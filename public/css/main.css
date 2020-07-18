@@ -1,0 +1,15 @@
+body {
+  padding-top: 5rem;
+}
+
+.starter-template {
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+/* Footer */
+.mastfoot {
+  color: rgba(255, 255, 255, .5);
+  position: relative;
+  bottom: 0px;
+}
