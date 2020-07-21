@@ -1,77 +1,84 @@
-<html>
-
-<head>
-  <title>회원가입</title>
-  <meta http-equiv="Content-Type" content="text/html; charset = utf-8" />
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
-  <style>
-    html,
-    body {
-      height: 100%;
-    }
-
-    body {
-      display: -ms-flexbox;
-      display: flex;
-      -ms-flex-align: center;
-      align-items: center;
-      padding-top: 60px;
-      padding-bottom: 60%;
-    }
-
-    .sign {
-      position: relative;
-      max-width: 470px;
-      padding: 15px;
-      margin: auto;
-    }
-
-    .sign .control {
-      position: relative;
-      box-sizing: border-box;
-      height: auto;
-      padding: 10px;
-      font-size: 16px;
-    }
-  </style>
+<%- include("partials/header"); -%>
+  <!-- Custom styles -->
+  <link href="css/signup.css" rel="stylesheet">
 </head>
 
-<body class="text-center">
-  <form class="sign" method="post" name="loginForm" action="signup_action.php">
-    <a href="main.php"><img src="images/hazelease.png" width="75px" height="75px" /></a>
-    <p></p>
-    <h2 class="mb-3 font-weight-normal"><b>회원 가입</b></h2>
-    <br>
-    <label for="username" class="sr-only">이름</label>
-    <input name="username" type="text" id="username" class="control" placeholder="이름" size="50px" required>
-    <p></p>
+<body class="text-center bg-light" id="bootstrap-overrides">
+  <form class="sign col" method="post" action="/signup">
+    <a href="/home"><img src="images/hazelease.png" class="mb-3" width="75px" height="75px" /></a>
+    <h2 class="mb-4 font-weight-normal"><b>회원 가입</b></h2>
+
+    <% if (message != "") { %>
+    <div class="alert alert-<%= statusCode == 200 ? "success" : "danger" %>" role="alert">
+      <%= message %> <a href='/login'>로그인</a>
+    </div>
+    <%}%>
+
+    <label for="fullname" class="sr-only">성명</label>
+    <input name="fullname" type="text" class="form-control my-4" placeholder="성명" maxlength="50" required />
+
     <label for="userid" class="sr-only">아이디</label>
-    <input name="userid" type="text" id="userid" class="control" placeholder="아이디" size="50px" maxlength="20" required />
-    <small class="form-text text-muted" align="left">아이디는 20자 이하입니다.</small>
-    <p></p>
+    <input name="userid" type="text" class="form-control" placeholder="아이디" maxlength="20" required />
+    <small class="form-text text-muted mb-3" align="left">아이디는 20자 이하입니다.</small>
+
     <label for="password" class="sr-only">비밀번호</label>
-    <input name="password" type="password" id="password" class="control" placeholder="비밀번호" size="50px" minlength="10" maxlength="20" required />
-    <small class="form-text text-muted" align="left">비밀번호는 10자 이상 20자 이하입니다.</small>
-    <p></p>
-    <label for="password_confirm" class="sr-only">비밀번호 확인</label>
-    <input name="password_confirm" type="password" id="password_confirm" class="control" placeholder="비밀번호 확인" minlength="10" maxlength="20" size="50px" required>
-    <p></p>
+    <input name="password" type="password" id="password" class="form-control" placeholder="비밀번호" minlength="6" maxlength="50" required />
+    <small class="form-text text-muted mb-3" align="left">비밀번호는 6자 이상 50자 이하입니다.</small>
+
+    <label for="password_confirm" class="sr-only">비밀번호 재확인</label>
+    <input name="password_confirm" type="password" id="password_confirm" class="form-control mb-4" placeholder="비밀번호 확인" minlength="6" maxlength="50" size="50px" required>
+
     <label for="gender" class="sr-only">성별</label>
-    <select id="gender" name="gender" class="control" style="width: 30%; float:left;">
+    <select id="gender" name="gender" class="form-control mr-3" style="width: 30%; float:left;">
       <option value="" selected>성별 선택</option>
       <option value="M">남자</option>
       <option value="F">여자</option>
     </select>
+
     <label for="birth" class="sr-only">생년월일</label>
-    <input name="birth" type="number" id="birth" class="control" placeholder="생년월일 8자" maxlength="8" style="width: 68%; float:left; margin-left: 2%; display: inline-block" required />
-    <div style="clear: both"></div>
-    <p></p>
+    <div class="row">
+      <div class="col-sm-4 dob-pr-rm">
+        <input type="text" id="yy" name="yy" placeholder="년(4자)" class="form-control" maxlength="4">
+      </div>
+      <div class="col-sm-4 dob-pr-rm">
+        <select id="mm" name="mm" class="form-control" aria-label="월">
+          <option value="">월</option>
+          <option value="01">1</option>
+          <option value="02">2</option>
+          <option value="03">3</option>
+          <option value="04">4</option>
+          <option value="05">5</option>
+          <option value="06">6</option>
+          <option value="07">7</option>
+          <option value="08">8</option>
+          <option value="09">9</option>
+          <option value="10">10</option>
+          <option value="11">11</option>
+          <option value="12">12</option>
+        </select>
+      </div>
+      <div class="col-sm-4 dob-pr-rm">
+        <input type="text" class="form-control" id="dd" name="dd" placeholder="일" maxlength="2">
+      </div>
+      <small class="form-text text-muted mb-3 ml-3" align="left">생년월일을 제대로 입력하세요.</small>
+    </div>
+
     <label for="email" class="sr-only">이메일</label>
-    <input name="email" type="email" id="email" class="control" placeholder="이메일" size="50px" required>
-    <p></p>
-    <label for="tel" class="sr-only">전화번호</label>
-    <input name="tel" type="tel" id="tel" class="control" placeholder="전화번호" maxlength="11" size="50px" required>
-    <small class="form-text text-muted" align="left">-없이 입력해 주십시오.</small>
-    <p></p>
-    <button class="btn btn-lg btn-block" type="submit" id="signup" name="signup" style="background-color: #80b5ee;">회원가입</button>
+    <input name="email" type="email" id="email" class="form-control mb-4" placeholder="이메일" maxlength="50" required>
+
+    <label for="no_tel" class="sr-only">전화번호</label>
+    <input name="no_tel" type="tel" id="no_tel" class="form-control" placeholder="전화번호" maxlength="20" required>
+    <small class="form-text text-muted mb-4" align="left">-없이 입력해 주십시오.</small>
+
+    <div class="row mb-5">
+      <div class="col-sm-6">
+        <a class="btn btn-lg btn-block btn-danger" href="/login">취소</a>
+      </div>
+      <div class="col-sm-6">
+        <button class="btn btn-lg btn-block btn-primary" type="submit" id="signup" name="signup">회원가입</button>
+      </div>
+    </div>
+  </form>
+
+<%- include("partials/copyright"); -%>
 <%- include("partials/footer"); -%>

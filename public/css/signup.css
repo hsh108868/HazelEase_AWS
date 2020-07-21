@@ -1,0 +1,22 @@
+html,
+body {
+  height: 100%;
+}
+
+body {
+  -ms-flex-align: center;
+  align-items: center;
+  padding-top: 60px;
+  padding-bottom: 60%;
+}
+
+.sign {
+  position: relative;
+  max-width: 470px;
+  padding: 15px;
+  margin: auto;
+}
+
+#bootstrap-overrides .dob-pr-rm {
+  padding-right: 0px;
+}
