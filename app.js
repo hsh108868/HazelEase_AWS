@@ -3,9 +3,10 @@ require('dotenv').config(); // .env 파일 내에 있는 변수를 이 파일로
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
-const session = require("express-session");
-const passport = require("passport");
 const mysql = require("mysql");
+const session = require("express-session");
+const passport = require("passport")
+  , LocalStrategy = require('passport-local').Strategy;;
 
 /* ---------- 정의된 모듈 ------------- */
 const connection = require("./lib/dbconn"); // DB 연결
@@ -27,14 +28,12 @@ db.connect(function(err) {
   console.log("Database connected!");
 });
 
+// 세션 사용
 app.use(session({
   secret: "Our little secret.",
   resave: false,
   saveUninitialized: false
 }));
-
-app.use(passport.initialize());
-app.use(passport.session());
 
 /* --- 페이지 개발할 때 수정하는 부분 --- */
 app.get("/", function (req, res) {
