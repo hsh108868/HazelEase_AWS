@@ -54,9 +54,7 @@ app.post("/login", user.login);
 
 app.get("/logout", user.logout);
 
-app.get("/profile", function(req, res) {
-  res.render("profile", { user_id: req.session.user_id });
-})
+app.get("/profile", user.profile);
 
 app.listen(3000, function() {
   console.log("Server has started at port 3000.");

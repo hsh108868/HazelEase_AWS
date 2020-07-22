@@ -1,6 +1,6 @@
-const mysql = require("mysql");
-const connection = require("../lib/dbconn"); // DB 연결
-db = connection.db;
+// const mysql = require("mysql");
+// const connection = require("../lib/dbconn"); // DB 연결
+// db = connection.db;
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
@@ -83,4 +83,19 @@ exports.logout = function (req, res) {
    req.session.destroy(function(err) {
       res.redirect("/login");
    })
+};
+
+/* ------------------------------ profile 처리 호출 ------------------------------ */
+exports.profile = function(req, res){
+   var user_id = req.session.user_id;
+
+   // 로그인된 상태 아니면 로그인 페이지로 이동
+   if (!req.session.loggedin) {
+     res.redirect("/login");
+   }
+
+   // 로그인된 아이디의 해당 정보들을 가져오고 profile 페이지로 넘겨줌
+   db.query('SELECT * FROM ?? WHERE user_id = ?', ['member', user_id], function (err, results, fields) {
+     res.render('profile.ejs', { user_id: user_id, data: results });
+   });
 };
