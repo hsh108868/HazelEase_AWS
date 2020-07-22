@@ -32,7 +32,8 @@ db.connect(function(err) {
 app.use(session({
   secret: "Our little secret.",
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  cookie: { maxAge: 60*60*1000 }
 }));
 
 /* --- 페이지 개발할 때 수정하는 부분 --- */
@@ -41,7 +42,8 @@ app.get("/", function (req, res) {
 });
 
 app.get("/home", function (req, res) {
-  res.render("home");
+  sess = req.session;
+  res.render("home", { user_id: sess.user_id });
 });
 
 app.get("/signup", user.signup);
