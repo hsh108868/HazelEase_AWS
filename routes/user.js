@@ -26,15 +26,27 @@ exports.signup = function(req, res) {
         var query = db.query('INSERT INTO member SET ?', post, function(error, results, fields) {
           if (error) throw error;
           message = "회원가입이 완료되었습니다.";
-          res.render('signup.ejs', { message: message, statusCode: 200 });
+          res.render('signup.ejs', {
+            message: message,
+            statusCode: 200
+          });
         });
       });
     } else {
       message = "비밀번호가 일치하지 않습니다.";
-      res.render('signup.ejs', { message: message, statusCode: 400 });
+      res.render('signup.ejs', {
+        message: message,
+        statusCode: 400
+      });
     }
   } else {
-    res.render('signup', { message: message });
+    db.query('SELECT ?? FROM ??', ['user_id', 'member'], function(err, results, fields) {
+      regUserids = []
+      results.forEach(function(member) {
+        regUserids.push(member.user_id);
+      })
+      res.render('signup.ejs', { message: message, regUserids: regUserids  });
+    });
   }
 
   /* Status Code:
@@ -48,54 +60,59 @@ exports.signup = function(req, res) {
 
 /* ------------------------------ login 처리 호출 ------------------------------ */
 exports.login = function(req, res) {
-   var message = "";
-   const userid = req.body.userid;
-   const password = req.body.password;
+  var message = "";
+  const userid = req.body.userid;
+  const password = req.body.password;
 
-   if(req.method == "POST") {
-     db.query('SELECT ?? FROM ?? WHERE user_id = ?', [['user_id', 'password'], 'member', userid], function (err, results, fields) {
-       if (err) throw err;
-       if(results.length > 0) {
-         bcrypt.compare(password, results[0].password, function(err, result) {
-           if (result === true) {
-             req.session.loggedin = true;
-             req.session.user_id = results[0].user_id;
-             res.redirect('/home');
-           } else {
-             message = "잘못된 아이디 또는 비밀번호!";
-             res.render('login.ejs', { message: message, statusCode: 400 });
-           }
-         });
-       } else {
-         message = "잘못된 아이디 또는 비밀번호!";
-         res.render('login.ejs', { message: message, statusCode: 400 });
-       }
-     });
+  if (req.method == "POST") {
+    db.query('SELECT ?? FROM ?? WHERE user_id = ?', [
+      ['user_id', 'password'], 'member', userid
+    ], function(err, results, fields) {
+      if (err) throw err;
+      if (results.length > 0) {
+        bcrypt.compare(password, results[0].password, function(err, result) {
+          if (result === true) {
+            req.session.loggedin = true;
+            req.session.user_id = results[0].user_id;
+            res.redirect('/home');
+          } else {
+            message = "잘못된 아이디 또는 비밀번호!";
+            res.render('login.ejs', { message: message, statusCode: 400 });
+          }
+        });
+      } else {
+        message = "잘못된 아이디 또는 비밀번호!";
+        res.render('login.ejs', { message: message, statusCode: 400 });
+      }
+    });
 
-   } else {
-     res.render('login.ejs', { message: message, statusCode: 100 });
-   }
+  } else {
+    res.render('login.ejs', {
+      message: message,
+      statusCode: 100
+    });
+  }
 
 };
 
 /* ------------------------------ logout 처리 호출 ------------------------------ */
-exports.logout = function (req, res) {
-   req.session.destroy(function(err) {
-      res.redirect("/login");
-   })
+exports.logout = function(req, res) {
+  req.session.destroy(function(err) {
+    res.redirect("/login");
+  })
 };
 
 /* ------------------------------ profile 처리 호출 ------------------------------ */
-exports.profile = function(req, res){
-   var user_id = req.session.user_id;
+exports.profile = function(req, res) {
+  var user_id = req.session.user_id;
 
-   // 로그인된 상태 아니면 로그인 페이지로 이동
-   if (!req.session.loggedin) {
-     res.redirect("/login");
-   }
+  // 로그인된 상태 아니면 로그인 페이지로 이동
+  if (!req.session.loggedin) {
+    res.redirect("/login");
+  }
 
-   // 로그인된 아이디의 해당 정보들을 가져오고 profile 페이지로 넘겨줌
-   db.query('SELECT * FROM ?? WHERE user_id = ?', ['member', user_id], function (err, results, fields) {
-     res.render('profile.ejs', { user_id: user_id, data: results });
-   });
+  // 로그인된 아이디의 해당 정보들을 가져오고 profile 페이지로 넘겨줌
+  db.query('SELECT * FROM ?? WHERE user_id = ?', ['member', user_id], function(err, results, fields) {
+    res.render('profile.ejs', { user_id: user_id, data: results });
+  });
 };

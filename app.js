@@ -6,7 +6,15 @@ const ejs = require("ejs");
 const mysql = require("mysql");
 const session = require("express-session");
 const passport = require("passport")
-  , LocalStrategy = require('passport-local').Strategy;;
+  , LocalStrategy = require('passport-local').Strategy;
+
+var jsdom = require("jsdom");
+const { JSDOM } = jsdom;
+const { window } = new JSDOM();
+const { document } = (new JSDOM('')).window;
+global.document = document;
+
+var $ = jQuery = require('jquery')(window);
 
 /* ---------- 정의된 모듈 ------------- */
 const connection = require("./lib/dbconn"); // DB 연결

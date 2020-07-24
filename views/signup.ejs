@@ -1,6 +1,6 @@
 <%- include("partials/header"); -%>
-  <!-- Custom styles -->
-  <link href="css/signup.css" rel="stylesheet">
+<!-- Custom styles -->
+<link href="css/signup.css" rel="stylesheet">
 </head>
 
 <body class="text-center bg-light" id="bootstrap-overrides">
@@ -18,8 +18,12 @@
     <input name="fullname" type="text" class="form-control my-4" placeholder="성명" maxlength="50" required />
 
     <label for="userid" class="sr-only">아이디</label>
-    <input name="userid" type="text" class="form-control" placeholder="아이디" maxlength="20" required />
-    <small class="form-text text-muted mb-3" align="left">아이디는 20자 이하입니다.</small>
+    <input name="userid" type="text" class="form-control" placeholder="아이디" id="userid" minlength="4" maxlength="20" autocomplete="off" pattern="[a-zA-Z0-9.]{4,20}" required />
+    <small class="form-text text-muted mb-3" align="left">
+      아이디는 20자 이하입니다.
+      <span id='id-check-duplicate' class="hidden text-danger"><i class='fas fa-exclamation-circle fa-lg'></i> 중복된 아이디입니다!</span>
+      <span id='id-check-usable' class="hidden text-success"><i class='fas fa-check-circle fa-lg'></i> 사용가능한 아이디입니다.</span>
+    </small>
 
     <label for="password" class="sr-only">비밀번호</label>
     <input name="password" type="password" id="password" class="form-control" placeholder="비밀번호" minlength="6" maxlength="50" required />
@@ -80,5 +84,28 @@
     </div>
   </form>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- 중복 체크 스크립트 -->
+<!-- user.js로부터 넘겨준 데이터를 받아 input hidden의 값에 지정 -->
+<input type="hidden" id="regUserids" name="regUserids" value="<%= regUserids %>"/>
+<script>
+  var regUserids = $('#regUserids').val().split(",");
+
+  $('#userid').on("input propertychange paste", function() {
+    if ($('#userid').val() == "") {
+      $('#id-check-usable').addClass('hidden');
+      $('#id-check-duplicate').addClass('hidden');
+    } else {
+      if(regUserids.includes($('#userid').val())) {
+        $('#id-check-duplicate').removeClass('hidden');
+        $('#id-check-usable').addClass('hidden');
+      } else {
+        $('#id-check-usable').removeClass('hidden');
+        $('#id-check-duplicate').addClass('hidden');
+      }
+    }
+  });
+</script>
 <%- include("partials/copyright"); -%>
 <%- include("partials/footer"); -%>

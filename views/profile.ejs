@@ -1,28 +1,41 @@
 <%- include("partials/header"); -%>
   <!-- Custom styles -->
-  <link href="css/profile.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/profile.css">
 </head>
 
-<body class="text-center">
+<body id="bootstrap-overrides">
   <%- include("partials/navbar"); -%>
 
-  <main role="main" class="container">
-    <div class="starter-template">
-      <h3>회원 정보</h3>
+  <main role="main" class="container-fluid">
+    <div class="side-navbar">
+      <h4>내 계정</h4>
+      <ul>
+        <li><a href="profile/account-info" class="nav-item">회원정보</a></li>
+        <li><a href="profile/manage-address" class="nav-item">주소록 관리</a></li>
+        <li><a href="profile/purchase-history" class="nav-item">구매목록</a></li>
+        <li><a href="profile/payment-method" class="nav-item">결제수단</a></li>
+        <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> 로그아웃</a></li>
+      </ul>
     </div>
+    <div class="tab-content">
+      <div>
+        <h3>회원 정보</h3>
+      </div>
 
-    <div class="row">
-      <div class="col-lg-4">
-        <svg class="bd-placeholder-img rounded-circle" width="140" height="140" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: 140x140"><title>Placeholder</title><rect width="100%" height="100%" fill="#777"/><text x="50%" y="50%" fill="#777" dy=".3em">140x140</text></svg>
-        <h2 class="my-3">계정ID: <%= user_id %></h2>
-        <p>성명: <%= data[0].fullname %></p>
-        <p>성별: <%= data[0].gender %></p>
-        <p>생년월일: <%= data[0].birth %></p>
-        <p>이메일: <%= data[0].email %></p>
-        <p>연락처: <%= data[0].phone %></p>
-        <p>쇼핑머니: <%= data[0].s_money ? results[0].s_money : 0; %> 원</p>
-        <p><a class="btn btn-secondary" href="#" role="button">회원 정보 수정 &raquo;</a></p>
-      </div><!-- /.col-lg-4 -->
-    </div><!-- /.row -->
+      <div class="tab-subcontent">
+        <div class="col-lg-4">
+          <svg class="bd-placeholder-img rounded-circle" width="140" height="140" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: 140x140"><title>Placeholder</title><rect width="100%" height="100%" fill="#777"/><text x="50%" y="50%" fill="#777" dy=".3em">140x140</text></svg>
+          <h2 class="my-3">계정 ID: <%= user_id %></h2>
+          <p>성명: <%= data[0].fullname %></p>
+          <p>성별: <%= data[0].gender %></p>
+          <p>생년월일: <%= data[0].birth != "0000-00-00" ? data[0].birth.getFullYear() + '-' + data[0].birth.getMonth() + '-' + data[0].birth.getDate() : "0000-00-00" %></p>
+          <p>이메일: <%= data[0].email %></p>
+          <p>연락처: <%= data[0].phone %></p>
+          <p>쇼핑머니: <%= data[0].s_money ? results[0].s_money : 0; %> 원</p>
+          <p><a class="btn btn-secondary" href="#" role="button">회원 정보 수정 &raquo;</a></p>
+        </div>
+      </div>
+    </div>
   </main>
 <%- include("partials/footer"); -%>

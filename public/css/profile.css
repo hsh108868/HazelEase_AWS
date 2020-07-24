@@ -1,13 +1,72 @@
 /* GLOBAL STYLES
 -------------------------------------------------- */
+/* (Color palette: https://colorhunt.co/palette/196180) */
 /* Padding below the footer and lighter body text */
 
 body {
-  padding-top: 5rem;
-  padding-bottom: 3rem;
-  color: #5a5a5a;
+  margin-top: 56px;
+  padding: 0px 30px;
+  background-color: #ebecf1;
+  color: #555555;
+  line-height: 1.5;
 }
 
+h4 {
+  padding: 10px;
+}
+
+ul {
+  list-style: none;
+  margin-bottom: 0;
+  padding: 0;
+}
+
+a {
+  display: block;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+/* Side navigation bar */
+.nav-item {
+  color: #555555;
+}
+
+.side-navbar {
+  margin: 20px 15px 20px 3%;
+  background-color: white;
+  width: 15%;
+  padding: 10px 10px;
+  float: left
+}
+
+.side-navbar li {
+  padding: 5px 10px;
+}
+
+.side-navbar li:hover {
+  background-color: rgba(158,158,158,0.2);
+  color: #3282b8;
+}
+
+.tab-content {
+  background-color: white;
+  float: left;
+  margin: 20px 3% 20px 0;
+  width: 77%;
+}
+
+.tab-content h3 {
+  background-color: #0f4c75;
+  color: white;
+  padding: 20px 20px;
+}
+
+.tab-subcontent {
+  padding: 20px;
+}
 
 /* Center align the text within the three columns below the carousel */
 .marketing .col-lg-4 {

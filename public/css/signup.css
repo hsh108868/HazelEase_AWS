@@ -17,6 +17,10 @@ body {
   margin: auto;
 }
 
+.hidden {
+  display: none;
+}
+
 #bootstrap-overrides .dob-pr-rm {
   padding-right: 0px;
 }
