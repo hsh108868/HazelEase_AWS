@@ -65,6 +65,11 @@ app.get("/logout", user.logout);
 app.get("/profile", user.profile);
 app.post("/profile", user.saveChanges);
 
+app.get("/productDetails", function(req, res) {
+  sess = req.session;
+  res.render("product.ejs", { user_id: sess.user_id });
+})
+
 app.listen(3000, function() {
   console.log("Server has started at port 3000.");
 });
