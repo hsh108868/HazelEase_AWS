@@ -88,7 +88,7 @@
 
 <!-- 중복 체크 스크립트 -->
 <!-- user.js로부터 넘겨준 데이터를 받아 input hidden의 값에 지정 -->
-<input type="hidden" id="regUserids" name="regUserids" value="<%= regUserids %>"/>
+<input type="hidden" id="regUserids" name="regUserids" value="<%= regUserids ? regUserids : "" %>"/>
 <script>
   var regUserids = $('#regUserids').val().split(",");
 

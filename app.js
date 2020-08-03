@@ -8,13 +8,13 @@ const session = require("express-session");
 const passport = require("passport")
   , LocalStrategy = require('passport-local').Strategy;
 
-var jsdom = require("jsdom");
-const { JSDOM } = jsdom;
-const { window } = new JSDOM();
-const { document } = (new JSDOM('')).window;
-global.document = document;
-
-var $ = jQuery = require('jquery')(window);
+// var jsdom = require("jsdom");
+// const { JSDOM } = jsdom;
+// const { window } = new JSDOM();
+// const { document } = (new JSDOM('')).window;
+// global.document = document;
+//
+// var $ = jQuery = require('jquery')(window);
 
 /* ---------- 정의된 모듈 ------------- */
 const connection = require("./lib/dbconn"); // DB 연결
@@ -63,6 +63,7 @@ app.post("/login", user.login);
 app.get("/logout", user.logout);
 
 app.get("/profile", user.profile);
+app.post("/profile", user.saveChanges);
 
 app.listen(3000, function() {
   console.log("Server has started at port 3000.");

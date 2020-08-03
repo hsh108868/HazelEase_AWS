@@ -15,14 +15,28 @@ h4 {
   padding: 10px;
 }
 
+img {
+  padding: 10px;
+}
+
+td {
+  padding: 5px;
+}
+
 ul {
   list-style: none;
   margin-bottom: 0;
   padding: 0;
 }
 
-a {
+.side-navbar a {
   display: block;
+  padding: 5px 10px;
+}
+
+td a {
+  margin: 15px 15px;
+
 }
 
 a:hover {
@@ -39,11 +53,7 @@ a:hover {
   background-color: white;
   width: 15%;
   padding: 10px 10px;
-  float: left
-}
-
-.side-navbar li {
-  padding: 5px 10px;
+  float: left;
 }
 
 .side-navbar li:hover {
@@ -51,6 +61,21 @@ a:hover {
   color: #3282b8;
 }
 
+/* Tab content */
+.btn-edit {
+  margin: 15px 0 0;
+}
+
+.center {
+  margin: auto;
+}
+
+.info-wrap {
+  background-color: #cbeaed;
+  border-radius: 20px;
+  padding: 20px;
+  display: inline-block;
+}
 .tab-content {
   background-color: white;
   float: left;
@@ -62,21 +87,14 @@ a:hover {
   background-color: #0f4c75;
   color: white;
   padding: 20px 20px;
+  margin: 0;
 }
 
 .tab-subcontent {
   padding: 20px;
 }
 
-/* Center align the text within the three columns below the carousel */
-.marketing .col-lg-4 {
-  margin-bottom: 1.5rem;
+.center-content {
   text-align: center;
-}
-.marketing h2 {
-  font-weight: 400;
-}
-.marketing .col-lg-4 p {
-  margin-right: .75rem;
-  margin-left: .75rem;
+  vertical-align: middle;
 }
