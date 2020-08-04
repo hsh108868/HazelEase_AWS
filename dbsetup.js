@@ -66,6 +66,98 @@ app.get("/cr_tb_address", function(req, res) {
   })
 });
 
+// product 테이블 생성
+app.get("/cr_tb_product", function(req, res) {
+  var sql = `create table product (
+  	product_id int unsigned not null auto_increment,
+  	product varchar(100) not null,
+  	info varchar(300),
+  	cost int unsigned not null,
+  	user_id varchar(30) not null,
+  	review double unsigned,
+  	quantity int unsigned not null,
+  	qrcode varchar(200),
+  	primary key(product_id),
+  	foreign key(user_id) references member(user_id) on delete cascade
+  );`
+
+  db.query(sql, function(err, result) {
+    if(err) {
+      res.send("Table already exists!");
+      throw err;
+    }
+    console.log(result);
+    res.send("Table created..");
+  })
+});
+
+// seller 테이블 생성
+app.get("/cr_tb_seller", function(req, res) {
+  var sql = `create table seller (
+  	user_id varchar(30) not null,
+  	product_id varchar(100) not null,
+  	address varchar(100) not null,
+  	phone varchar(20),
+  	email varchar(50),
+  	foreign key(user_id) references member(user_id) on delete cascade,
+  	foreign key(product_id) references product(product_id) on delete cascade
+  );`
+
+  db.query(sql, function(err, result) {
+    if(err) {
+      res.send("Table already exists!");
+      throw err;
+    }
+    console.log(result);
+    res.send("Table created..");
+  })
+});
+
+// cart 테이블 생성
+app.get("/cr_tb_cart", function(req, res) {
+  var sql = `create table cart (
+  	cart_id int unsigned not null auto_increment,
+  	user_id varchar(30) not null,
+  	product_id varchar(100) not null,
+  	date date not null,
+  	quantity int unsigned,
+  	primary key(cart_id),
+  	foreign key(user_id) references member(user_id) on delete cascade,
+  	foreign key(product_id) references product(product_id) on delete cascade
+  );`
+
+  db.query(sql, function(err, result) {
+    if(err) {
+      res.send("Table already exists!");
+      throw err;
+    }
+    console.log(result);
+    res.send("Table created..");
+  })
+});
+
+// wishlist 테이블 생성
+app.get("/cr_tb_wishlist", function(req, res) {
+  var sql = `create table wishlist (
+  	wishlist_id int unsigned not null auto_increment,
+  	user_id varchar(30) not null,
+  	product_id varchar(100) not null,
+  	date date not null,
+  	primary key(wishlist_id),
+  	foreign key(user_id) references member(user_id) on delete cascade,
+  	foreign key(product_id) references product(product_id) on delete cascade
+  );`
+
+  db.query(sql, function(err, result) {
+    if(err) {
+      res.send("Table already exists!");
+      throw err;
+    }
+    console.log(result);
+    res.send("Table created..");
+  })
+});
+
 app.listen(3000, function() {
   console.log("Server has started at port 3000.");
 });

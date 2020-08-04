@@ -81,9 +81,7 @@ exports.login = function(req, res) {
   const password = req.body.password;
 
   if (req.method == "POST") {
-    db.query('SELECT ?? FROM ?? WHERE user_id = ?', [
-      ['user_id', 'password'], 'member', userid
-    ], function(err, results, fields) {
+    db.query('SELECT ?? FROM ?? WHERE user_id = ?', [['user_id', 'password'], 'member', userid], function(err, results, fields) {
       if (err) throw err;
       if (results.length > 0) {
         bcrypt.compare(password, results[0].password, function(err, result) {

@@ -19,6 +19,7 @@ const passport = require("passport")
 /* ---------- 정의된 모듈 ------------- */
 const connection = require("./lib/dbconn"); // DB 연결
 const user = require('./routes/user');
+const product = require('./routes/product');
 
 /* ----------------------------------- */
 
@@ -65,10 +66,18 @@ app.get("/logout", user.logout);
 app.get("/profile", user.profile);
 app.post("/profile", user.saveChanges);
 
-app.get("/productDetails", function(req, res) {
-  sess = req.session;
-  res.render("product.ejs", { user_id: sess.user_id });
-})
+app.get("/my-cart", function(req, res) {
+  res.render("cart", { user_id: req.session.user_id });
+});
+
+app.get("/my-wishlist", function(req, res) {
+  res.render("wishlist", { user_id: req.session.user_id });
+});
+
+app.get("/product", function(req, res) {
+  res.render("product", { user_id: req.session.user_id });
+});
+// app.get("/product/:productId", product.showDetails);
 
 app.listen(3000, function() {
   console.log("Server has started at port 3000.");
