@@ -95,7 +95,7 @@ app.get("/cr_tb_product", function(req, res) {
 app.get("/cr_tb_seller", function(req, res) {
   var sql = `create table seller (
   	user_id varchar(30) not null,
-  	product_id varchar(100) not null,
+  	product_id int unsigned not null,
   	address varchar(100) not null,
   	phone varchar(20),
   	email varchar(50),
@@ -118,7 +118,7 @@ app.get("/cr_tb_cart", function(req, res) {
   var sql = `create table cart (
   	cart_id int unsigned not null auto_increment,
   	user_id varchar(30) not null,
-  	product_id varchar(100) not null,
+  	product_id int unsigned not null,
   	date date not null,
   	quantity int unsigned,
   	primary key(cart_id),
@@ -141,7 +141,7 @@ app.get("/cr_tb_wishlist", function(req, res) {
   var sql = `create table wishlist (
   	wishlist_id int unsigned not null auto_increment,
   	user_id varchar(30) not null,
-  	product_id varchar(100) not null,
+  	product_id int unsigned not null,
   	date date not null,
   	primary key(wishlist_id),
   	foreign key(user_id) references member(user_id) on delete cascade,
