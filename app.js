@@ -50,6 +50,8 @@ app.get("/", function (req, res) {
   res.redirect("/home");
 });
 
+
+app.get("/home", product.showOutlines);
 app.get("/home", function (req, res) {
   sess = req.session;
   res.render("home", { user_id: sess.user_id });
@@ -66,13 +68,19 @@ app.get("/logout", user.logout);
 app.get("/profile", user.profile);
 app.post("/profile", user.saveChanges);
 
+app.get("/my-cart", product.showMycart);
 app.get("/my-cart", function(req, res) {
   res.render("cart", { user_id: req.session.user_id });
 });
 
+app.get("/cart/:productId", product.cart);
+
+app.get("/my-wishlist", product.showMyWishlist);
 app.get("/my-wishlist", function(req, res) {
   res.render("wishlist", { user_id: req.session.user_id });
 });
+
+app.get("/wishlist/:productId", product.wishlist);
 
 app.get("/product", function(req, res) {
   res.render("product", { user_id: req.session.user_id });

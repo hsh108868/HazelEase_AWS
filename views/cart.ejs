@@ -1,4 +1,4 @@
-<%-include("partials/header");-%>
+ti<%-include("partials/header");-%>
 <!-- Custom styles -->
 <link href="css/cart.css" rel="stylesheet">
 </head>
@@ -83,6 +83,7 @@
             판매자명
           </div>
           <!-- 상품 1 -->
+          <% for(var i = 0; i < data.length; i++) { %>
           <div class="card-body">
             <div class="row">
               <div class="col-sm-3">
@@ -92,7 +93,57 @@
                 <div class="row">
                   <div class="col-sm-10">
                     <h5 class="card-title">
-                      상품명
+                      <%= data[i].product%>
+                      <br><small>종류</small>
+                    </h5>
+                  </div>
+                  <div class="col-sm-2">
+                    <input type="checkbox" name="" value="" class="item">
+                  </div>
+                </div>
+                <p class="card-text mb-2"><strong><%= data[i].cost%> 원</strong></p>
+                <div class="row">
+                  <div class="col-sm-7">
+                    <p>
+                      <span style="color: #fbd46d;">
+                        <% for (var j = 0; j < data[i].review; j++) { %>
+                          <i class="fas fa-star"></i> <% }%>
+                      </span>(23)
+                    </p>
+                  </div>
+                  <div class="col-sm-1">
+                    <a href="#" class="btn btn-sm btn-outline-secondary mr-2"><i class="fas fa-trash"></i></a>
+                  </div>
+                  <div class="col-sm-4">
+                    <div class="input-group input-group-sm">
+                      <span class="input-group-prepend">
+                        <button type="button" class="quantity-left-minus btn btn-sm btn-outline-secondary btn-number" data-type="minus" data-field="">
+                          <i class="fas fa-minus"></i>
+                        </button>
+                      </span>
+                      <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1" min="1" max="100">
+                      <span class="input-group-append">
+                        <button type="button" class="quantity-right-plus btn btn-sm btn-outline-secondary btn-number" data-type="plus" data-field="">
+                          <i class="fas fa-plus"></i>
+                        </button>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% }%>
+          <!-- 상품 2
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-3">
+                <img src="images/product-default.jpg" alt="product-img" width="110%"/>
+              </div>
+              <div class="col-sm-9">
+                <div class="row">
+                  <div class="col-sm-10">
+                    <h5 class="card-title">
                       <br><small>종류</small>
                     </h5>
                   </div>
@@ -131,63 +182,14 @@
               </div>
             </div>
           </div>
-          <!-- 상품 2 -->
-          <div class="card-body">
-            <div class="row">
-              <div class="col-sm-3">
-                <img src="images/product-default.jpg" alt="product-img" width="110%"/>
-              </div>
-              <div class="col-sm-9">
-                <div class="row">
-                  <div class="col-sm-10">
-                    <h5 class="card-title">
-                      상품명
-                      <br><small>종류</small>
-                    </h5>
-                  </div>
-                  <div class="col-sm-2">
-                    <input type="checkbox" name="" value="" class="item">
-                  </div>
-                </div>
-                <p class="card-text mb-2"><strong>0,000 원</strong></p>
-                <div class="row">
-                  <div class="col-sm-7">
-                    <p>
-                      <span style="color: #fbd46d;">
-                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i><i class="far fa-star"></i>
-                      </span> (23)
-                    </p>
-                  </div>
-                  <div class="col-sm-1">
-                    <a href="#" class="btn btn-sm btn-outline-secondary mr-2"><i class="fas fa-trash"></i></a>
-                  </div>
-                  <div class="col-sm-4">
-                    <div class="input-group input-group-sm">
-                      <span class="input-group-prepend">
-                        <button type="button" class="quantity-left-minus btn btn-sm btn-outline-secondary btn-number" data-type="minus" data-field="">
-                          <i class="fas fa-minus"></i>
-                        </button>
-                      </span>
-                      <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1" min="1" max="100">
-                      <span class="input-group-append">
-                        <button type="button" class="quantity-right-plus btn btn-sm btn-outline-secondary btn-number" data-type="plus" data-field="">
-                          <i class="fas fa-plus"></i>
-                        </button>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        </div> -->
 
         <!-- 판매자 2 -->
         <div class="card mb-4">
           <div class="card-header">
             판매자명
           </div>
-          <!-- 상품 1 -->
+          <!--상품 1 -->
           <div class="card-body">
             <div class="row">
               <div class="col-sm-3">
@@ -237,8 +239,10 @@
             </div>
           </div>
         </div>
+        </div>
       </div>
     </div>
+  </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="js/cart.js"></script>
