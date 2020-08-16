@@ -1,6 +1,3 @@
-// const mysql = require("mysql");
-// const connection = require("../lib/dbconn"); // DB 연결
-// db = connection.db;
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const currentYear = new Date().getFullYear();

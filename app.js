@@ -8,14 +8,6 @@ const session = require("express-session");
 const passport = require("passport")
   , LocalStrategy = require('passport-local').Strategy;
 
-// var jsdom = require("jsdom");
-// const { JSDOM } = jsdom;
-// const { window } = new JSDOM();
-// const { document } = (new JSDOM('')).window;
-// global.document = document;
-//
-// var $ = jQuery = require('jquery')(window);
-
 /* ---------- 정의된 모듈 ------------- */
 const connection = require("./lib/dbconn"); // DB 연결
 const user = require('./routes/user');
@@ -50,13 +42,10 @@ app.get("/", function (req, res) {
   res.redirect("/home");
 });
 
-
+// 홈 페이지의 요청 처리
 app.get("/home", product.showOutlines);
-app.get("/home", function (req, res) {
-  sess = req.session;
-  res.render("home", { user_id: sess.user_id });
-});
 
+// 회원가입, 로그인, 로그아웃 페이지의 요청 처리
 app.get("/signup", user.signup);
 app.post("/signup", user.signup);
 
@@ -65,27 +54,33 @@ app.post("/login", user.login);
 
 app.get("/logout", user.logout);
 
+// 회원정보 수정 페이지의 요청 처리
 app.get("/profile", user.profile);
 app.post("/profile", user.saveChanges);
 
-app.get("/my-cart", product.showMycart);
-app.get("/my-cart", function(req, res) {
-  res.render("cart", { user_id: req.session.user_id });
-});
-
-app.get("/cart/:productId", product.cart);
+// 쇼핑카트, 위시리스트 페이지의 요청 처리
+app.get("/my-cart", product.showMyCart);
+app.get("/cart/add/:productId", product.cartAdd);
+app.get("/cart/delete/:cartId", product.cartDelete);
 
 app.get("/my-wishlist", product.showMyWishlist);
-app.get("/my-wishlist", function(req, res) {
-  res.render("wishlist", { user_id: req.session.user_id });
+app.get("/wishlist/add/:productId", product.wishlistAdd);
+app.get("/wishlist/delete/:wishlistId", product.wishlistDelete);
+
+// 제품 상세내역 페이지의 요청 처리
+app.get("/product/:productId", product.showDetails);
+
+// 알림 페이지의 요청 처리
+app.get("/notification", function(req, res) {
+  res.render("notification", { user_id: req.session.user_id });
 });
 
-app.get("/wishlist/:productId", product.wishlist);
-
-app.get("/product", function(req, res) {
-  res.render("product", { user_id: req.session.user_id });
+// 수령여부 페이지의 요청 처리
+app.get("/receipt", function(req, res) {
+  res.render("receipt", { user_id: req.session.user_id });
 });
-// app.get("/product/:productId", product.showDetails);
+
+
 
 app.listen(3000, function() {
   console.log("Server has started at port 3000.");

@@ -71,11 +71,13 @@ app.get("/cr_tb_product", function(req, res) {
   var sql = `create table product (
   	product_id int unsigned not null auto_increment,
   	product varchar(100) not null,
+    type_avail varchar(100),
   	info varchar(300),
-  	cost int unsigned not null,
+  	price int unsigned not null,
   	user_id varchar(30) not null,
-  	review double unsigned,
+  	rating double unsigned,
   	quantity int unsigned not null,
+    category varchar(50),
   	qrcode varchar(200),
   	primary key(product_id),
   	foreign key(user_id) references member(user_id) on delete cascade
@@ -119,8 +121,9 @@ app.get("/cr_tb_cart", function(req, res) {
   	cart_id int unsigned not null auto_increment,
   	user_id varchar(30) not null,
   	product_id int unsigned not null,
+    type varchar(50),
+    quantity int unsigned,
   	date date not null,
-  	quantity int unsigned,
   	primary key(cart_id),
   	foreign key(user_id) references member(user_id) on delete cascade,
   	foreign key(product_id) references product(product_id) on delete cascade
