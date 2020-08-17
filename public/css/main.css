@@ -9,6 +9,10 @@ body {
   color: #5a5a5a;
 }
 
+a:hover {
+  text-decoration: none;
+}
+
 .jumbotron {
   padding-top: 3rem;
   padding-bottom: 3rem;

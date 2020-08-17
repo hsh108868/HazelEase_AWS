@@ -28,7 +28,8 @@ exports.showDetails = function(req, res) {
 /* ------------------------------ home화면 product 출력 ------------------------------ */
 exports.showOutlines = function(req, res) {
   const user_id = req.session.user_id;
-  db.query('select * from product;', function(err, results, fields) {
+  sql = `SELECT * FROM product;`
+  db.query(sql, function(err, results, fields) {
     if (err) throw err;
     res.render('home.ejs', {
       user_id: user_id,
@@ -50,13 +51,28 @@ exports.showMyCart = function(req, res) {
            FROM product AS p RIGHT OUTER JOIN cart AS c
            ON p.product_id = c.product_id
            WHERE c.user_id = ?
-           ORDER BY seller ASC`
-    params = [user_id]
+           ORDER BY seller ASC;
+
+           SELECT p.user_id as seller, COUNT(*) as count
+           FROM product as p RIGHT OUTER JOIN cart as c
+           ON p.product_id = c.product_id
+           WHERE c.user_id = ?
+           GROUP BY seller
+           ORDER BY seller ASC;
+
+           SELECT checked, COUNT(*) as count
+           FROM cart
+           WHERE user_id = ? AND checked = 1
+           GROUP BY checked`
+    params = [user_id, user_id, user_id];
     db.query(sql, params, function(err, results, fields) {
       if (err) throw err;
+      console.log(results[2]);
       res.render('cart.ejs', {
         user_id: user_id,
-        data: results,
+        data: results[0],
+        rep: results[1],
+        noOfCheckedItems: results[2].length > 0 ? results[2][0].count : 0,
         formatNum: fn.formatNum
       });
     });
@@ -69,8 +85,8 @@ exports.cartAdd = function(req, res) {
   let reqProductId = req.params.productId;
   var now = new Date();
 
-  var sql = 'insert into cart(user_id, product_id, date, quantity) values (?,?,?,?);';
-  var params = [user_id, reqProductId, now, '1'];
+  var sql = 'insert into cart(user_id, product_id, date, quantity, checked) values (?,?,?,?,?);';
+  var params = [user_id, reqProductId, now, '1', '1'];
   if (!req.session.loggedin) {
     res.redirect("/login");
     res.end();
@@ -80,7 +96,7 @@ exports.cartAdd = function(req, res) {
         res.send('쇼핑카트 항목 추가에 실패');
         throw err;
       } else {
-        console.log(results);
+        console.log("성공적으로 추가되었습니다.");
       }
       res.redirect('/my-cart');
     })
@@ -189,10 +205,8 @@ exports.wishlistAdd = function(req, res) {
   } else {
     db.query(sql, params, function(err, results) {
       if (err) {
-        res.send('send error');
+        res.send('실패');
         throw err;
-      } else {
-        console.log(results);
       }
       res.redirect('/my-wishlist');
     })
