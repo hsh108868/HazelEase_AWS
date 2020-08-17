@@ -74,15 +74,18 @@
         </div>
       </div>
 
-      <div class="col-md-8 order-md-1">
-        <h4 class="mb-3">구매하는 상품</h4>
+      <form id="cart-items-form" class="col-md-8 order-md-1" method="POST" action="/cart/update/<%= data.length %>">
+        <h4 class="mb-3 clearfix">
+          <span class="float-left">구매하는 상품</span>
+          <button id="save-button" class="btn btn-sm btn-warning float-right" style="display: none"><strong>업데이트</strong></button>
+        </h4>
 
-        <!-- 판매자 1 -->
-        <div class="card mb-4">
+        <!-- 판매자 -->
+        <div class="card mb-4 itemwrap-form" >
           <div class="card-header">
             판매자명
           </div>
-          <!-- 상품 1 -->
+          <!-- 상품 -->
           <% for(var i = 0; i < data.length; i++) { %>
           <div class="card-body cart-item">
             <div class="row">
@@ -98,7 +101,8 @@
                     </h5>
                   </div>
                   <div class="col-sm-2">
-                    <input type="checkbox" name="" value="" class="item" checked>
+                    <input type="hidden" name="cb<%= i %>" class="cb-state" value="<%= data[i].checked ? data[i].checked : 0 %>">
+                    <input type="checkbox" name="" value="" class="item" <%= data[i].checked == 1 ? "checked" : "" %>>
                   </div>
                 </div>
                 <p class="card-text mb-2"><strong><%= formatNum(data[i].price) %> 원</strong></p>
@@ -124,11 +128,23 @@
                   <div class="col-sm-4">
                     <div class="input-group input-group-sm">
                       <span class="input-group-prepend">
-                        <button type="button" id="btn-update-<%= i %>" class="btn btn-sm btn-primary" style="display: none">
+                        <button type="button" class="qty-minus btn btn-sm btn-outline-secondary" data-type="minus" data-field="">
+                          <i class="fas fa-minus"></i>
+                        </button>
+                      </span>
+                        <input type="hidden" name="cart<%= i %>" value="<%= data[i].cart_id %>">
+                        <input type="text" name="qty<%= i %>" class="qty-input form-control input-number" value="<%= data[i].quantity %>" min="1" max="10">
+                      <span class="input-group-append">
+                        <button type="button" class="qty-plus btn btn-sm btn-outline-secondary">
+                          <i class="fas fa-plus"></i>
+                        </button>
+                      </span>
+                      <!-- <span class="input-group-prepend">
+                        <button type="button" onClick="location.href = '/cart/delete/'" class="btn btn-sm btn-primary quantity-update" style="display: none">
                           업데이트
                         </button>
                       </span>
-                      <input type="number" name="quantity" id="quantity-<%= i %>" class="form-control input-number quantity-input" value="<%= data[i].quantity %>" min="1" max="10">
+                      <input type="number" name="quantity" class="form-control input-number quantity-input" value="<%= data[i].quantity %>" min="1" max="10"> -->
                     </div>
                   </div>
                 </div>
@@ -192,7 +208,7 @@
             </div>
           </div>
         </div> -->
-      </div>
+      </form>
     </div>
   </div>
 

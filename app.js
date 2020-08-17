@@ -62,10 +62,12 @@ app.post("/profile", user.saveChanges);
 app.get("/my-cart", product.showMyCart);
 app.get("/cart/add/:productId", product.cartAdd);
 app.get("/cart/delete/:cartId", product.cartDelete);
+app.post("/cart/update/:totalItems", product.cartUpdate);
 
 app.get("/my-wishlist", product.showMyWishlist);
 app.get("/wishlist/add/:productId", product.wishlistAdd);
 app.get("/wishlist/delete/:wishlistId", product.wishlistDelete);
+app.get("/wishlist/move/:wishlistId/:productId", product.wishlistMove);
 
 // 제품 상세내역 페이지의 요청 처리
 app.get("/product/:productId", product.showDetails);

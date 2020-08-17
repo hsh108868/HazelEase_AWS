@@ -122,8 +122,9 @@ app.get("/cr_tb_cart", function(req, res) {
   	user_id varchar(30) not null,
   	product_id int unsigned not null,
     type varchar(50),
-    quantity int unsigned,
+    quantity int(10) unsigned,
   	date date not null,
+    checked int(1),
   	primary key(cart_id),
   	foreign key(user_id) references member(user_id) on delete cascade,
   	foreign key(product_id) references product(product_id) on delete cascade
