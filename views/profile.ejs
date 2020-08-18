@@ -1,25 +1,14 @@
 <%- include("partials/header"); -%>
 <!-- Custom styles -->
-<link rel="stylesheet" href="css/main.css">
-<link rel="stylesheet" href="css/profile.css">
+<link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="/css/profile.css">
 </head>
 
 <body id="bootstrap-overrides">
   <%- include("partials/navbar"); -%>
 
   <main role="main" class="container-fluid">
-
-    <div class="side-navbar">
-      <h4>내 계정</h4>
-      <ul>
-        <li><a href="profile/account-info" class="nav-item">회원정보</a></li>
-        <li><a href="profile/manage-address" class="nav-item">주소록 관리</a></li>
-        <li><a href="profile/purchase-history" class="nav-item">구매목록</a></li>
-        <li><a href="profile/payment-method" class="nav-item">결제수단</a></li>
-        <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> 로그아웃</a></li>
-      </ul>
-    </div>
-
+    <%- include("partials/sidenav"); -%>
     <div class="tab-content">
       <div>
         <h3>회원 정보</h3>
@@ -33,7 +22,7 @@
           <%}%>
           <table>
             <tr class="center">
-              <td class="center-content" colspan="2"><img src="images/user-default-pic.png" class="rounded-circle" width="140" height="140" /></td>
+              <td class="center-content" colspan="2"><img src="/images/user-default-pic.png" class="rounded-circle" width="140" height="140" /></td>
             </tr>
             <tr>
               <td class="center-content" colspan="2">

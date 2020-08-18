@@ -8,7 +8,7 @@
   <div class="collapse navbar-collapse" id="navbars">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item">
-        <a class="navbar-brand" href="/profile"><i class="fas fa-user-circle"></i></a>
+        <a class="navbar-brand" href="/account/profile"><i class="fas fa-user-circle"></i></a>
       </li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -30,8 +30,8 @@
       <button class="btn btn-secondary my-2 my-sm-0" type="submit"><i class="fas fa-search"></i></button>
     </form>
     <div>
-      <a class="mx-2" style="color: #24a19c;" href="/my-cart"><i class="fas fa-shopping-cart fa-lg"></i><span style="position: relative; top: 5px"></span></a>
-      <a class="mx-2" style="color: #24a19c;" href="/my-wishlist"><i class="fas fa-heart fa-lg"></i><span style="position: relative; top: 5px"></span></a>
+      <a class="mx-2" style="color: #24a19c;" href="/my-cart"><i class="fas fa-shopping-cart fa-lg"></i><span style="position: relative; top: 5px"> <%= noOfCartItems %></span></a>
+      <a class="mx-2" style="color: #24a19c;" href="/my-wishlist"><i class="fas fa-heart fa-lg"></i><span style="position: relative; top: 5px"> <%= noOfWishlistItems %></span></a>
     </div>
   </div>
 </nav>

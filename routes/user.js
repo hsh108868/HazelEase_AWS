@@ -113,8 +113,10 @@ exports.logout = function(req, res) {
   })
 };
 
-/* ------------------------------ profile 처리 호출 ------------------------------ */
-exports.profile = function(req, res) {
+
+/* ------------------------------ account 루트 처리 호출 ------------------------------ */
+exports.openSubPage = function(req, res) {
+  var reqSubPage = req.params.subPage;
   var user_id = req.session.user_id;
 
   // 로그인된 상태 아니면 로그인 페이지로 이동
@@ -122,12 +124,72 @@ exports.profile = function(req, res) {
     res.redirect("/login");
     res.end();
   } else {
-    // 로그인된 아이디의 해당 정보들을 가져오고 profile 페이지로 넘겨줌
-    db.query('SELECT * FROM ?? WHERE user_id = ?', ['member', user_id], function(err, results, fields) {
-      res.render('profile.ejs', { user_id: user_id, data: results, message: req.session.message });
-    });
+    if(reqSubPage === "profile") {
+      // 로그인된 아이디의 해당 정보들을 가져오고 profile 페이지로 넘겨줌
+      db.query('SELECT * FROM ?? WHERE user_id = ?', ['member', user_id], function(err, results, fields) {
+        res.render('profile.ejs', {
+          user_id: user_id,
+          data: results,
+          message: req.session.message,
+          noOfCartItems: req.session.noOfCartItems,
+          noOfWishlistItems: req.session.noOfWishlistItems,
+        });
+      });
+    } else if (reqSubPage === "manage-address") {
+      db.query('SELECT * FROM ?? WHERE user_id = ?', ['member', user_id], function(err, results, fields) {
+        res.render('addresses.ejs', {
+          user_id: user_id,
+          data: results,
+          message: req.session.message,
+          noOfCartItems: req.session.noOfCartItems,
+          noOfWishlistItems: req.session.noOfWishlistItems,
+        });
+      });
+    } else if (reqSubPage === "purchase-history") {
+      db.query('SELECT * FROM ?? WHERE user_id = ?', ['member', user_id], function(err, results, fields) {
+        res.render('purchases.ejs', {
+          user_id: user_id,
+          data: results,
+          message: req.session.message,
+          noOfCartItems: req.session.noOfCartItems,
+          noOfWishlistItems: req.session.noOfWishlistItems,
+        });
+      });
+    } else if (reqSubPage === "payment-method") {
+      db.query('SELECT * FROM ?? WHERE user_id = ?', ['member', user_id], function(err, results, fields) {
+        res.render('paymeth.ejs', {
+          user_id: user_id,
+          data: results,
+          message: req.session.message,
+          noOfCartItems: req.session.noOfCartItems,
+          noOfWishlistItems: req.session.noOfWishlistItems,
+        });
+      });
+    }
   }
-};
+}
+
+/* ------------------------------ profile 처리 호출 ------------------------------ */
+// exports.profile = function(req, res) {
+//   var user_id = req.session.user_id;
+//
+//   // 로그인된 상태 아니면 로그인 페이지로 이동
+//   if (!req.session.loggedin) {
+//     res.redirect("/login");
+//     res.end();
+//   } else {
+//     // 로그인된 아이디의 해당 정보들을 가져오고 profile 페이지로 넘겨줌
+//     db.query('SELECT * FROM ?? WHERE user_id = ?', ['member', user_id], function(err, results, fields) {
+//       res.render('profile.ejs', {
+//         user_id: user_id,
+//         data: results,
+//         message: req.session.message,
+//         noOfCartItems: req.session.noOfCartItems,
+//         noOfWishlistItems: req.session.noOfWishlistItems,
+//       });
+//     });
+//   }
+// };
 
 /* ------------------------------ profile 정보수정 처리 호출 ------------------------------ */
 exports.saveChanges = function(req, res) {
@@ -153,10 +215,10 @@ exports.saveChanges = function(req, res) {
       bcrypt.compare(pw, results[0].password, function(err, result) {
         if (result === false || new_pw !== new_pw_c) {
           req.session.message = "비밀번호가 일치하지 않습니다."
-          res.redirect("/profile");
+          res.redirect("/account/profile");
         } else if (inputYear <= minYear || inputYear > currentYear || inputMonth == "" || inputDate <= 0 || inputDate > maxDate) {
           req.session.message = "생년월일을 제대로 입력하세요!"
-          res.redirect("/profile");
+          res.redirect("/account/profile");
         } else {
           if (new_pw) {
             bcrypt.hash(new_pw, saltRounds, function(err, hash) {
@@ -172,7 +234,7 @@ exports.saveChanges = function(req, res) {
               db.query('UPDATE member SET fullname = ?, password = ?, gender = ?, birth = ?, email = ?, phone = ? WHERE user_id = ?', [post.fullname, post.password, post.gender, post.birth, post.email, post.phone, user_id], function (error, results, fields) {
                 if (error) throw error;
                 req.session.message = "변경이 저장되었습니다.";
-                res.redirect("/profile");
+                res.redirect("/account/profile");
               });
             });
           } else {
@@ -187,7 +249,7 @@ exports.saveChanges = function(req, res) {
             db.query('UPDATE member SET fullname = ?, gender = ?, birth = ?, email = ?, phone = ? WHERE user_id = ?', [post.fullname, post.gender, post.birth, post.email, post.phone, user_id], function (error, results, fields) {
               if (error) throw error;
               req.session.message = "변경이 저장되었습니다.";
-              res.redirect("/profile");
+              res.redirect("/account/profile");
             });
           }
         }

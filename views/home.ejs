@@ -66,9 +66,9 @@
         <% for(var i = 0; i < product.length; i++) { %>
         <div class="col-md-4">
           <div class="card mb-4 shadow-sm">
-            <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">이미지</text></svg>
+            <a href="/product/<%= product[i].product_id %>"><svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">이미지</text></svg></a>
             <div class="card-body">
-              <h6><strong><%= product[i].product %></strong></h6>
+              <h6 onClick="location.href='/product/<%= product[i].product_id %>'"><strong><%= product[i].product %></strong></h6>
               <p class="card-text">₩ <%= formatNum(product[i].price) %></p>
               <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">

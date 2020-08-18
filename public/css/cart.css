@@ -13,6 +13,10 @@ input.item {
   margin-right: 15px;
 }
 
+a:hover {
+  text-decoration: none;
+}
+
 /* Footer */
 .mastfoot {
   color: rgba(255, 255, 255, .5);

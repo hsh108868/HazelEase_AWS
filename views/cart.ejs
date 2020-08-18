@@ -114,7 +114,7 @@
                     <input type="checkbox" name="" value="" class="item" <%= data[i].checked == 1 ? "checked" : "" %>>
                   </div>
                 </div>
-                <p class="card-text mb-2"><strong><%= formatNum(data[i].price) %> 원</strong></p>
+                <p class="card-text mb-2"><strong><%= formatNum(data[i].price) %> 원</strong> x <%= data[i].quantity %> = <%= formatNum(data[i].quantity*data[i].price) %> 원</p>
                 <div class="row">
                   <div class="col-sm-7">
                     <p>

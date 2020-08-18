@@ -5,6 +5,10 @@ body {
     background-color: #ebecf1;
 }
 
+a:hover {
+  text-decoration: none;
+}
+
 /* Footer */
 .mastfoot {
   color: rgba(255, 255, 255, .5);

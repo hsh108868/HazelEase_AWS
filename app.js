@@ -55,7 +55,7 @@ app.post("/login", user.login);
 app.get("/logout", user.logout);
 
 // 회원정보 수정 페이지의 요청 처리
-app.get("/profile", user.profile);
+app.get("/account/:subPage", user.openSubPage);
 app.post("/profile", user.saveChanges);
 
 // 쇼핑카트, 위시리스트 페이지의 요청 처리
@@ -74,15 +74,21 @@ app.get("/product/:productId", product.showDetails);
 
 // 알림 페이지의 요청 처리
 app.get("/notification", function(req, res) {
-  res.render("notification", { user_id: req.session.user_id });
+  res.render("notification", {
+    user_id: req.session.user_id,
+    noOfCartItems: req.session.noOfCartItems,
+    noOfWishlistItems: req.session.noOfWishlistItems
+  });
 });
 
 // 수령여부 페이지의 요청 처리
 app.get("/receipt", function(req, res) {
-  res.render("receipt", { user_id: req.session.user_id });
+  res.render("receipt", {
+    user_id: req.session.user_id,
+    noOfCartItems: req.session.noOfCartItems,
+    noOfWishlistItems: req.session.noOfWishlistItems
+  });
 });
-
-
 
 app.listen(3000, function() {
   console.log("Server has started at port 3000.");

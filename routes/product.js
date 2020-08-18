@@ -13,13 +13,17 @@ exports.showDetails = function(req, res) {
       res.render('product.ejs', {
         user_id: user_id,
         data: results,
-        message: message
+        message: message,
+        noOfCartItems: req.session.noOfCartItems,
+        noOfWishlistItems: req.session.noOfWishlistItems
       });
     } else { // 제품 아이디가 없는 경우
       message = "요청한 제품의 정보가 없습니다.";
       res.render('product.ejs', {
         user_id: user_id,
-        message: message
+        message: message,
+        noOfCartItems: req.session.noOfCartItems,
+        noOfWishlistItems: req.session.noOfWishlistItems
       });
     }
   });
@@ -28,12 +32,21 @@ exports.showDetails = function(req, res) {
 /* ------------------------------ home화면 product 출력 ------------------------------ */
 exports.showOutlines = function(req, res) {
   const user_id = req.session.user_id;
-  sql = `SELECT * FROM product;`
-  db.query(sql, function(err, results, fields) {
+  sql = "SELECT * FROM product; "
+  sql += "SELECT user_id, COUNT(*) as count FROM cart WHERE user_id = ? GROUP BY user_id; "
+  sql += "SELECT user_id, COUNT(*) as count FROM wishlist WHERE user_id = ? GROUP BY user_id; "
+  params = [user_id, user_id];
+
+  db.query(sql, params, function(err, results, fields) {
     if (err) throw err;
+    req.session.noOfCartItems = results[1].length > 0 ? results[1][0].count : 0;
+    req.session.noOfWishlistItems = results[2].length > 0 ? results[2][0].count : 0;
+
     res.render('home.ejs', {
       user_id: user_id,
-      product: results,
+      product: results[0],
+      noOfCartItems: results[1].length > 0 ? results[1][0].count : "",
+      noOfWishlistItems: results[2].length > 0 ? results[2][0].count : "",
       formatNum: fn.formatNum
     });
   });
@@ -67,12 +80,13 @@ exports.showMyCart = function(req, res) {
     params = [user_id, user_id, user_id];
     db.query(sql, params, function(err, results, fields) {
       if (err) throw err;
-      console.log(results[2]);
       res.render('cart.ejs', {
         user_id: user_id,
         data: results[0],
         rep: results[1],
         noOfCheckedItems: results[2].length > 0 ? results[2][0].count : 0,
+        noOfCartItems: req.session.noOfCartItems,
+        noOfWishlistItems: req.session.noOfWishlistItems,
         formatNum: fn.formatNum
       });
     });
@@ -85,8 +99,9 @@ exports.cartAdd = function(req, res) {
   let reqProductId = req.params.productId;
   var now = new Date();
 
-  var sql = 'insert into cart(user_id, product_id, date, quantity, checked) values (?,?,?,?,?);';
-  var params = [user_id, reqProductId, now, '1', '1'];
+  var sql = 'SELECT * FROM cart WHERE product_id = ? AND user_id = ?'
+  var params = [reqProductId, user_id];
+
   if (!req.session.loggedin) {
     res.redirect("/login");
     res.end();
@@ -95,10 +110,22 @@ exports.cartAdd = function(req, res) {
       if (err) {
         res.send('쇼핑카트 항목 추가에 실패');
         throw err;
+      } else if (results.length == 0) {
+        sql = 'insert into cart(user_id, product_id, date, quantity, checked) values (?,?,?,?,?);';
+        params = [user_id, reqProductId, now, '1', '1'];
+        db.query(sql, params, function(err, results1) {
+          if (err) throw err;
+          res.redirect('/my-cart');
+        });
       } else {
-        console.log("성공적으로 추가되었습니다.");
+        var qty = results[0].quantity;
+        sql = 'UPDATE cart SET quantity = ?, checked = ? WHERE cart_id = ?;';
+        params = [qty + 1, 1, results[0].cart_id];
+        db.query(sql, params, function(err, results1) {
+          if (err) throw err;
+          res.redirect('/my-cart');
+        });
       }
-      res.redirect('/my-cart');
     })
   }
 }
@@ -185,6 +212,8 @@ exports.showMyWishlist = function(req, res) {
         res.render('wishlist.ejs', {
           user_id: user_id,
           data: results,
+          noOfCartItems: req.session.noOfCartItems,
+          noOfWishlistItems: req.session.noOfWishlistItems,
           formatNum: fn.formatNum
         });
       });
