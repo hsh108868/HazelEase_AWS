@@ -73,7 +73,7 @@
           <% } %>
           <div class="input-group">
             <input type="hidden" name="subTotal" value="<%= subTotal %>">
-            <input type="text" class="form-control" name="code" placeholder="쿠폰 코드">
+            <input type="text" class="form-control" name="code" placeholder="쿠폰 코드" required>
             <div class="input-group-append">
               <button type="submit" class="btn btn-secondary">적용</button>
             </div>
@@ -94,7 +94,9 @@
       <form id="cart-items-form" class="col-md-8 order-md-1" method="POST" action="/cart/update/<%= data.length %>">
         <h4 class="mb-3 clearfix">
           <span class="float-left">구매하는 상품</span>
-          <button id="save-button" class="btn btn-warning float-right" style="display: none"><strong>업데이트</strong></button>
+          <span class="float-right">
+            <button id="save-button" class="btn btn-warning" style="display: none"><strong>업데이트</strong></button>
+          </span>
         </h4>
 
         <% if( rep.length === 0) { %>

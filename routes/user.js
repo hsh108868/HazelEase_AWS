@@ -53,7 +53,7 @@ exports.signup = function(req, res) {
           var query = db.query('INSERT INTO member SET ?', post, function(error, results, fields) {
             if (error) throw error;
             message = "회원가입이 완료되었습니다.";
-            res.render('signup.ejs', { message: message, statusCode: 200, regUserids: regUserids });
+            res.render('login.ejs', { message: message, statusCode: 200 });
           });
         });
       }

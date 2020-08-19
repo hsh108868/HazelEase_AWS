@@ -5,7 +5,7 @@ body {
     background-color: #ebecf1;
 }
 
-input.item {
+input.item, input.all-items {
   width: 20px;
   height: 20px;
   position: absolute;

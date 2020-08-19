@@ -74,7 +74,7 @@ app.get("/wishlist/move/:wishlistId/:productId", product.wishlistMove);
 app.get("/product/:productId", product.showDetails);
 
 // 알림 페이지의 요청 처리
-app.get("/notification", function(req, res) {
+app.get("/my-notification", function(req, res) {
   res.render("notification", {
     user_id: req.session.user_id,
     noOfCartItems: req.session.noOfCartItems,
@@ -83,7 +83,7 @@ app.get("/notification", function(req, res) {
 });
 
 // 수령여부 페이지의 요청 처리
-app.get("/receipt", function(req, res) {
+app.get("/my-receipt", function(req, res) {
   res.render("receipt", {
     user_id: req.session.user_id,
     noOfCartItems: req.session.noOfCartItems,

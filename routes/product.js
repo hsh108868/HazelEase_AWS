@@ -147,7 +147,7 @@ exports.cartDelete = function(req, res) {
   req.session.couponValue = "";
   req.session.couponMsg = "";
   req.session.couponStatus = 0;
-  
+
   var reqCartId = req.params.cartId;
 
   var sql = 'delete from cart where cart_id=?;';
@@ -246,19 +246,24 @@ exports.wishlistAdd = function(req, res) {
   let reqProductId = req.params.productId;
   var now = new Date();
 
-  var sql = 'insert into wishlist(user_id, product_id, date) values (?,?,?);';
-  var params = [user_id, reqProductId, now];
   if (!req.session.loggedin) {
     res.redirect("/login");
     res.end();
   } else {
-    db.query(sql, params, function(err, results) {
-      if (err) {
-        res.send('실패');
-        throw err;
+    db.query('SELECT product_id FROM wishlist WHERE product_id = ? AND user_id = ?', [reqProductId, user_id], function(err, results) {
+      if (err) throw err;
+      if (results.length == 0) {
+        var sql = 'insert into wishlist(user_id, product_id, date) values (?,?,?);';
+        var params = [user_id, reqProductId, now];
+        db.query(sql, params, function(err, results) {
+          if (err) {
+            res.send('실패');
+            throw err;
+          }
+        });
       }
       res.redirect('/my-wishlist');
-    })
+    });
   }
 }
 /* 오류 발생시 product auto_increment 초기화
