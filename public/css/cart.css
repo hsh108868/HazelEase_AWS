@@ -27,6 +27,13 @@ a:hover {
 }
 
 /* ---------------------- */
+.disc-tag {
+  background-color: #ea5455;
+  border-radius: 10px;
+  color: #e5e5e5;
+  padding: 2px 5px;
+}
+
 .container {
   max-width: 960px;
 }

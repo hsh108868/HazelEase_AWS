@@ -1,5 +1,7 @@
 const fn = require("../lib/other"); // 정의된 함수들 가져오기
 
+/* ----------------------------------------------- */
+
 /* ------------------------------ product의 상세정보 출력 ------------------------------ */
 exports.showDetails = function(req, res) {
   const user_id = req.session.user_id;
@@ -31,6 +33,11 @@ exports.showDetails = function(req, res) {
 
 /* ------------------------------ home화면 product 출력 ------------------------------ */
 exports.showOutlines = function(req, res) {
+  req.session.couponCode = "";
+  req.session.couponValue = "";
+  req.session.couponMsg = "";
+  req.session.couponStatus = 0;
+  
   const user_id = req.session.user_id;
   sql = "SELECT * FROM product; "
   sql += "SELECT user_id, COUNT(*) as count FROM cart WHERE user_id = ? GROUP BY user_id; "
@@ -60,7 +67,7 @@ exports.showMyCart = function(req, res) {
     res.redirect("/login");
     res.end();
   } else {
-    sql = `SELECT p.product, p.price, p.rating, p.type_avail, p.user_id as seller, c.cart_id, c.quantity, c.user_id, c.checked
+    sql = `SELECT p.product, p.price, p.discount, p.rating, p.type_avail, p.user_id as seller, c.cart_id, c.quantity, c.user_id, c.checked
            FROM product AS p RIGHT OUTER JOIN cart AS c
            ON p.product_id = c.product_id
            WHERE c.user_id = ?
@@ -87,7 +94,8 @@ exports.showMyCart = function(req, res) {
         noOfCheckedItems: results[2].length > 0 ? results[2][0].count : 0,
         noOfCartItems: req.session.noOfCartItems,
         noOfWishlistItems: req.session.noOfWishlistItems,
-        formatNum: fn.formatNum
+        formatNum: fn.formatNum,
+        couponResult: [req.session.couponCode, req.session.couponValue, req.session.couponMsg, req.session.couponStatus]
       });
     });
   }
@@ -197,6 +205,8 @@ exports.cartUpdate = function(req, res) {
   }
 }
 
+
+
 /* ------------------------------ wishlist에 있는 제품 출력 ------------------------------ */
 exports.showMyWishlist = function(req, res) {
   const user_id = req.session.user_id;
@@ -293,3 +303,43 @@ exports.wishlistMove = function(req, res) {
     });
   }
 }
+
+/* ------------------------------ cart에 쿠폰코드 적용 처리 ------------------------------ */
+exports.applyCoupon = function(req, res) {
+  var couponInput = req.body.code;
+  var subTotal = req.body.subTotal;
+  var sess = req.session;
+
+  var today = new Date().getTime();
+
+  db.query('SELECT * FROM coupon WHERE coupon_code = ?', [couponInput], function(err, results, fields) {
+    if (results.length > 0) {
+      cond1 = today < results[0].effective_date.getTime();
+      cond2 = today > results[0].expiry_date.getTime();
+      cond3 = subTotal < results[0].min_spend;
+      if (cond1 || cond2 || cond3) {
+        if(cond1)
+          sess.couponMsg = "코폰 유효기간이 아닙니다.";
+        else if(cond2)
+          sess.couponMsg = "코폰 유효기간이 끝났습니다.";
+        else if(cond3)
+          sess.couponMsg = "구매금액이 " + fn.formatNum(results[0].min_spend) + "원 이상 사용할 수 있습니다.";
+
+        sess.couponCode = "";
+        sess.couponValue = "";
+        sess.couponStatus = 0;
+      } else {
+        sess.couponMsg = "'" + results[0].coupon_code + "' 쿠폰코드가 적용되었습니다.";
+        sess.couponCode = results[0].coupon_code;
+        sess.couponValue = results[0].value;
+        sess.couponStatus = 1;
+      }
+    } else {
+      sess.couponMsg = "코폰 코드가 존재하지 않습니다.";
+      sess.couponCode = "";
+      sess.couponValue = "";
+      sess.couponStatus = 0;
+    }
+    res.redirect("/my-cart");
+  });
+};

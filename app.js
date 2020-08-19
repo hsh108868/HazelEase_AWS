@@ -63,6 +63,7 @@ app.get("/my-cart", product.showMyCart);
 app.get("/cart/add/:productId", product.cartAdd);
 app.get("/cart/delete/:cartId", product.cartDelete);
 app.post("/cart/update/:totalItems", product.cartUpdate);
+app.post("/apply-coupon", product.applyCoupon);
 
 app.get("/my-wishlist", product.showMyWishlist);
 app.get("/wishlist/add/:productId", product.wishlistAdd);

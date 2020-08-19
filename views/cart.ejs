@@ -31,32 +31,49 @@
         <ul class="list-group mb-3">
           <li class="list-group-item d-flex justify-content-between lh-condensed">
             <h6 class="my-0">주문 금액</h6>
-            <span class="text-muted">00,000 원</span>
+            <%
+            var totalProductPrice = 0;
+            var totalDiscount = 0;
+            var couponValue = couponResult[1];
+            for(let i = 0; i < data.length; i++) {
+              if(data[i].checked === 1) {
+                totalProductPrice += Math.round(data[i].price*data[i].quantity);
+                if(data[i].discount > 0) {
+                  totalDiscount += Math.round(data[i].price*(data[i].discount/100)*data[i].quantity);
+                }
+              }
+            }
+            subTotal = totalProductPrice - totalDiscount;
+            total = totalProductPrice - totalDiscount - couponValue;
+            %>
+            <span class="text-muted"><%= formatNum(totalProductPrice) %> 원</span>
           </li>
           <li class="list-group-item d-flex justify-content-between lh-condensed">
             <h6 class="my-0">할인 금액</h6>
-            <span class="text-muted">00,000 원</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between lh-condensed">
-            <h6 class="my-0">배송비</h6>
-            <span class="text-muted">00,000 원</span>
+            <span class="text-muted">-<%= formatNum(totalDiscount) %> 원</span>
           </li>
           <li class="list-group-item d-flex justify-content-between bg-light">
-            <div class="text-success">
+            <div class="<%= couponResult[3] == 1 ? "text-success" : "" %>">
               <h6 class="my-0">쿠폰</h6>
-              <small>EXAMPLECODE</small>
+              <small><%= couponResult[0] %></small>
             </div>
-            <span class="text-success">-0,000 원</span>
+            <span class="<%= couponResult[3] == 1 ? "text-success" : "" %>">-<%= couponResult[1] ? formatNum(couponResult[1]) : "0,000" %> 원</span>
           </li>
           <li class="list-group-item d-flex justify-content-between">
             <span>전체 금액 (KRW)</span>
-            <strong>00,000 원</strong>
+            <strong><%= formatNum(total) %> 원</strong>
           </li>
         </ul>
 
-        <form class="card p-2">
+        <form class="card p-2 coupon-form" method="POST" action="/apply-coupon">
+          <% if (couponResult[2]) { %>
+          <small class="alert alert-<%= couponResult[3] == 1 ? 'success' : 'danger' %>" role="alert" style="padding: 5px 10px">
+            <strong><%= couponResult[2] %></strong>
+          </small>
+          <% } %>
           <div class="input-group">
-            <input type="text" class="form-control" placeholder="쿠폰 코드">
+            <input type="hidden" name="subTotal" value="<%= subTotal %>">
+            <input type="text" class="form-control" name="code" placeholder="쿠폰 코드">
             <div class="input-group-append">
               <button type="submit" class="btn btn-secondary">적용</button>
             </div>
@@ -114,7 +131,14 @@
                     <input type="checkbox" name="" value="" class="item" <%= data[i].checked == 1 ? "checked" : "" %>>
                   </div>
                 </div>
-                <p class="card-text mb-2"><strong><%= formatNum(data[i].price) %> 원</strong> x <%= data[i].quantity %> = <%= formatNum(data[i].quantity*data[i].price) %> 원</p>
+                <%
+                var price = data[i].price;
+                if (data[i].discount > 0) {
+                    price = Math.round(data[i].price*((100-data[i].discount)/100))
+                %>
+                <small><s><%= formatNum(data[i].price) %> 원</s> <span class="disc-tag mx-1"><%= data[i].discount %>% off</span></small>
+                <% } %>
+                <p class="card-text mb-2"><strong><%= formatNum(price) %> 원</strong> x <%= data[i].quantity %> = <%= formatNum(price*data[i].quantity) %> 원</p>
                 <div class="row">
                   <div class="col-sm-7">
                     <p>
@@ -142,18 +166,12 @@
                         </button>
                       </span>
                         <input type="hidden" name="cart<%= i %>" value="<%= data[i].cart_id %>">
-                        <input type="text" name="qty<%= i %>" class="qty-input form-control input-number" value="<%= data[i].quantity %>" min="1" max="10">
+                        <input type="text" name="qty<%= i %>" class="qty-input form-control input-number" value="<%= data[i].quantity %>">
                       <span class="input-group-append">
                         <button type="button" class="qty-plus btn btn-sm btn-outline-secondary">
                           <i class="fas fa-plus"></i>
                         </button>
                       </span>
-                      <!-- <span class="input-group-prepend">
-                        <button type="button" onClick="location.href = '/cart/delete/'" class="btn btn-sm btn-primary quantity-update" style="display: none">
-                          업데이트
-                        </button>
-                      </span>
-                      <input type="number" name="quantity" class="form-control input-number quantity-input" value="<%= data[i].quantity %>" min="1" max="10"> -->
                     </div>
                   </div>
                 </div>
