@@ -37,7 +37,7 @@ exports.showOutlines = function(req, res) {
   req.session.couponValue = "";
   req.session.couponMsg = "";
   req.session.couponStatus = 0;
-  
+
   const user_id = req.session.user_id;
   sql = "SELECT * FROM product; "
   sql += "SELECT user_id, COUNT(*) as count FROM cart WHERE user_id = ? GROUP BY user_id; "
@@ -143,6 +143,11 @@ exports.cartAdd = function(req, res) {
 
 /* ------------------------------ cart에세 항목 삭제 처리 ------------------------------ */
 exports.cartDelete = function(req, res) {
+  req.session.couponCode = "";
+  req.session.couponValue = "";
+  req.session.couponMsg = "";
+  req.session.couponStatus = 0;
+  
   var reqCartId = req.params.cartId;
 
   var sql = 'delete from cart where cart_id=?;';
@@ -165,6 +170,11 @@ exports.cartDelete = function(req, res) {
 
 /* ------------------------------ cart에서 수량, 체크상태 업데이트 처리 ------------------------------ */
 exports.cartUpdate = function(req, res) {
+  req.session.couponCode = "";
+  req.session.couponValue = "";
+  req.session.couponMsg = "";
+  req.session.couponStatus = 0;
+
   var reqTotalItems = req.params.totalItems;
   var cartIds = [];
   var qtyValues = [];
