@@ -1,0 +1,119 @@
+<%-include("partials/header");-%>
+<!-- Custom styles -->
+<link href="css/cart.css" rel="stylesheet">
+<link href="css/receipt.css" rel="stylesheet">
+</head>
+
+<body>
+  <%- include("partials/navbar"); -%>
+  <div class="container py-4">
+    <div class="row">
+      <div class="col-sm-12">
+        <button class="tablink btn btn-lg mr-2" onclick="openPage('Delivery', this, 'red')">최근 배송상품</button>
+        <button class="tablink btn btn-lg mr-2" onclick="openPage('Pickup', this, 'green')" id="defaultOpen">픽업 상품</button>
+      </div>
+      <div id="Delivery" class="tabcontent col-sm-12">
+        <div class="card mb-4">
+          <div class="card-header clear-fix">
+            판매자명
+            <div class="float-right">
+              No. 24030255240
+            </div>
+          </div>
+          <!-- 상품 1 -->
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-3">
+                <img src="images/product-default.jpg" alt="product-img" width="110%" />
+              </div>
+              <div class="col-sm-9">
+                <div class="row">
+                  <div class="col-sm-10 ml-1">
+                    <h5 class="card-title">
+                      상품명
+                      <br><small>배송여부/도착 예정 날짜</small>
+                    </h5>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- 상품 2 -->
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-3">
+                <img src="images/product-default.jpg" alt="product-img" width="110%" />
+              </div>
+              <div class="col-sm-9">
+                <div class="row">
+                  <div class="col-sm-10 ml-1">
+                    <h5 class="card-title">
+                      상품명
+                      <br><small>배송여부/도착 예정 날짜</small>
+                    </h5>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="Pickup" class="tabcontent col-sm-12">
+        <div class="card mb-4">
+          <div class="card-header clear-fix">
+            판매자명
+            <div class="float-right">
+              No. 24030255240
+            </div>
+          </div>
+          <!-- 상품 1 -->
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-3">
+                <img src="images/product-default.jpg" alt="product-img" width="110%" />
+              </div>
+              <div class="col-sm-9">
+                <div class="row">
+                  <div class="col-sm-10 ml-2">
+                    <h5 class="card-title">
+                      상품명
+                      <br><small>픽업마감 날짜</small>
+                    </h5>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-outline-dark mb-1 mx-1 ">수령확인</button>
+                <button type="button" class="btn btn-outline-dark mb-1 mx-1 ">매장 위치</button>
+              </div>
+            </div>
+          </div>
+          <!-- 상품 2 -->
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-3">
+                <img src="images/product-default.jpg" alt="product-img" width="110%" />
+              </div>
+              <div class="col-sm-9">
+                <div class="row">
+                  <div class="col-sm-10 ml-2">
+                    <h5 class="card-title">
+                      상품명
+                      <br><small>픽업마감 날짜</small>
+                    </h5>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-outline-dark mb-1 mx-1 ">수령확인</button>
+                <button type="button" class="btn btn-outline-dark mb-1 mx-1 ">매장 위치</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="js/receipt.js"></script>
+  <!-- FOOTER -->
+  <%- include("partials/copyright"); -%>
+  <%- include("partials/footer"); -%>

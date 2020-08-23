@@ -1,0 +1,28 @@
+body, html {
+  height: 100%;
+  margin: 0;
+  padding-top: 2.5rem;
+}
+
+.tablink {
+  background-color: #f4f4f4;
+  float: left;
+  border: 3px solid #e0dede;
+  border-radius: 30px;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  font-size: 17px;
+  width: 25%;
+}
+
+.tablink:hover {
+  background-color: #777;
+  color: white;
+}
+
+.tabcontent {
+  display: none;
+  padding: 20px 14px;
+  height: 100%;
+}

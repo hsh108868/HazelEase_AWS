@@ -5,11 +5,9 @@
 
 <body class="text-center">
   <%- include("partials/navbar"); -%>
-
+  <div class="text-center alert-danger" style="margin-top: 56px;"><%= message %></div>
   <main role="main">
-
     <div class="container">
-
       <div class="nav-scroller py-1 mb-2">
         <nav class="nav d-flex justify-content-between">
           <a class="p-2 text-muted" href="#">World</a>
@@ -27,6 +25,65 @@
         </nav>
       </div>
 
+      <br>
+      <br>
+
+      <div class="container-fluid">
+        <div class="card">
+          <div class="row">
+            <aside class="col-sm-5 border-right">
+                <div class="img-big-wrap">
+                  <div> <a href="#"><img src="image.jpg"></a></div>
+            </aside>
+            <aside class="col-sm-7">
+              <article class="card-body p-5">
+                <h3 class="title mb-3 text-left"><%= data[0].product %></h3>
+                <small class="text-muted float-right">
+                  <% for (let j = 0; j < Math.floor(data[0].rating); j++) { %>
+                    <i class="fas fa-star"></i>
+                  <% } %>
+                  <% if (data[0].rating - Math.floor(data[0].rating) >= 0.5) { %>
+                    <i class="fas fa-star-half-alt"></i>
+                  <% } %>
+                  <% for (let j = 1; j <= 5 - (data[0].rating - Math.floor(data[0].rating) < 0.5  ? Math.floor(data[0].rating) : data[0].rating); j++) { %>
+                    <i class="far fa-star"></i>
+                  <% } %>
+                  (0) <!-- 리뷰의 수 -->
+                </small>
+                <br><hr><br>
+                  <h3 class="text-left"><%= formatNum(data[0].price) %> 원 </h3>
+                <br><hr>
+                <h6 class="text-left"><b>할인 금액</b></h6><p>
+                <%
+                var price = data[0].price;
+                if (data[0].discount > 0) {
+                  price = Math.round(data[0].price*((100-data[0].discount)/100))
+                %>
+                <h3 class="text-left"><s><%= formatNum(data[0].price) %> 원</s> <%= formatNum(price) %> 원</h3>
+                <p class="disc-tag mx-1 text-right"><%= data[0].discount %>% off</p>
+                <% }  else { %>
+                  <h3 class="text-left">0원</h3>
+                  <% } %>
+              </p>
+                <hr><br>
+                        <select class="form-control form-control-sm" style="width:70px;">
+                          <option> 1 </option>
+                          <option> 2 </option>
+                          <option> 3 </option>
+                        </select>
+                <br><hr><br>
+                <a href="/cart/add/<%= data[0].product_id %>" class="btn btn-lg btn-primary text-uppercase"> 장바구니 </a>
+                <a href="/wishlist/add/<%= data[0].product_id %>" class="btn btn-lg btn-outline-primary text-uppercase"> 위시리스트 </a>
+              </article>
+            </aside>
+          </div>
+        </div>
+
+
+      </div>
+
+      <!--
+
       <div class="row m-4">
         <div class="col-md-12">
           <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
@@ -41,16 +98,16 @@
                   <col style=*>
                 </colgroup>
                 <tr>
-                  <th>제목:</th>
-                  <th class="mb-1 text-muted "> 제목1</th>
+                  <th>제품명</th>
+                  <th class="mb-1 text-muted "><%= data[0].product %></th>
                 </tr>
                 <tr>
-                  <th>가격:</th>
-                  <th class="mb-1 text-muted"> 가격1</th>
+                  <th>가격</th>
+                  <th class="mb-1 text-muted"> <%= formatNum(data[0].price) %></th>
                 </tr>
                 <tr>
-                  <th>갯수:</th>
-                  <th class="mb-1 text-muted"> 갯수1</th>
+                  <th>갯수</th>
+                  <th class="mb-1 text-muted"> <%= data[0].quantity %> 개 남았습니다</th>
                 </tr>
               </table>
 
@@ -59,22 +116,37 @@
         </div>
       </div>
 
-      <button type="button" class="btn btn-outline-dark float-right mb-3 mr-1 ">바로구매</button>
-      <button type="button" class="btn btn-outline-dark float-right mb-3 mr-1">장바구니</button>
-      <button type="button" class="btn btn-outline-dark float-right mb-3 mr-1">매장구입</button>
+      !-->
 
+      <br>
+      <br>
+      <br>
 
-      <div class="col-md-12 d-inline-block">
-        <div class="p-4 mb-3 bg-light rounded">
-          <h4 class="text-left">고객 리뷰</h4>
-          <p class="mb-0 text-left">Etiam porta <em>sem malesuada magna</em> mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.</p>
+      <div>
+      <section id="tabs">
+        <div class="container-fluid">
+          <div class="row fixed-width">
+            <div class="col-xs-12 fixed-width">
+              <nav>
+                <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                  <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">상세 정보</a>
+                  <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">리뷰</a>
+                </div>
+              </nav>
+              <div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
+                <div class="tab-pane fade show active text-justify" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                  <br>
+                  <%= data[0].info %>
+                </div>
+                <div class="tab-pane fade text-justify" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                  <br>
+                  <%= data[0].info %>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-
-        <div class="p-4 mb-3 bg-light rounded">
-          <h4 class="text-left">상품 정보</h4>
-          <p class="mb-0 text-left">Etiam porta <em>sem malesuada magna</em> mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.</p>
-        </div>
-        <hr class="featurette-divider">
+      </section>
       </div>
 
 

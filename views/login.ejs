@@ -9,8 +9,8 @@
     <a href="/home"><img src="images/hazelease.png" width="100px" height="100px"></a>
     <h2 class="my-4 font-weight-normal">하젤이스</h2>
 
-    <% if (message != "" && statusCode == 400) { %>
-    <div class="alert alert-danger role="alert">
+    <% if (message != "") { %>
+    <div class="alert alert-<%= statusCode == 400 ? 'danger' : 'success' %>" role="alert">
       <%= message %>
     </div>
     <%}%>

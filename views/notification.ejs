@@ -1,0 +1,130 @@
+<%-include("partials/header");-%>
+<!-- Custom styles -->
+<link href="css/cart.css" rel="stylesheet">
+</head>
+
+<body>
+  <%- include("partials/navbar"); -%>
+
+  <div class="container py-4">
+
+    <div class="row">
+
+      <div class="col-md-12 mt-4">
+        <h4 class="mb-3">상품이 구매되었습니다.</h4>
+
+        <!-- 판매자 1 -->
+        <div class="card mb-4">
+          <div class="card-header clearfix">
+            판매자명
+            <div class="float-right">
+              No. 24030255240
+            </div>
+          </div>
+          <div class="row">
+            <!-- 상품 1 -->
+            <div class="col-md-6">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-sm-3">
+                    <img src="images/product-default.jpg" alt="product-img" width="110%"/>
+                  </div>
+                  <div class="col-sm-9">
+                    <h5 class="card-title">
+                      상품명 x 1
+                      <br><small>종류</small>
+                    </h5>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- 상품 2 -->
+            <div class="col-md-6">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-sm-3">
+                    <img src="images/product-default.jpg" alt="product-img" width="110%"/>
+                  </div>
+                  <div class="col-sm-9">
+                    <h5 class="card-title">
+                      상품명 x 1
+                      <br><small>종류</small>
+                    </h5>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="clear-fix my-2 mx-1">
+            <div class="float-left">
+              <button type="button" class="btn btn-link mx-2">취소</button>
+            </div>
+            <div class="float-right">
+              <small class="mr-3 text-danger">수령법 선택 0000-00-00까지</small>
+              <button type="button" class="btn btn-outline-secondary mb-1 mr-2 ">배송</button>
+              <button type="button" class="btn btn-outline-secondary mb-1 mr-2">픽업</button>
+              <button type="button" class="btn btn-outline-secondary mb-1 mr-3">바로 가져가기</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 판매자 2 -->
+        <div class="card mb-4">
+          <div class="card-header clearfix">
+            판매자명
+            <div class="float-right">
+              No. 24030255240
+            </div>
+          </div>
+          <div class="row">
+            <!-- 상품 1 -->
+            <div class="col-md-6">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-sm-3">
+                    <img src="images/product-default.jpg" alt="product-img" width="110%"/>
+                  </div>
+                  <div class="col-sm-9">
+                    <h5 class="card-title">
+                      상품명 x 1
+                      <br><small>종류</small>
+                    </h5>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- 상품 2 -->
+            <div class="col-md-6">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-sm-3">
+                    <img src="images/product-default.jpg" alt="product-img" width="110%"/>
+                  </div>
+                  <div class="col-sm-9">
+                    <h5 class="card-title">
+                      상품명 x 1
+                      <br><small>종류</small>
+                    </h5>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="clear-fix my-2 mx-1">
+            <div class="float-left">
+              <button type="button" class="btn btn-link mx-2">취소</button>
+            </div>
+            <div class="float-right">
+              <small class="mr-3 text-danger">수령법 선택 0000-00-00까지</small>
+              <button type="button" class="btn btn-outline-secondary mb-1 mr-2 ">배송</button>
+              <button type="button" class="btn btn-outline-secondary mb-1 mr-2">픽업</button>
+              <button type="button" class="btn btn-outline-secondary mb-1 mr-3">바로 가져가기</button>
+            </div>
+          </div>
+        </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="js/cart.js"></script>
+    <!-- FOOTER -->
+    <%- include("partials/copyright"); -%>
+    <%- include("partials/footer"); -%>

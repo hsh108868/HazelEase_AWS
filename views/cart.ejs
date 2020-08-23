@@ -1,4 +1,4 @@
-ti<%-include("partials/header");-%>
+<%-include("partials/header");-%>
 <!-- Custom styles -->
 <link href="css/cart.css" rel="stylesheet">
 </head>
@@ -16,7 +16,7 @@ ti<%-include("partials/header");-%>
         <h4 class="d-flex justify-content-between align-items-center mb-3">
           <span class="text-muted">결제 체크아웃</span>
           <!-- 전체 상품 -->
-          <span class="badge badge-secondary badge-pill">0 개</span>
+          <span class="badge badge-secondary badge-pill"><%= noOfCheckedItems %> 개</span>
         </h4>
 
         <div class="card mb-3">
@@ -31,99 +31,146 @@ ti<%-include("partials/header");-%>
         <ul class="list-group mb-3">
           <li class="list-group-item d-flex justify-content-between lh-condensed">
             <h6 class="my-0">주문 금액</h6>
-            <span class="text-muted">00,000 원</span>
+            <%
+            var totalProductPrice = 0;
+            var totalDiscount = 0;
+            var couponValue = couponResult[1];
+            for(let i = 0; i < data.length; i++) {
+              if(data[i].checked === 1) {
+                totalProductPrice += Math.round(data[i].price*data[i].quantity);
+                if(data[i].discount > 0) {
+                  totalDiscount += Math.round(data[i].price*(data[i].discount/100)*data[i].quantity);
+                }
+              }
+            }
+            subTotal = totalProductPrice - totalDiscount;
+            total = totalProductPrice - totalDiscount - couponValue;
+            %>
+            <span class="text-muted"><%= formatNum(totalProductPrice) %> 원</span>
           </li>
           <li class="list-group-item d-flex justify-content-between lh-condensed">
             <h6 class="my-0">할인 금액</h6>
-            <span class="text-muted">00,000 원</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between lh-condensed">
-            <h6 class="my-0">배송비</h6>
-            <span class="text-muted">00,000 원</span>
+            <span class="text-muted">-<%= formatNum(totalDiscount) %> 원</span>
           </li>
           <li class="list-group-item d-flex justify-content-between bg-light">
-            <div class="text-success">
+            <div class="<%= couponResult[3] == 1 ? "text-success" : "" %>">
               <h6 class="my-0">쿠폰</h6>
-              <small>EXAMPLECODE</small>
+              <small><%= couponResult[0] %></small>
             </div>
-            <span class="text-success">-0,000 원</span>
+            <span class="<%= couponResult[3] == 1 ? "text-success" : "" %>">-<%= couponResult[1] ? formatNum(couponResult[1]) : "0,000" %> 원</span>
           </li>
           <li class="list-group-item d-flex justify-content-between">
             <span>전체 금액 (KRW)</span>
-            <strong>00,000 원</strong>
+            <strong><%= formatNum(total) %> 원</strong>
           </li>
         </ul>
 
-        <form class="card p-2">
+        <form class="card p-2 coupon-form" method="POST" action="/apply-coupon">
+          <% if (couponResult[2]) { %>
+          <small class="alert alert-<%= couponResult[3] == 1 ? 'success' : 'danger' %>" role="alert" style="padding: 5px 10px">
+            <strong><%= couponResult[2] %></strong>
+          </small>
+          <% } %>
           <div class="input-group">
-            <input type="text" class="form-control" placeholder="쿠폰 코드">
+            <input type="hidden" name="subTotal" value="<%= subTotal %>">
+            <input type="text" class="form-control" name="code" placeholder="쿠폰 코드" required>
             <div class="input-group-append">
               <button type="submit" class="btn btn-secondary">적용</button>
             </div>
           </div>
         </form>
         <div class="card p-2 mt-3">
-            <div class="clearfix px-2 my-2">
-              <span class="float-left"><strong>자동결제</strong> <i class="far fa-question-circle ml-1"></i></span>
-              <label class="switch float-right">
-                <input type="checkbox">
-                <span class="slider round"></span>
-              </label>
-            </div>
-            <button class="btn btn-md btn-block btn-primary" type="submit" id="signup" name="signup">계속</button>
+          <div class="clearfix px-2 my-2">
+            <span class="float-left"><strong>자동결제</strong> <i class="far fa-question-circle ml-1"></i></span>
+            <label class="switch float-right">
+              <input type="checkbox">
+              <span class="slider round"></span>
+            </label>
+          </div>
+          <button class="btn btn-md btn-block btn-primary" type="submit" id="signup" name="signup">계속</button>
         </div>
       </div>
 
-      <div class="col-md-8 order-md-1">
-        <h4 class="mb-3">구매하는 상품</h4>
+      <form id="cart-items-form" class="col-md-8 order-md-1" method="POST" action="/cart/update/<%= data.length %>">
+        <h4 class="mb-3 clearfix">
+          <span class="float-left">구매하는 상품</span>
+          <span class="float-right">
+            <button id="save-button" class="btn btn-warning" style="display: none"><strong>업데이트</strong></button>
+          </span>
+        </h4>
 
-        <!-- 판매자 1 -->
-        <div class="card mb-4">
+        <% if( rep.length === 0) { %>
+          <div class="card mb-4" >
+            <div class="card-body text-center">
+              카트에 담은 제품이 없습니다.
+            </div>
+          </div>
+        <% } %>
+        <!-- 판매자 -->
+        <% var i = 0; %>
+        <% for (let p = 0; p < rep.length; p++) { %>
+          <div class="card mb-4" >
           <div class="card-header">
-            판매자명
+            판매자: <strong><%= rep[p].seller %></strong>
           </div>
-          <!-- 상품 1 -->
-          <% for(var i = 0; i < data.length; i++) { %>
-          <div class="card-body">
+          <!-- 상품 -->
+          <% for (let q = 0; q < rep[p].count; q++, i++) { %>
+          <div class="card-body cart-item">
             <div class="row">
               <div class="col-sm-3">
-                <img src="images/product-default.jpg" alt="product-img" width="110%"/>
+                <img src="images/product-default.jpg" alt="product-img" width="110%" />
               </div>
               <div class="col-sm-9">
                 <div class="row">
                   <div class="col-sm-10">
                     <h5 class="card-title">
-                      <%= data[i].product%>
-                      <br><small>종류</small>
+                      <%= data[i].product %>
+                      <br><small><%= data[i].type_avail %></small>
                     </h5>
                   </div>
                   <div class="col-sm-2">
-                    <input type="checkbox" name="" value="" class="item">
+                    <input type="hidden" name="cb<%= i %>" class="cb-state" value="<%= data[i].checked ? data[i].checked : 0 %>">
+                    <input type="checkbox" name="" value="" class="item" <%= data[i].checked == 1 ? "checked" : "" %>>
                   </div>
                 </div>
-                <p class="card-text mb-2"><strong><%= data[i].cost%> 원</strong></p>
+                <%
+                var price = data[i].price;
+                if (data[i].discount > 0) {
+                    price = Math.round(data[i].price*((100-data[i].discount)/100))
+                %>
+                <small><s><%= formatNum(data[i].price) %> 원</s> <span class="disc-tag mx-1"><%= data[i].discount %>% off</span></small>
+                <% } %>
+                <p class="card-text mb-2"><strong><%= formatNum(price) %> 원</strong> x <%= data[i].quantity %> = <%= formatNum(price*data[i].quantity) %> 원</p>
                 <div class="row">
                   <div class="col-sm-7">
                     <p>
                       <span style="color: #fbd46d;">
-                        <% for (var j = 0; j < data[i].review; j++) { %>
-                          <i class="fas fa-star"></i> <% }%>
-                      </span>(23)
+                        <% for (let j = 0; j < Math.floor(data[i].rating); j++) { %>
+                        <i class="fas fa-star"></i>
+                        <% } %>
+                        <% if (data[i].rating - Math.floor(data[i].rating) >= 0.5) { %>
+                        <i class="fas fa-star-half-alt"></i>
+                        <% } %>
+                        <% for (let j = 1; j <= 5 - (data[i].rating - Math.floor(data[i].rating) < 0.5  ? Math.floor(data[i].rating) : data[i].rating); j++) { %>
+                        <i class="far fa-star"></i>
+                        <% } %>
+                      </span>(0)
                     </p>
                   </div>
                   <div class="col-sm-1">
-                    <a href="#" class="btn btn-sm btn-outline-secondary mr-2"><i class="fas fa-trash"></i></a>
+                    <button type="button" onClick="location.href = '/cart/delete/<%= data[i].cart_id %>'" class="btn btn-sm btn-outline-secondary"><i class="fas fa-trash py-1"></i></button>
                   </div>
                   <div class="col-sm-4">
                     <div class="input-group input-group-sm">
                       <span class="input-group-prepend">
-                        <button type="button" class="quantity-left-minus btn btn-sm btn-outline-secondary btn-number" data-type="minus" data-field="">
+                        <button type="button" class="qty-minus btn btn-sm btn-outline-secondary" data-type="minus" data-field="">
                           <i class="fas fa-minus"></i>
                         </button>
                       </span>
-                      <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1" min="1" max="100">
+                        <input type="hidden" name="cart<%= i %>" value="<%= data[i].cart_id %>">
+                        <input type="text" name="qty<%= i %>" class="qty-input form-control input-number" value="<%= data[i].quantity %>">
                       <span class="input-group-append">
-                        <button type="button" class="quantity-right-plus btn btn-sm btn-outline-secondary btn-number" data-type="plus" data-field="">
+                        <button type="button" class="qty-plus btn btn-sm btn-outline-secondary">
                           <i class="fas fa-plus"></i>
                         </button>
                       </span>
@@ -133,119 +180,15 @@ ti<%-include("partials/header");-%>
               </div>
             </div>
           </div>
-        <% }%>
-          <!-- 상품 2
-          <div class="card-body">
-            <div class="row">
-              <div class="col-sm-3">
-                <img src="images/product-default.jpg" alt="product-img" width="110%"/>
-              </div>
-              <div class="col-sm-9">
-                <div class="row">
-                  <div class="col-sm-10">
-                    <h5 class="card-title">
-                      <br><small>종류</small>
-                    </h5>
-                  </div>
-                  <div class="col-sm-2">
-                    <input type="checkbox" name="" value="" class="item">
-                  </div>
-                </div>
-                <p class="card-text mb-2"><strong>0,000 원</strong></p>
-                <div class="row">
-                  <div class="col-sm-7">
-                    <p>
-                      <span style="color: #fbd46d;">
-                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i><i class="far fa-star"></i>
-                      </span> (23)
-                    </p>
-                  </div>
-                  <div class="col-sm-1">
-                    <a href="#" class="btn btn-sm btn-outline-secondary mr-2"><i class="fas fa-trash"></i></a>
-                  </div>
-                  <div class="col-sm-4">
-                    <div class="input-group input-group-sm">
-                      <span class="input-group-prepend">
-                        <button type="button" class="quantity-left-minus btn btn-sm btn-outline-secondary btn-number" data-type="minus" data-field="">
-                          <i class="fas fa-minus"></i>
-                        </button>
-                      </span>
-                      <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1" min="1" max="100">
-                      <span class="input-group-append">
-                        <button type="button" class="quantity-right-plus btn btn-sm btn-outline-secondary btn-number" data-type="plus" data-field="">
-                          <i class="fas fa-plus"></i>
-                        </button>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <% } %>
           </div>
-        </div> -->
-
-        <!-- 판매자 2 -->
-        <div class="card mb-4">
-          <div class="card-header">
-            판매자명
-          </div>
-          <!--상품 1 -->
-          <div class="card-body">
-            <div class="row">
-              <div class="col-sm-3">
-                <img src="images/product-default.jpg" alt="product-img" width="110%"/>
-              </div>
-              <div class="col-sm-9">
-                <div class="row">
-                  <div class="col-sm-10">
-                    <h5 class="card-title">
-                      상품명
-                      <br><small>종류</small>
-                    </h5>
-                  </div>
-                  <div class="col-sm-2">
-                    <input type="checkbox" name="" value="" class="item">
-                  </div>
-                </div>
-                <p class="card-text mb-2"><strong>0,000 원</strong></p>
-                <div class="row">
-                  <div class="col-sm-7">
-                    <p>
-                      <span style="color: #fbd46d;">
-                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i><i class="far fa-star"></i>
-                      </span> (23)
-                    </p>
-                  </div>
-                  <div class="col-sm-1">
-                    <a href="#" class="btn btn-sm btn-outline-secondary mr-2"><i class="fas fa-trash"></i></a>
-                  </div>
-                  <div class="col-sm-4">
-                    <div class="input-group input-group-sm">
-                      <span class="input-group-prepend">
-                        <button type="button" class="quantity-left-minus btn btn-sm btn-outline-secondary btn-number" data-type="minus" data-field="">
-                          <i class="fas fa-minus"></i>
-                        </button>
-                      </span>
-                      <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1" min="1" max="100">
-                      <span class="input-group-append">
-                        <button type="button" class="quantity-right-plus btn btn-sm btn-outline-secondary btn-number" data-type="plus" data-field="">
-                          <i class="fas fa-plus"></i>
-                        </button>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        </div>
-      </div>
+        <% } %>
+      </form>
     </div>
   </div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="js/cart.js"></script>
-    <!-- FOOTER -->
-    <%- include("partials/copyright"); -%>
-    <%- include("partials/footer"); -%>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="js/cart.js"></script>
+  <!-- FOOTER -->
+  <%- include("partials/copyright"); -%>
+  <%- include("partials/footer"); -%>

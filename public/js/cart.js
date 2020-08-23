@@ -1,26 +1,60 @@
-$(document).ready(function() {
+// $('.quantity-update').each(function(i, obj1) {
+//   $('.quantity-input').each(function(j, obj2) {
+//     if (i == j) {
+//       $(obj2).on("input propertychange paste", function() {
+//           $(obj1).show();
+//       });
+//     }
+//   });
+//   $(obj1).on("click", function() {
+//     $(obj1).hide();
+//   });
+// });
 
-  var quantitiy = 0;
-  $('.quantity-right-plus').click(function(e) {
-    // Stop acting like a button
-    e.preventDefault();
-    // Get the field name
-    var quantity = parseInt($('#quantity').val());
-    // If is not undefined
-    // Increment
-    $('#quantity').val(quantity + 1);
-  });
-
-  $('.quantity-left-minus').click(function(e) {
-    // Stop acting like a button
-    e.preventDefault();
-    // Get the field name
-    var quantity = parseInt($('#quantity').val());
-    // If is not undefined
-    // Decrement
-    if (quantity > 1) {
-      $('#quantity').val(quantity - 1);
+$('.qty-plus').each(function(i, obj1) {
+  $('.qty-input').each(function(j, obj2) {
+    if (i === j) {
+      $(obj1).click(function(e) {
+        e.preventDefault();
+        var quantity = parseInt($(obj2).val());
+        $(obj2).val(quantity + 1);
+      });
     }
-  });
-
+  })
 });
+
+$('.qty-minus').each(function(i, obj1) {
+  $('.qty-input').each(function(j, obj2) {
+    if (i === j) {
+      $(obj1).click(function(e) {
+        e.preventDefault();
+        var quantity = parseInt($(obj2).val());
+        if (quantity > 1) {
+          $(obj2).val(quantity - 1);
+        }
+      });
+    }
+  })
+});
+
+$(".qty-input, .qty-plus, .qty-minus, .item").on("input propertychange paste click", function() {
+    $('#save-button').show();
+});
+
+$('#save-button').on("click", function() {
+  $('#cart-items-form').submit();
+  $('#save-button').hide();
+});
+
+$('.item').each(function(i, obj1) {
+  $('.cb-state').each(function(j, obj2) {
+    if (i == j) {
+      $(obj1).change(function() {
+        if(this.checked)
+          $(obj2).val('1');
+        else
+          $(obj2).val('0');
+      });
+    }
+  })
+})
