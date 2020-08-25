@@ -34,11 +34,6 @@ ul {
   padding: 5px 10px;
 }
 
-td a {
-  margin: 15px 15px;
-
-}
-
 a:hover {
   text-decoration: none;
 }

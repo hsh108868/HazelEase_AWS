@@ -1,0 +1,129 @@
+<%- include("partials/header"); -%>
+<!-- Custom styles -->
+<link rel="stylesheet" href="/css/account.css">
+<link rel="stylesheet" href="/css/seller.css">
+</head>
+
+<body id="bootstrap-overrides">
+  <%- include("partials/navbar"); -%>
+
+  <main role="main" class="container-fluid">
+    <%- include("partials/sidenav"); -%>
+    <div class="tab-content">
+      <div>
+        <h3>판매자 관리</h3>
+      </div>
+      <div class="tab-subcontent">
+        <div>
+          판매자로 계정을 등록하시겠습니까?
+          <button type="button" name="button" class="btn btn-sm btn-success mx-1">예</button>
+          <button type="button" name="button" class="btn btn-sm btn-danger mr-1">아니오</button>
+        </div>
+        <div class="mt-2">
+          <button type="button" name="button" class="rounded-pill btn btn-outline-primary">판매자 정보</button>
+          <button type="button" name="button" class="rounded-pill btn btn-outline-primary">판매하는 상품</button>
+          <button type="button" name="button" class="rounded-pill btn btn-outline-primary">매장</button>
+          <button type="button" name="button" class="rounded-pill btn btn-outline-primary">재고품</button>
+        </div>
+
+        <!--  -->
+        <form class="row" method="post" action="/account/become-seller">
+          <div class="col-md-12">
+            <h4 class="font-weight-normal"><b>판매자 정보</b></h4>
+          </div>
+          <div class="col-md-6">
+            <label for="sellerName" class="sr-only">판매자/브랜드명</label>
+            <input name="sellerName" type="text" class="form-control mb-3" placeholder="판매자/브랜드명" maxlength="50" required />
+
+            <label for="sellerAddress" class="sr-only">회사 주소</label>
+            <input name="sellerAddress" type="text" class="form-control mb-3" placeholder="회사 주소" maxlength="100" required />
+          </div>
+          <div class="col-md-6">
+            <label for="sellerEmail" class="sr-only">이메일</label>
+            <input name="sellerEmail" type="email" id="email" class="form-control mb-3" placeholder="이메일" maxlength="50" required>
+
+            <label for="sellerPhone" class="sr-only">전화번호</label>
+            <input name="sellerPhone" type="tel" id="no_tel" class="form-control" placeholder="전화번호" maxlength="20" required>
+            <small class="form-text text-muted mb-3" align="left">-없이 입력해 주십시오.</small>
+          </div>
+          <div class="col-md-12 clearfix">
+            <button class="btn btn-danger float-right">취소</button>
+            <button class="btn btn-primary float-right mr-2" type="submit" name="infoSave">저장</button>
+          </div>
+        </form>
+
+        <form class="row" method="post" action="/account/become-seller">
+          <div class="col-md-12">
+            <h4 class="font-weight-normal"><b>판매하는 상품 추가</b></h4>
+          </div>
+          <div class="col-md-6">
+            <label for="productName" class="sr-only">제품명</label>
+            <input name="productName" type="text" class="form-control mb-3" placeholder="제품명" maxlength="50" required />
+
+            <label for="productType" class="sr-only">종류</label>
+            <input name="productType" type="text" class="form-control mb-3" placeholder="종류 리스트 (예: Black, Blue, ..)" maxlength="100" required />
+          </div>
+          <div class="col-md-6">
+            <label for="productPrice" class="sr-only">가격</label>
+            <input name="productPrice" type="number" class="form-control mb-3" placeholder="가격 (원)" min="0" step="10000" required />
+
+            <label for="productPrice" class="sr-only">할인</label>
+            <input name="productPrice" type="number" class="form-control mb-3" placeholder="할인 (%)" min="0" max="100" required />
+          </div>
+          <div class="col-sm-12">
+            <label for="productDesc" class="sr-only">제품 설명</label>
+            <textarea name="productDesc" rows="8" cols="80" class="form-control mb-3" placeholder="제품 설명"></textarea>
+          </div>
+          <div class="col-md-12 clearfix mb-3">
+            <button class="btn btn-danger float-right">취소</button>
+            <button class="btn btn-primary float-right mr-2" type="submit" name="infoSave">저장</button>
+          </div>
+        </form>
+
+        <table class="table table-dark" style="border-radius: 10px">
+          <thead>
+            <tr style="border: none">
+              <th scope="col">#</th>
+              <th scope="col">제품명</th>
+              <th scope="col">종류</th>
+              <th scope="col">설명</th>
+              <th scope="col">가격 (원)</th>
+              <th scope="col">할인 (%)</th>
+              <th scope="col">카테고리</th>
+              <th scope="col">평점</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">1</th>
+              <td>Fireon - Plain Wide-...</td>
+              <td>White, Green</td>
+              <td class="desc">Images are for reference only...</td>
+              <td>11,957</td>
+              <td>10</td>
+              <td>Clothing</td>
+              <td>4.6</td>
+              <td>
+                <div class="dropdown">
+                  <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuAction" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    액션
+                  </a>
+
+                  <div class="dropdown-menu" aria-labelledby="dropdownMenuAction">
+                    <a class="dropdown-item" href="#"><i class="fas fa-edit mr-2"></i>수정</a>
+                    <a class="dropdown-item" href="#"><i class="fas fa-trash mr-2"></i> 삭제</a>
+                  </div>
+                </div>
+                <!-- <a class="m-0"><i class="fas fa-edit mr-1"></i></a>
+                <a class="m-0"><i class="fas fa-trash"></i></a> -->
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <%- include("partials/footer"); -%>

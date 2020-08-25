@@ -1,0 +1,7 @@
+/* h4 {
+  padding: 8px 0;
+} */
+
+.table td, .table th {
+  border-top: none;
+}
