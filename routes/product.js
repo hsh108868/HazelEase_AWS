@@ -17,7 +17,8 @@ exports.showDetails = function(req, res) {
         data: results,
         message: message,
         noOfCartItems: req.session.noOfCartItems,
-        noOfWishlistItems: req.session.noOfWishlistItems
+        noOfWishlistItems: req.session.noOfWishlistItems,
+        formatNum: fn.formatNum
       });
     } else { // 제품 아이디가 없는 경우
       message = "요청한 제품의 정보가 없습니다.";

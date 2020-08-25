@@ -36,6 +36,13 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+.disc-tag {
+  background-color: #ea5455;
+  border-radius: 10px;
+  color: #e5e5e5;
+  padding: 2px 5px;
+}
+
 .nav-scroller {
   position: relative;
   z-index: 2;
@@ -62,6 +69,10 @@ h1, h2, h3, h4, h5, h6 {
   font-size: .875rem;
 }
 
+
+
+/*
+
 .card-img-right {
   height: 100%;
   border-radius: 0 3px 3px 0;
@@ -77,6 +88,9 @@ h1, h2, h3, h4, h5, h6 {
   .h-md-250 { height: 250px; }
 }
 
+ */
+
+
 /* Pagination */
 .blog-pagination {
   margin-bottom: 4rem;
@@ -84,6 +98,8 @@ h1, h2, h3, h4, h5, h6 {
 .blog-pagination > .btn {
   border-radius: 2rem;
 }
+
+
 
 /*
  * Blog posts
@@ -100,6 +116,7 @@ h1, h2, h3, h4, h5, h6 {
   color: #999;
 }
 
+
 /*
  * Footer
  */
@@ -112,4 +129,39 @@ h1, h2, h3, h4, h5, h6 {
 }
 .blog-footer p:last-child {
   margin-bottom: 0;
+}
+
+section {
+  padding: 60px 0;
+}
+
+section .section-title {
+  text-align: center;
+  color: #007b5e;
+  margin-bottom: 50px;
+  text-transform: uppercase;
+}
+#tabs{
+  background: #007b5e;
+  color: #eee;
+}
+
+#tabs .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+  color: #f3f3f3;
+  background-color: transparent;
+  border-color: transparent transparent #f3f3f3;
+  border-bottom: 4px solid !important;
+  font-size: 20px;
+  font-weight: bold;
+}
+#tabs .nav-tabs .nav-link {
+  border: 1px solid transparent;
+  border-top-left-radius: .25rem;
+  border-top-right-radius: .25rem;
+  color: #eee;
+  font-size: 20px;
+}
+
+.fixed-width {
+  width:100px;
 }
