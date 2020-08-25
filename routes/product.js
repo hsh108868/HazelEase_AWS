@@ -26,7 +26,7 @@ exports.showDetails = function(req, res) {
         user_id: user_id,
         message: message,
         noOfCartItems: req.session.noOfCartItems,
-        noOfWishlistItems: req.session.noOfWishlistItems,
+        noOfWishlistItems: req.session.noOfWishlistItems
       });
     }
   });
