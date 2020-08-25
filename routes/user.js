@@ -165,6 +165,16 @@ exports.openSubPage = function(req, res) {
           noOfWishlistItems: req.session.noOfWishlistItems,
         });
       });
+    } else if (reqSubPage === "seller-management") {
+      db.query('SELECT * FROM ?? WHERE user_id = ?', ['member', user_id], function(err, results, fields) {
+        res.render('seller.ejs', {
+          user_id: user_id,
+          data: results,
+          message: req.session.message,
+          noOfCartItems: req.session.noOfCartItems,
+          noOfWishlistItems: req.session.noOfWishlistItems,
+        });
+      });
     }
   }
 }
