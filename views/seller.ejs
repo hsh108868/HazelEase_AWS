@@ -67,7 +67,7 @@
           <div id="manageProduct" class="subform">
             <form class="row" method="post" action="/seller/manage-product">
               <div class="col-md-12">
-                <h4 class="font-weight-normal"><b>판매하는 상품 추가</b></h4>
+                <h4 class="font-weight-normal"><b><%= sess.openProductInfo.product_id == "" ? "판매하는 제품 추가" : "제품 정보 수정" %></b></h4>
               </div>
 
               <div class="col-md-6">
@@ -115,7 +115,7 @@
               <thead>
                 <tr style="border: none">
                   <th scope="col">ID</th>
-                  <th scope="col">제품명</th>
+                  <th scope="col">제품</th>
                   <th scope="col">종류</th>
                   <th scope="col">설명</th>
                   <th scope="col">가격 (원)</th>
@@ -163,7 +163,7 @@
           <div id="manageShop" class="subform">
             <form class="row" method="post" action="/seller/manage-shop">
               <div class="col-md-12">
-                <h4 class="font-weight-normal"><b>매장/가게 등록</b></h4>
+                <h4 class="font-weight-normal"><b><%= sess.openShopInfo.shop_id == "" ? "매장/가게 등록" : "매장 정보 수정" %></b></h4>
               </div>
               <div class="col-md-6">
                 <label for="productName" >매장/가게명</label>
@@ -193,7 +193,7 @@
               <thead>
                 <tr style="border: none">
                   <th scope="col">ID</th>
-                  <th scope="col">매장명</th>
+                  <th scope="col">매장</th>
                   <th scope="col">전화번호</th>
                   <th scope="col">주소</th>
                   <th scope="col"></th>
