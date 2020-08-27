@@ -63,13 +63,12 @@ app.get("/cr_tb_:tableName", function(req, res) {
         info text,
         price int unsigned not null,
         discount int(3) unsigned,
-        user_id varchar(30) not null,
+        seller_id varchar(30) not null,
         rating double unsigned,
-        quantity int unsigned not null,
         category varchar(50),
         qrcode varchar(200),
         primary key(product_id),
-        foreign key(user_id) references member(user_id) on delete cascade
+        foreign key(seller_id) references seller(seller_id) on delete cascade
       );`
       break;
 
@@ -139,15 +138,17 @@ app.get("/cr_tb_:tableName", function(req, res) {
       );`
       break;
 
-    // availibility 테이블 생성 쿼리
-    case "availibility":
-      sql = `create table availability (
+    // stock 테이블 생성 쿼리
+    case "stock":
+      sql = `create table stock (
         product_id int unsigned not null,
         shop_id int unsigned not null,
-        quantity int unsigned not null,
+        quantity varchar(250) not null,
+        seller_id varchar(30) not null,
         primary key(product_id, shop_id),
-        foreign key(product_id) references product(product_id) on delete cascade
-        foreign key(shop_id) references shop(shop_id) on delete cascade
+        foreign key(product_id) references product(product_id) on delete cascade,
+        foreign key(shop_id) references shop(shop_id) on delete cascade,
+        foreign key(seller_id) references seller(seller_id) on delete cascade
       );`
       break;
   }

@@ -14,116 +14,308 @@
         <h3>판매자 관리</h3>
       </div>
       <div class="tab-subcontent">
-        <div>
+        <% if (sess.messageErr) { %>
+        <div class="text-danger mb-2"><%= sess.messageErr %></div>
+        <% } else { %>
+        <div class="text-success mb-2"><%= sess.message %></div>
+        <% } %>
+        <% sess.message = ""; sess.messageErr = ""; %>
+        <div id="newSeller" class="<%= isSeller === "yes" ? 'hidden' : '' %>">
           판매자로 계정을 등록하시겠습니까?
-          <button type="button" name="button" class="btn btn-sm btn-success mx-1">예</button>
-          <button type="button" name="button" class="btn btn-sm btn-danger mr-1">아니오</button>
-        </div>
-        <div class="mt-2">
-          <button type="button" name="button" class="rounded-pill btn btn-outline-primary">판매자 정보</button>
-          <button type="button" name="button" class="rounded-pill btn btn-outline-primary">판매하는 상품</button>
-          <button type="button" name="button" class="rounded-pill btn btn-outline-primary">매장</button>
-          <button type="button" name="button" class="rounded-pill btn btn-outline-primary">재고품</button>
+          <button id="bs-yes" type="button" name="button" class="btn btn-sm btn-success mx-1">예</button>
+          <button id="bs-no" type="button" name="button" class="btn btn-sm btn-danger mr-1">아니오</button>
         </div>
 
-        <!--  -->
-        <form class="row" method="post" action="/account/become-seller">
-          <div class="col-md-12">
-            <h4 class="font-weight-normal"><b>판매자 정보</b></h4>
+        <div id="sellerSystem" style="display: <%= isSeller === "yes" ? 'block' : 'none' %>">
+          <div class="my-2">
+            <button type="button" name="button" class="rounded-pill btn btn-outline-primary subform-btn" onclick="openPage('manageInfo', this, 0)" id="<%= sess.openForm == 0 ? 'defaultOpen' : '' %>">판매자 정보</button>
+            <button type="button" name="button" class="rounded-pill btn btn-outline-primary subform-btn <%= isSeller === "no" ? 'hidden' : '' %>" onclick="openPage('manageProduct', this, 1)" id="<%= sess.openForm == 1 ? 'defaultOpen' : '' %>">판매하는
+              제품</button>
+            <button type="button" name="button" class="rounded-pill btn btn-outline-primary subform-btn <%= isSeller === "no" ? 'hidden' : '' %>" onclick="openPage('manageShop', this, 2)"
+              id="<%= sess.openForm == 2 ? 'defaultOpen' : '' %>">매장</button>
+            <button type="button" name="button" class="rounded-pill btn btn-outline-primary subform-btn <%= isSeller === "no" ? 'hidden' : '' %>" onclick="openPage('manageStock', this, 3)"
+              id="<%= sess.openForm == 3 ? 'defaultOpen' : '' %>">재고품</button>
           </div>
-          <div class="col-md-6">
-            <label for="sellerName" class="sr-only">판매자/브랜드명</label>
-            <input name="sellerName" type="text" class="form-control mb-3" placeholder="판매자/브랜드명" maxlength="50" required />
 
-            <label for="sellerAddress" class="sr-only">회사 주소</label>
-            <input name="sellerAddress" type="text" class="form-control mb-3" placeholder="회사 주소" maxlength="100" required />
-          </div>
-          <div class="col-md-6">
-            <label for="sellerEmail" class="sr-only">이메일</label>
-            <input name="sellerEmail" type="email" id="email" class="form-control mb-3" placeholder="이메일" maxlength="50" required>
+          <div id="manageInfo" class="subform">
+            <form class="row" method="post" action="/seller/manage-info">
+              <div class="col-md-12">
+                <h4 class="font-weight-normal"><b>판매자 정보</b></h4>
+              </div>
+              <div class="col-md-6">
+                <label for="sellerName" >판매자/브랜드명</label>
+                <input name="sellerName" type="text" class="form-control mb-3" maxlength="50" value="<%= seller.name %>" required />
 
-            <label for="sellerPhone" class="sr-only">전화번호</label>
-            <input name="sellerPhone" type="tel" id="no_tel" class="form-control" placeholder="전화번호" maxlength="20" required>
-            <small class="form-text text-muted mb-3" align="left">-없이 입력해 주십시오.</small>
-          </div>
-          <div class="col-md-12 clearfix">
-            <button class="btn btn-danger float-right">취소</button>
-            <button class="btn btn-primary float-right mr-2" type="submit" name="infoSave">저장</button>
-          </div>
-        </form>
+                <label for="sellerAddress" >회사 주소</label>
+                <input name="sellerAddress" type="text" class="form-control mb-3" maxlength="100" value="<%= seller.address %>" required />
+              </div>
+              <div class="col-md-6">
+                <label for="sellerEmail" >이메일</label>
+                <input name="sellerEmail" type="email" id="email" class="form-control mb-3" maxlength="50" value="<%= seller.email %>" required>
 
-        <form class="row" method="post" action="/account/become-seller">
-          <div class="col-md-12">
-            <h4 class="font-weight-normal"><b>판매하는 상품 추가</b></h4>
+                <label for="sellerPhone" >전화번호</label>
+                <input name="sellerPhone" type="tel" id="no_tel" class="form-control" maxlength="20" value="<%= seller.phone %>" required>
+                <small class="form-text text-muted mb-3" align="left">-없이 입력해 주십시오.</small>
+              </div>
+              <div class="col-md-12 clearfix">
+                <a href="/seller/withdraw" id="bs-quit" class="btn btn-danger float-right">탈퇴</a>
+                <button class="btn btn-primary float-right mr-2" type="submit" name="infoSave">저장</button>
+              </div>
+            </form>
           </div>
-          <div class="col-md-6">
-            <label for="productName" class="sr-only">제품명</label>
-            <input name="productName" type="text" class="form-control mb-3" placeholder="제품명" maxlength="50" required />
 
-            <label for="productType" class="sr-only">종류</label>
-            <input name="productType" type="text" class="form-control mb-3" placeholder="종류 리스트 (예: Black, Blue, ..)" maxlength="100" required />
-          </div>
-          <div class="col-md-6">
-            <label for="productPrice" class="sr-only">가격</label>
-            <input name="productPrice" type="number" class="form-control mb-3" placeholder="가격 (원)" min="0" step="10000" required />
+          <div id="manageProduct" class="subform">
+            <form class="row" method="post" action="/seller/manage-product">
+              <div class="col-md-12">
+                <h4 class="font-weight-normal"><b>판매하는 상품 추가</b></h4>
+              </div>
 
-            <label for="productPrice" class="sr-only">할인</label>
-            <input name="productPrice" type="number" class="form-control mb-3" placeholder="할인 (%)" min="0" max="100" required />
-          </div>
-          <div class="col-sm-12">
-            <label for="productDesc" class="sr-only">제품 설명</label>
-            <textarea name="productDesc" rows="8" cols="80" class="form-control mb-3" placeholder="제품 설명"></textarea>
-          </div>
-          <div class="col-md-12 clearfix mb-3">
-            <button class="btn btn-danger float-right">취소</button>
-            <button class="btn btn-primary float-right mr-2" type="submit" name="infoSave">저장</button>
-          </div>
-        </form>
+              <div class="col-md-6">
+                <label for="productName" >제품명</label>
+                <input name="productName" type="text" class="form-control mb-3"  maxlength="50" value="<%= sess.openProductInfo.product %>" required />
+              </div>
+              <div class="col-md-3">
+                <label for="productPrice" >가격 (원)</label>
+                <input name="productPrice" type="number" class="form-control mb-3"  min="0" value="<%= sess.openProductInfo.price %>" required />
+              </div>
+              <div class="col-md-3">
+                <label for="productDisc" >할인 (%)</label>
+                <input name="productDisc" type="number" class="form-control mb-3" min="0" max="100" value="<%= sess.openProductInfo.discount %>" />
+              </div>
 
-        <table class="table table-dark" style="border-radius: 10px">
-          <thead>
-            <tr style="border: none">
-              <th scope="col">#</th>
-              <th scope="col">제품명</th>
-              <th scope="col">종류</th>
-              <th scope="col">설명</th>
-              <th scope="col">가격 (원)</th>
-              <th scope="col">할인 (%)</th>
-              <th scope="col">카테고리</th>
-              <th scope="col">평점</th>
-              <th scope="col"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th scope="row">1</th>
-              <td>Fireon - Plain Wide-...</td>
-              <td>White, Green</td>
-              <td class="desc">Images are for reference only...</td>
-              <td>11,957</td>
-              <td>10</td>
-              <td>Clothing</td>
-              <td>4.6</td>
-              <td>
-                <div class="dropdown">
-                  <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuAction" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    액션
-                  </a>
+              <div class="col-md-6">
+                <label for="productType" >종류</label>
+                <input name="productType" type="text" class="form-control mb-3" placeholder="/로 구분 (예: Black/Blue/.. )" maxlength="100" value="<%= sess.openProductInfo.type_avail %>"/>
+              </div>
+              <div class="col-md-6">
+                <label for="productCategory" >카테고리</label>
+                <input name="productCategory" type="text" class="form-control mb-3" maxlength="50" value="<%= sess.openProductInfo.category %>" required />
+              </div>
+              <div class="col-sm-12">
+                <label for="productDesc" >제품 설명</label>
+                <textarea name="productDesc" rows="8" cols="80" class="form-control mb-3"><%= sess.openProductInfo.info %></textarea>
+              </div>
+              <div class="col-md-6">
+                <label for="productImg">제품 사진</label>
+                <input type="file" class="form-control-file" id="productImg">
+              </div>
+              <div class="col-md-12 clearfix mb-3">
+                <% if (sess.openProductInfo.product_id == "") { %>
+                <button type="reset" class="btn btn-danger float-right">재쓰기</button>
+                <button class="btn btn-primary float-right mr-2" type="submit" name="productAdd">추가</button>
+                <% } else { %>
+                <button class="btn btn-danger float-right mr-2" type="button" onClick="location.href='/seller/close-product-info'">취소</button>
+                <button class="btn btn-success float-right mr-2" type="submit" name="productEdit">수정완료</button>
+                <% } %>
+              </div>
+            </form>
 
-                  <div class="dropdown-menu" aria-labelledby="dropdownMenuAction">
-                    <a class="dropdown-item" href="#"><i class="fas fa-edit mr-2"></i>수정</a>
-                    <a class="dropdown-item" href="#"><i class="fas fa-trash mr-2"></i> 삭제</a>
+            <h4 class="font-weight-normal"><b>판매하는 제품 목록</b></h4>
+            <table class="table table-dark" style="border-radius: 10px">
+              <thead>
+                <tr style="border: none">
+                  <th scope="col">ID</th>
+                  <th scope="col">제품명</th>
+                  <th scope="col">종류</th>
+                  <th scope="col">설명</th>
+                  <th scope="col">가격 (원)</th>
+                  <th scope="col">할인 (%)</th>
+                  <th scope="col">카테고리</th>
+                  <th scope="col">평점</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (products.length == 0) { %>
+                <tr>
+                  <td scope="col" colspan="9" class="text-center">등록된 제품 정보가 없습니다.</td>
+                </tr>
+                <% } %>
+                <% for(let i = 0; i < products.length; i++) { %>
+                <tr>
+                  <th scope="row"><%= products[i].product_id %></th>
+                  <td><%= products[i].product.length > 15 ? products[i].product.substring(0, 15) + "..." : products[i].product %></td>
+                  <td><%= products[i].type_avail.length > 15 ? products[i].type_avail.substring(0, 15) + "..." : products[i].type_avail %></td>
+                  <td><%= products[i].info.length > 30 ? products[i].info.substring(0, 30) + "..." : products[i].info %></td>
+                  <td><%= formatNum(products[i].price) %></td>
+                  <td><%= products[i].discount ? products[i].discount : '0' %></td>
+                  <td><%= products[i].category ? products[i].category : '-' %></td>
+                  <td><%= products[i].rating ? products[i].rating : 'N/A' %></td>
+                  <td>
+                    <div class="dropdown">
+                      <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuAction" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        액션
+                      </a>
+                      <div class="dropdown-menu" aria-labelledby="dropdownMenuAction">
+                        <button type="button" class="dropdown-item" onClick="location.href='/seller/open-product-info/<%= products[i].product_id %>'"><i class="fas fa-edit mr-2"></i>수정</button>
+                        <button type="button" class="dropdown-item" onClick="location.href='/seller/delete-product/<%= products[i].product_id %>'"><i class="fas fa-trash mr-2"></i> 삭제</button>
+                      </div>
+                    </div>
+                    <!-- <a class="m-0"><i class="fas fa-edit mr-1"></i></a>
+                    <a class="m-0"><i class="fas fa-trash"></i></a> -->
+                  </td>
+                </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+
+          <div id="manageShop" class="subform">
+            <form class="row" method="post" action="/seller/manage-shop">
+              <div class="col-md-12">
+                <h4 class="font-weight-normal"><b>매장/가게 등록</b></h4>
+              </div>
+              <div class="col-md-6">
+                <label for="productName" >매장/가게명</label>
+                <input name="shopName" type="text" class="form-control mb-3" maxlength="50" value="<%= sess.openShopInfo.shop %>" required />
+              </div>
+              <div class="col-md-6">
+                <label for="sellerPhone" >전화번호</label>
+                <input name="shopPhone" type="tel" id="no_tel" class="form-control" maxlength="20" value="<%= sess.openShopInfo.phone %>" required>
+              </div>
+              <div class="col-sm-12">
+                <label for="shopAddress" >매장/가게 주소</label>
+                <textarea name="shopAddress" rows="2" cols="80" class="form-control mb-3"><%= sess.openShopInfo.address %></textarea>
+              </div>
+              <div class="col-md-12 clearfix mb-3">
+                <% if (sess.openShopInfo.shop_id == "") { %>
+                <button type="reset" class="btn btn-danger float-right">재쓰기</button>
+                <button class="btn btn-primary float-right mr-2" type="submit" name="shopAdd">추가</button>
+                <% } else { %>
+                <button class="btn btn-danger float-right mr-2" type="button" onClick="location.href='/seller/close-shop-info'">취소</button>
+                <button class="btn btn-success float-right mr-2" type="submit" name="shopEdit">수정완료</button>
+                <% } %>
+              </div>
+            </form>
+
+            <h4 class="font-weight-normal"><b>매장 목록</b></h4>
+            <table class="table table-dark" style="border-radius: 10px">
+              <thead>
+                <tr style="border: none">
+                  <th scope="col">ID</th>
+                  <th scope="col">매장명</th>
+                  <th scope="col">전화번호</th>
+                  <th scope="col">주소</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (shops.length == 0) { %>
+                <tr>
+                  <td scope="col" colspan="5" class="text-center">등록된 매장 정보가 없습니다.</td>
+                </tr>
+                <% } %>
+                <% for(let i = 0; i < shops.length; i++) { %>
+                <tr>
+                  <th scope="row"><%= shops[i].shop_id %></th>
+                  <td><%= shops[i].shop %></td>
+                  <td><%= shops[i].phone %></td>
+                  <td><%= shops[i].address %></td>
+                  <td>
+                    <div class="dropdown">
+                      <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuAction" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        액션
+                      </a>
+
+                      <div class="dropdown-menu" aria-labelledby="dropdownMenuAction">
+                        <button type="button" class="dropdown-item" onClick="location.href='/seller/open-shop-info/<%= shops[i].shop_id %>'"><i class="fas fa-edit mr-2"></i>수정</button>
+                        <button type="button" class="dropdown-item" onClick="location.href='/seller/delete-shop/<%= shops[i].shop_id %>'"><i class="fas fa-trash mr-2"></i> 삭제</button>
+                      </div>
+                    </div>
+                    <!-- <a class="m-0"><i class="fas fa-edit mr-1"></i></a>
+                    <a class="m-0"><i class="fas fa-trash"></i></a> -->
+                  </td>
+                </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+
+          <div id="manageStock" class="subform">
+            <form class="row" method="post" action="/seller/add-stock">
+              <div class="col-md-12">
+                <h4 class="font-weight-normal"><b>재고품 관리</b></h4>
+              </div>
+              <div class="col-md-12">
+                <select id="shopId" name="shopId" class="form-control mb-3">
+                  <option value="0">매장 선택</option>
+                  <% for(let i = 0; i < shops.length; i++) { %>
+                  <option value="<%= shops[i].shop_id %>" <%= shops[i].shop_id == sess.selectedShop ? 'selected' : '' %>>[<%= shops[i].shop_id %>] <%= shops[i].shop %></option>
+                  <% } %>
+                </select>
+              </div>
+              <div class="col-md-12">
+                <div class="input-group mb-3">
+                  <select id="productId" name="productId" class="form-control">
+                    <option value="">매장에 추가할 제품 선택</option>
+                    <% for(let i = 0; i < products.length; i++) { %>
+                      <% var doPrint = true; %>
+                      <% for(let j = 0; j < stocks.length; j++) { %>
+                        <% if(products[i].product_id == stocks[j].product_id) { doPrint = false; } %>
+                      <% } %>
+                      <% if(doPrint == true) { %>
+                        <option value="<%= products[i].product_id %>">[<%= products[i].product_id %>] <%= products[i].product %> (<%= products[i].type_avail ? products[i].type_avail : "종류 없음"  %>)</option>
+                      <% } %>
+                    <% } %>
+                  </select>
+                  <input name="productQty" type="text" class="px-3" placeholder="수량 ,(쉼표)로 구분" required />
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit" id="button-addon2"><i class="fas fa-plus-circle"></i></button>
                   </div>
                 </div>
-                <!-- <a class="m-0"><i class="fas fa-edit mr-1"></i></a>
-                <a class="m-0"><i class="fas fa-trash"></i></a> -->
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              </div>
+            </form>
+            <form class="row" method="post" action="/seller/manage-stock">
+              <div class="col-md-12">
+                <table class="table table-dark" style="border-radius: 10px">
+                  <thead>
+                    <tr style="border: none">
+                      <th scope="col">ID</th>
+                      <th scope="col" class="fixed-width-300">제품명</th>
+                      <th scope="col">종류</th>
+                      <th scope="col" class="fixed-width-200">수량</th>
+                      <th scope="col"></th>
+
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <input type="hidden" id="passedShopId" value="">
+                    <% if (stocks.length == 0) { %>
+                    <tr>
+                      <td scope="col" colspan="5" class="text-center">선택된 매장에 판매하는 제품이 없습니다.</td>
+                    </tr>
+                    <% } %>
+                    <% for(let i = 0; i < stocks.length; i++) { %>
+                    <tr>
+                      <th scope="row"><%= stocks[i].product_id %></th>
+                      <td><%= stocks[i].product %></td>
+                      <td><%= stocks[i].type_avail %></td>
+                      <td>
+                        <div class="input-group input-group-sm mb-3">
+                          <input type="text" value="<%= stocks[i].quantity %>" class="form-control form-control-sm qty-input">
+                          <div class="input-group-append hidden qty-save">
+                            <input type="hidden" id="currProductId<%= i %>" value="<%= stocks[i].product_id %>">
+                            <input type="hidden" id="currShopId<%= i %>" value="<%= stocks[i].shop_id %>">
+                            <button class="btn btn-success qty-save-btn" type="button"><i class="fas fa-check-circle"></i></button>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <button type="button" class="btn btn-outline-danger btn-sm" onClick="location.href='/seller/delete-stock/<%= stocks[i].product_id %>-<%= stocks[i].shop_id %>/'"><i class="fas fa-trash"></i></button>
+                      </td>
+                    </tr>
+                    <% } %>
+                  </tbody>
+                </table>
+              </div>
+            </form>
+          </div>
+        </div>
+
       </div>
     </div>
   </main>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="/js/seller.js"></script>
   <%- include("partials/footer"); -%>

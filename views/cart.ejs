@@ -111,20 +111,20 @@
         <% for (let p = 0; p < rep.length; p++) { %>
           <div class="card mb-4" >
           <div class="card-header">
-            판매자: <strong><%= rep[p].seller %></strong>
+            판매자: <strong><%= rep[p].sellername %></strong>
           </div>
           <!-- 상품 -->
           <% for (let q = 0; q < rep[p].count; q++, i++) { %>
           <div class="card-body cart-item">
             <div class="row">
               <div class="col-sm-3">
-                <img src="images/product-default.jpg" alt="product-img" width="110%" />
+                <a href="/product/<%= data[i].product_id %>"><img src="images/product-default.jpg" alt="product-img" width="110%" /></a>
               </div>
               <div class="col-sm-9">
                 <div class="row">
                   <div class="col-sm-10">
                     <h5 class="card-title">
-                      <%= data[i].product %>
+                      <a href="/product/<%= data[i].product_id %>"><%= data[i].product %></a>
                       <br><small><%= data[i].type_avail %></small>
                     </h5>
                   </div>
