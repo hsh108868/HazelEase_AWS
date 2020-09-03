@@ -229,14 +229,114 @@ exports.deleteStock = function(req, res) {
   });
 }
 
+/* ------------------------------ 쿠폰 발행 / 정보 수정 처리 ------------------------------ */
+exports.manageCoupon = function(req, res) {
+  user_id = req.session.user_id;
+  req.session.openForm = 4;
+
+  var post = {
+    coupon_code: req.body.couponCode,
+    value: req.body.couponValue,
+    min_spend: req.body.couponMinSpend,
+    effective_date: req.body.couponStart,
+    expiry_date: req.body.couponEnd,
+    seller_id: user_id
+  }
+
+  if (req.session.openCouponInfo.coupon_code == "") {
+    db.query('INSERT INTO coupon SET ?', post, function(err, results, fields) {
+      if (err) throw err;
+      req.session.message = "새 쿠폰을 성공적으로 발행하였습니다.";
+      res.redirect("/account/seller-management");
+    });
+  } else {
+    sql =  `UPDATE coupon SET value = ?, min_spend = ?, effective_date = ?, expiry_date = ?, seller_id = ? WHERE coupon_code = ?; `
+    params = [post.value, post.min_spend, post.effective_date, post.expiry_date, post.seller_id, req.session.openCouponInfo.coupon_code];
+    db.query(sql, params, function(err, results, fields) {
+      if (err) throw err;
+      req.session.message = "쿠폰 정보 변경이 저장도었습니다.";
+      req.session.openCouponInfo = null;
+      res.redirect("/account/seller-management");
+    });
+  }
+}
+/* ------------------------------ 발행된 쿠폰 정보 여는 처리 ------------------------------ */
+exports.openCouponInfo = function(req, res) {
+  var reqCouponCode = req.params.couponCode;
+  req.session.openForm = 4;
+
+  db.query('SELECT * FROM coupon WHERE coupon_code = ?', [reqCouponCode], function(err, results) {
+    req.session.openCouponInfo = results[0];
+
+    var sd = results[0].effective_date;
+    var ed = results[0].expiry_date;
+    var sYYYY, sMM, sDD, eYYYY, eMM, eDD;
+
+    sYYYY = sd.getFullYear();
+    if (sd.getMonth() < 9) {
+      sMM = '0' + (sd.getMonth() + 1).toString();
+    } else {
+      sMM = (sd.getMonth() + 1).toString();
+    }
+
+    if (sd.getDate() <= 9) {
+      sDD = '0' + sd.getDate().toString();
+    } else {
+      sDD = sd.getDate().toString();
+    }
+
+    eYYYY = ed.getFullYear();
+    if (ed.getMonth() < 9) {
+      eMM = '0' + (ed.getMonth() + 1).toString();
+    } else {
+      eMM = (ed.getMonth() + 1).toString();
+    }
+
+    if (ed.getDate() <= 9) {
+      eDD = '0' + ed.getDate().toString();
+    } else {
+      eDD = ed.getDate().toString();
+    }
+
+    req.session.couponValidPeriod = {
+      effectiveDate:  sYYYY + '-' + sMM + '-' + sDD,
+      expiryDate: eYYYY + '-' + eMM + '-' + eDD
+    }
+
+    res.redirect('/account/seller-management');
+  });
+}
+
+/* ------------------------------ 발행된 쿠폰 정보 정보 닫는 처리 ------------------------------ */
+exports.closeCouponInfo = function(req, res) {
+  req.session.openForm = 4;
+  req.session.openCouponInfo = null;
+  res.redirect('/account/seller-management');
+}
+
+/* ------------------------------ 쿠폰 삭제 처리 ------------------------------ */
+exports.deleteCoupon = function(req, res) {
+  var reqCouponCode = req.params.couponCode;
+  req.session.openForm = 4;
+
+  var sql = `DELETE FROM coupon WHERE coupon_code = ?;`
+  var params = [reqCouponCode];
+
+  db.query(sql, params, function(err, results) {
+    req.session.message = "쿠폰이 삭제되었습니다.";
+    res.redirect('/account/seller-management');
+  });
+}
+
 /* ------------------------------ 판매자 탈퇴 처리 ------------------------------ */
 exports.withdraw = function(req, res) {
   var user_id = req.session.user_id;
   var sql = `DELETE FROM seller WHERE seller_id = ?;
              DELETE FROM product WHERE seller_id = ?
              DELETE FROM shop WHERE seller_id = ?;
-             DELETE FROM stock WHERE seller_id = ?;`
-  var params = [user_id, user_id, user_id, user_id];
+             DELETE FROM stock WHERE seller_id = ?;
+             DELETE FROM coupon WHERE seller_id = ?; `
+  var params = [user_id, user_id, user_id, user_id, user_id];
   db.query(sql, params, function(err, results) {
     req.session.message = "판매자 서비스에서 성공적으로 탈퇴하였습니다. 서비스를 이용해 주셔서 갑사합니다.";
     res.redirect('/account/seller-management');

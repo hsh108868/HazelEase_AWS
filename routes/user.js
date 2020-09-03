@@ -205,13 +205,27 @@ exports.openSubPage = function(req, res) {
         });
       });
     } else if (reqSubPage === "manage-address") {
-      db.query('SELECT * FROM ?? WHERE user_id = ?', ['member', user_id], function(err, results, fields) {
-        res.render('addresses.ejs', {
+      var sql = `SELECT a.address_id, a.recipient, a.address, a.state, a.city, a.zip, a.phone, m.default_address
+                 FROM address as a
+                    RIGHT OUTER JOIN member as m ON a.address_id = m.default_address
+                 WHERE m.user_id = ?;
+
+                 SELECT * FROM address WHERE user_id = ?; `
+      var params = [user_id, user_id];
+
+      if (req.session.openAddressInfo == null) {
+        req.session.openAddressInfo = { recipient: "", address: "", city: "", state: "", zip: "", phone: "" };
+      }
+
+      db.query(sql, params, function(err, results, fields) {
+        res.render('address.ejs', {
           user_id: user_id,
-          data: results,
+          defAddr: results[0][0],
+          othAddr: results[1],
           message: req.session.message,
           noOfCartItems: req.session.noOfCartItems,
           noOfWishlistItems: req.session.noOfWishlistItems,
+          sess: req.session
         });
       });
     } else if (reqSubPage === "purchase-history") {
@@ -238,12 +252,13 @@ exports.openSubPage = function(req, res) {
       var sql = `SELECT * FROM seller WHERE seller_id = ?;
                  SELECT * FROM product WHERE seller_id = ?;
                  SELECT * FROM shop WHERE seller_id = ?;
+                 SELECT * FROM coupon WHERE seller_id = ?;
                  SELECT st.product_id, pr.product, pr.type_avail, st.shop_id, st.quantity, sh.shop
                  FROM stock as st
                     RIGHT OUTER JOIN shop as sh ON st.shop_id = sh.shop_id
                     RIGHT OUTER JOIN product as pr ON st.product_id = pr.product_id
                  WHERE st.seller_id = ? AND st.shop_id = ?; `
-      var params = [user_id, user_id, user_id, user_id];
+      var params = [user_id, user_id, user_id, user_id, user_id];
 
       if (req.session.selectedShop) {
         params.push(req.session.selectedShop);
@@ -257,7 +272,12 @@ exports.openSubPage = function(req, res) {
       }
 
       if (req.session.openShopInfo == null) {
-        req.session.openShopInfo = { shop_id: "", shop: "", address: "", phone: "", email: "", seller_id: ""};
+        req.session.openShopInfo = { shop_id: "", shop: "", address: "", phone: "", email: "", seller_id: "" };
+      }
+
+      if (req.session.openCouponInfo == null) {
+        req.session.openCouponInfo = { coupon_code: "", value: "", min_spend: "", seller_id: "" };
+        req.session.couponValidPeriod = { effectiveDate: "", expiryDate: "" };
       }
 
       db.query(sql, params, function(err, results, fields) {
@@ -270,7 +290,8 @@ exports.openSubPage = function(req, res) {
             seller: results[0][0],
             products: results[1],
             shops: results[2],
-            stocks: results[3],
+            coupons: results[3],
+            stocks: results[4],
             formatNum: fn.formatNum,
             sess: req.session
           });

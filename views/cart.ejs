@@ -22,9 +22,15 @@
         <div class="card mb-3">
           <div class="card-header">배송지 <span class="btn btn-sm btn-link" onclick="location.href='/account/manage-address'">(주소 선택)</span></div>
           <div class="card-body">
-            <div class="mb-2"><i class="fas fa-address-card mr-1"></i> 홍길동</div>
-            <div class="mb-2"><%= address[0].state%> <%= address[0].city%> <%= address[0].address%></div>
-            <div>연락처: +821042090323</div>
+            <% if (address[0].address_id != null) { %>
+            <div class="mb-2"><i class="fas fa-address-card mr-1"></i> <%= address[0].recipient %></div>
+            <div class="mb-2">[<%= address[0].zip %>] <%= address[0].state %> <%= address[0].city %> <%= address[0].address %></div>
+            <div>연락처: <%= address[0].phone %></div>
+            <% } else { %>
+            <small class="alert alert-danger" role="alert" style="padding: 5px 10px">
+              <strong>기본 주소 없습니다.</strong>
+            </small>
+            <% } %>
           </div>
         </div>
 

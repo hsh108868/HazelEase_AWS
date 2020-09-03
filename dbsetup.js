@@ -24,6 +24,22 @@ app.get("/cr_tb_:tableName", function(req, res) {
 
   switch (tableName) {
 
+    // (사용자)address 테이블 생성 쿼리
+    case "address":
+      sql = `create table address (
+        address_id int unsigned not null auto_increment,
+        recipient varchar(30),
+        address varchar(100) not null,
+        city varchar(20),
+        state varchar(20),
+        zip char(5),
+        phone varchar(20),
+        user_id varchar(30) not null,
+        primary key(address_id),
+        foreign key(user_id) references member(user_id) ON DELETE SET NULL
+      );`
+      break;
+
     // member 테이블 생성 쿼리
     case "member":
       sql = `create table member (
@@ -31,28 +47,26 @@ app.get("/cr_tb_:tableName", function(req, res) {
         password varchar(200) not null,
         fullname varchar(50) not null,
         gender char(1),
-        default_address int unsigned,
         birth date,
         email varchar(50),
         phone varchar(20),
         s_money int,
+        default_address int unsigned,
         creation_time timestamp default current_timestamp,
-        foreign key(default_address) references address(address_id) on delete cascade,
-        primary key(user_id)
+        primary key(user_id),
+        foreign key(default_address) references address(address_id) on delete cascade
       );`
       break;
 
-    // (사용자)address 테이블 생성 쿼리
-    case "address":
-      sql = `create table address (
-        address_id int unsigned not null auto_increment,
+    // seller 테이블 생성 쿼리
+    case "seller":
+      sql = `create table seller (
+        seller_id varchar(30) not null,
+        name varchar(50) not null,
         address varchar(100) not null,
-        city varchar(20),
-        state varchar(20),
-        zip char(5),
-        user_id varchar(30) not null,
-        primary key(address_id),
-        foreign key(user_id) references member(user_id) ON DELETE SET NULL
+        phone varchar(20) not null,
+        email varchar(50) not null,
+        primary key(seller_id)
       );`
       break;
 
@@ -109,21 +123,11 @@ app.get("/cr_tb_:tableName", function(req, res) {
         coupon_code varchar(30) not null,
         value int unsigned not null,
         min_spend int unsigned not null,
-        start_date date,
         effective_date date not null,
-        primary key(coupon_code)
-      );`
-      break;
-
-    // seller 테이블 생성 쿼리
-    case "seller":
-      sql = `create table seller (
+        expiry_date date not null,
         seller_id varchar(30) not null,
-        name varchar(50) not null,
-        address varchar(100) not null,
-        phone varchar(20) not null,
-        email varchar(50) not null,
-        primary key(seller_id)
+        primary key(coupon_code),
+        foreign key(seller_id) references seller(seller_id) on delete cascade
       );`
       break;
 

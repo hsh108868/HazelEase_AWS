@@ -8,7 +8,7 @@ exports.show = function (req, res) {
     res.redirect("/login");
     res.end();
   } else {
-    sql = `SELECT p.product, p.product_id, p.price, p.discount, p.rating, p.type_avail, p.seller_id as seller, c.cart_id, c.quantity, c.user_id, c.checked
+    sql = `SELECT p.product, p.product_id, p.price, p.discount, p.rating, p.type_avail, p.seller_id as seller, c.quantity, c.cart_id, c.user_id, c.checked
            FROM product AS p RIGHT OUTER JOIN cart AS c ON p.product_id = c.product_id
            WHERE c.user_id = ?
            ORDER BY seller ASC;
@@ -25,25 +25,28 @@ exports.show = function (req, res) {
            FROM cart
            WHERE user_id = ? AND checked = 1
            GROUP BY checked;
-           
-           select a.address_id, a.state, a.city, a.address, u.default_address from address as a right outer join member as u on a.address_id = u.default_address
-           where a.user_id = ?;`
-        params = [user_id, user_id, user_id, user_id];
-        db.query(sql, params, function (err, results, fields) {
-            if (err) throw err;
-            res.render('cart.ejs', {
-                user_id: user_id,
-                data: results[0],
-                rep: results[1],
-                address: results[3],
-                noOfCheckedItems: results[2].length > 0 ? results[2][0].count : 0,
-                noOfCartItems: req.session.noOfCartItems,
-                noOfWishlistItems: req.session.noOfWishlistItems,
-                formatNum: fn.formatNum,
-                couponResult: [req.session.couponCode, req.session.couponValue, req.session.couponMsg, req.session.couponStatus]
-            });
-        });
-    }
+
+           SELECT a.address_id, a.recipient, a.address, a.state, a.city, a.zip, a.phone, m.default_address
+           FROM address as a
+              RIGHT OUTER JOIN member as m ON a.address_id = m.default_address
+           WHERE m.user_id = ?; `
+    params = [user_id, user_id, user_id, user_id];
+    db.query(sql, params, function (err, results, fields) {
+      if (err) throw err;
+      console.log(results[3]);
+      res.render('cart.ejs', {
+        user_id: user_id,
+        data: results[0],
+        rep: results[1],
+        address: results[3],
+        noOfCheckedItems: results[2].length > 0 ? results[2][0].count : 0,
+        noOfCartItems: req.session.noOfCartItems,
+        noOfWishlistItems: req.session.noOfWishlistItems,
+        formatNum: fn.formatNum,
+        couponResult: [req.session.couponCode, req.session.couponValue, req.session.couponMsg, req.session.couponStatus]
+      });
+    });
+  }
 };
 
 /* ------------------------------ cart에 항목 추가 처리 ------------------------------ */
@@ -108,7 +111,8 @@ exports.delete = function (req, res) {
             } else {
                 console.log("성공적으로 삭제되었습니다.");
             }
-            res.redirect('/my-cart');
+            req.session.backURL = req.header('Referer') || '/';
+            res.redirect(req.session.backURL);
         })
     }
 }

@@ -28,13 +28,21 @@
 
         <div id="sellerSystem" style="display: <%= isSeller === "yes" ? 'block' : 'none' %>">
           <div class="my-2">
-            <button type="button" name="button" class="rounded-pill btn btn-outline-primary subform-btn" onclick="openPage('manageInfo', this, 0)" id="<%= sess.openForm == 0 ? 'defaultOpen' : '' %>">판매자 정보</button>
+            <button type="button" name="button" class="rounded-pill btn btn-outline-primary subform-btn" onclick="openPage('manageInfo', this, 0)" id="<%= sess.openForm == 0 ? 'defaultOpen' : '' %>">
+              판매자 정보
+            </button>
             <button type="button" name="button" class="rounded-pill btn btn-outline-primary subform-btn <%= isSeller === "no" ? 'hidden' : '' %>" onclick="openPage('manageProduct', this, 1)" id="<%= sess.openForm == 1 ? 'defaultOpen' : '' %>">판매하는
-              제품</button>
-            <button type="button" name="button" class="rounded-pill btn btn-outline-primary subform-btn <%= isSeller === "no" ? 'hidden' : '' %>" onclick="openPage('manageShop', this, 2)"
-              id="<%= sess.openForm == 2 ? 'defaultOpen' : '' %>">매장</button>
-            <button type="button" name="button" class="rounded-pill btn btn-outline-primary subform-btn <%= isSeller === "no" ? 'hidden' : '' %>" onclick="openPage('manageStock', this, 3)"
-              id="<%= sess.openForm == 3 ? 'defaultOpen' : '' %>">재고품</button>
+              제품
+            </button>
+            <button type="button" name="button" class="rounded-pill btn btn-outline-primary subform-btn <%= isSeller === "no" ? 'hidden' : '' %>" onclick="openPage('manageShop', this, 2)" id="<%= sess.openForm == 2 ? 'defaultOpen' : '' %>">
+              매장
+            </button>
+            <button type="button" name="button" class="rounded-pill btn btn-outline-primary subform-btn <%= isSeller === "no" ? 'hidden' : '' %>" onclick="openPage('manageStock', this, 3)" id="<%= sess.openForm == 3 ? 'defaultOpen' : '' %>">
+              재고품
+            </button>
+            <button type="button" name="button" class="rounded-pill btn btn-outline-primary subform-btn <%= isSeller === "no" ? 'hidden' : '' %>" onclick="openPage('manageCoupon', this, 4)" id="<%= sess.openForm == 4 ? 'defaultOpen' : '' %>">
+              쿠폰
+            </button>
           </div>
 
           <div id="manageInfo" class="subform">
@@ -111,7 +119,7 @@
             </form>
 
             <h4 class="font-weight-normal"><b>판매하는 제품 목록</b></h4>
-            <table class="table table-dark" style="border-radius: 10px">
+            <table class="table table-light" style="border-radius: 10px">
               <thead>
                 <tr style="border: none">
                   <th scope="col">ID</th>
@@ -189,7 +197,7 @@
             </form>
 
             <h4 class="font-weight-normal"><b>매장 목록</b></h4>
-            <table class="table table-dark" style="border-radius: 10px">
+            <table class="table table-light" style="border-radius: 10px">
               <thead>
                 <tr style="border: none">
                   <th scope="col">ID</th>
@@ -267,7 +275,7 @@
             </form>
             <form class="row" method="post" action="/seller/manage-stock">
               <div class="col-md-12">
-                <table class="table table-dark" style="border-radius: 10px">
+                <table class="table table-light" style="border-radius: 10px">
                   <thead>
                     <tr style="border: none">
                       <th scope="col">ID</th>
@@ -309,6 +317,103 @@
                 </table>
               </div>
             </form>
+          </div>
+
+          <div id="manageCoupon" class="subform">
+            <form class="row" method="post" action="/seller/manage-coupon">
+              <div class="col-md-12">
+                <h4 class="font-weight-normal"><b><%= sess.openCouponInfo.coupon_code == "" ? "쿠폰 발행" : "쿠폰 정보 수정" %></b></h4>
+              </div>
+              <div class="col-md-6">
+                <label for="couponCode">쿠폰 코드</label>
+                <input name="couponCode" type="text" class="form-control mb-3" maxlength="50" value="<%= sess.openCouponInfo.coupon_code %>" <%= sess.openCouponInfo.coupon_code != "" ? "disabled" : "" %> required />
+              </div>
+              <div class="col-md-3">
+                <label for="couponStart">유효기간 (시작)</label>
+                <input name="couponStart" type="date" class="form-control" value="<%= sess.couponValidPeriod.effectiveDate %>" required>
+              </div>
+              <div class="col-md-3">
+                <label for="couponEnd">유효가간 (만기)</label>
+                <input name="couponEnd" type="date" class="form-control" value="<%= sess.couponValidPeriod.expiryDate %>" required>
+              </div>
+              <div class="col-md-6">
+                <label for="couponValue">가치 (원)</label>
+                <input name="couponValue" type="number" class="form-control" min="0" value="<%= sess.openCouponInfo.value %>" required>
+              </div>
+              <div class="col-md-6">
+                <label for="couponMinSpend">최소 소비 (원)</label>
+                <input name="couponMinSpend" type="number" class="form-control mb-3" min="0" value="<%= sess.openCouponInfo.min_spend %>" required>
+              </div>
+
+              <div class="col-md-12 clearfix mb-3">
+                <% if (sess.openCouponInfo.coupon_code == "") { %>
+                <button type="reset" class="btn btn-danger float-right">재쓰기</button>
+                <button class="btn btn-primary float-right mr-2" type="submit" name="shopAdd">발행</button>
+                <% } else { %>
+                <button class="btn btn-danger float-right mr-2" type="button" onClick="location.href='/seller/close-coupon-info'">취소</button>
+                <button class="btn btn-success float-right mr-2" type="submit" name="couponEdit">수정완료</button>
+                <% } %>
+              </div>
+            </form>
+
+            <h4 class="font-weight-normal"><b>발행된 쿠폰 목록</b></h4>
+            <table class="table table-light" style="border-radius: 10px">
+              <thead>
+                <tr>
+                  <th scope="col"></th>
+                  <th scope="col">쿠폰코드</th>
+                  <th scope="col">가치 (원)</th>
+                  <th scope="col">최소 소비 (원)</th>
+                  <th scope="col">유효기간</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (coupons.length == 0) { %>
+                <tr>
+                  <td scope="col" colspan="5" class="text-center">발행된 쿠폰이 없습니다.</td>
+                </tr>
+                <% } %>
+                <% for(let i = 0; i < coupons.length; i++) { %>
+                <tr>
+                  <%
+                  let today, couponStart, couponEnd, couponValidity = false;
+                  today = new Date().getTime();
+                  couponStart = coupons[i].effective_date.getTime();
+                  couponEnd = coupons[i].expiry_date.getTime();
+
+                  if(today > couponStart && today < couponEnd) {
+                    couponValidity = true;
+                  }
+                  %>
+
+                  <% if (couponValidity == true) { %>
+                    <td class="text-success"><i class="fas fa-check-circle"></i></td>
+                  <% } else { %>
+                    <td class="text-danger"><i class="fas fa-times-circle"></i></td>
+                  <% } %>
+                  <th scope="row"><%= coupons[i].coupon_code %></th>
+                  <td><%= formatNum(coupons[i].value) %></td>
+                  <td><%= formatNum(coupons[i].min_spend) %></td>
+                  <td><%= coupons[i].effective_date.getFullYear() %>년 <%= coupons[i].effective_date.getMonth() + 1 %>월 <%= coupons[i].effective_date.getDate() %>일 ~ <%= coupons[i].expiry_date.getFullYear() %>년 <%= coupons[i].expiry_date.getMonth() + 1 %>월 <%= coupons[i].expiry_date.getDate() %>일</td>
+                  <td>
+                    <div class="dropdown">
+                      <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuAction" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        액션
+                      </a>
+
+                      <div class="dropdown-menu" aria-labelledby="dropdownMenuAction">
+                        <button type="button" class="dropdown-item" onClick="location.href='/seller/open-coupon-info/<%= coupons[i].coupon_code %>'"><i class="fas fa-edit mr-2"></i>수정</button>
+                        <button type="button" class="dropdown-item" onClick="location.href='/seller/delete-coupon/<%= coupons[i].coupon_code %>'"><i class="fas fa-trash mr-2"></i>삭제</button>
+                      </div>
+                    </div>
+                    <!-- <a class="m-0"><i class="fas fa-edit mr-1"></i></a>
+                    <a class="m-0"><i class="fas fa-trash"></i></a> -->
+                  </td>
+                </tr>
+                <% } %>
+              </tbody>
+            </table>
           </div>
         </div>
 

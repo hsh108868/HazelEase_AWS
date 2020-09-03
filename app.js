@@ -18,7 +18,6 @@ const cart = require('./routes/cart');
 const wishlist = require('./routes/wishlist');
 
 /* ----------------------------------- */
-
 const app = express();
 
 app.set('view engine', 'ejs');
@@ -59,13 +58,17 @@ app.post("/login", user.login);
 app.get("/logout", user.logout);
 
 //주소록 관리
-app.get('/account/manage-address', address.show);
-app.get('/account/manage-address/new', address.saveAddress);
-app.post('/account/manage-address/new', address.saveAddress);
-app.get("/account/manage-address/edit/:addressId", address.updateAddress);
-app.post("/account/manage-address/edit/:addressId", address.updateAddress);
-app.get("/account/manage-address/delete/:addressId", address.delete);
-app.get("/account/manage-address/default/:addressId", address.default);
+app.post('/account/manage-address', address.add);
+app.post('/account/manage-address/:addressId', address.update);
+app.get('/account/delete-address/:addressId', address.delete);
+app.get('/account/default-address/:addressId', address.default);
+app.get('/account/edit-address/:mode/:addressId', address.edit);
+// app.get('/account/manage-address/new', address.saveAddress);
+// app.post('/account/manage-address/new', address.saveAddress);
+// app.get("/account/manage-address/edit/:addressId", address.updateAddress);
+// app.post("/account/manage-address/edit/:addressId", address.updateAddress);
+// app.get("/account/manage-address/delete/:addressId", address.delete);
+// app.get("/account/manage-address/default/:addressId", address.default);
 
 // 회원정보 수정 페이지의 요청 처리
 app.get("/account/:subPage", user.openSubPage);
@@ -90,8 +93,12 @@ app.get("/seller/update-stock/:productId-:shopId/:productQty", seller.updateStoc
 app.get("/seller/delete-stock/:productId-:shopId", seller.deleteStock);
 app.get("/seller/show-stocks/:shopId", seller.showStocks);
 
-app.get("/seller/withdraw", seller.withdraw);
+app.post("/seller/manage-coupon", seller.manageCoupon);
+app.get("/seller/open-coupon-info/:couponCode", seller.openCouponInfo);
+app.get("/seller/close-coupon-info", seller.closeCouponInfo);
+app.get("/seller/delete-coupon/:couponCode", seller.deleteCoupon);
 
+app.get("/seller/withdraw", seller.withdraw);
 
 // 쇼핑카트, 위시리스트 페이지의 요청 처리
 app.get("/my-cart", cart.show);
@@ -107,7 +114,6 @@ app.get("/wishlist/move/:wishlistId/:productId", wishlist.move);
 
 // 제품 상세내역 페이지의 요청 처리
 app.get("/product/:productId", product.showDetails);
-
 
 // 알림 페이지의 요청 처리
 app.get("/my-notification", function(req, res) {
