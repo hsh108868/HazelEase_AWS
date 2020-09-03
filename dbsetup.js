@@ -18,80 +18,151 @@ db.connect(function(err) {
   console.log("Database connected!");
 });
 
-// member 테이블 생성
-app.get("/cr_tb_member", function(req, res) {
-  var sql = `create table member (
-  	user_id varchar(30) not null,
-  	password varchar(200) not null,
-  	fullname varchar(50) not null,
-  	gender char(1),
-  	birth date,
-  	email varchar(50),
-  	phone varchar(20),
-  	s_money int,
-  	creation_time timestamp default current_timestamp,
-  	primary key(user_id)
-  );`
+app.get("/cr_tb_:tableName", function(req, res) {
+  var tableName = req.params.tableName;
+  var sql;
+
+  switch (tableName) {
+
+    // member 테이블 생성 쿼리
+    case "member":
+      sql = `create table member (
+        user_id varchar(30) not null,
+        password varchar(200) not null,
+        fullname varchar(50) not null,
+        gender char(1),
+        default_address int unsigned,
+        birth date,
+        email varchar(50),
+        phone varchar(20),
+        s_money int,
+        creation_time timestamp default current_timestamp,
+        foreign key(default_address) references address(address_id) on delete cascade,
+        primary key(user_id)
+      );`
+      break;
+
+    // (사용자)address 테이블 생성 쿼리
+    case "address":
+      sql = `create table address (
+        address_id int unsigned not null auto_increment,
+        address varchar(100) not null,
+        city varchar(20),
+        state varchar(20),
+        zip char(5),
+        user_id varchar(30) not null,
+        primary key(address_id),
+        foreign key(user_id) references member(user_id) ON DELETE SET NULL
+      );`
+      break;
+
+    // product 테이블 생성 쿼리
+    case "product":
+      sql = `create table product (
+        product_id int unsigned not null auto_increment,
+        product varchar(100) not null,
+        type_avail varchar(100),
+        info text,
+        price int unsigned not null,
+        discount int(3) unsigned,
+        seller_id varchar(30) not null,
+        rating double unsigned,
+        category varchar(50),
+        qrcode varchar(200),
+        primary key(product_id),
+        foreign key(seller_id) references seller(seller_id) on delete cascade
+      );`
+      break;
+
+    // cart 테이블 생성 쿼리
+    case "cart":
+      sql = `create table cart (
+        cart_id int unsigned not null auto_increment,
+        user_id varchar(30) not null,
+        product_id int unsigned not null,
+        type varchar(50),
+        quantity int(10) unsigned,
+        date date not null,
+        checked int(1),
+        primary key(cart_id),
+        foreign key(user_id) references member(user_id) on delete cascade,
+        foreign key(product_id) references product(product_id) on delete cascade
+      );`
+      break;
+
+    // wishlist 테이블 생성 쿼리
+    case "wishlist":
+      sql = `create table wishlist (
+        wishlist_id int unsigned not null auto_increment,
+        user_id varchar(30) not null,
+        product_id int unsigned not null,
+        date date not null,
+        primary key(wishlist_id),
+        foreign key(user_id) references member(user_id) on delete cascade,
+        foreign key(product_id) references product(product_id) on delete cascade
+      );`
+      break;
+
+    // coupon 테이블 생성 쿼리
+    case "coupon":
+      sql = `create table coupon (
+        coupon_code varchar(30) not null,
+        value int unsigned not null,
+        min_spend int unsigned not null,
+        start_date date,
+        effective_date date not null,
+        primary key(coupon_code)
+      );`
+      break;
+
+    // seller 테이블 생성 쿼리
+    case "seller":
+      sql = `create table seller (
+        seller_id varchar(30) not null,
+        name varchar(50) not null,
+        address varchar(100) not null,
+        phone varchar(20) not null,
+        email varchar(50) not null,
+        primary key(seller_id)
+      );`
+      break;
+
+    // shop 테이블 생성 쿼리
+    case "shop":
+      sql = `create table shop (
+        shop_id int unsigned not null auto_increment,
+        shop varchar(50) not null,
+        address varchar(100) not null,
+        phone varchar(20) not null,
+        seller_id varchar(30) not null,
+        primary key(shop_id),
+        foreign key(seller_id) references seller(seller_id) on delete cascade
+      );`
+      break;
+
+    // stock 테이블 생성 쿼리
+    case "stock":
+      sql = `create table stock (
+        product_id int unsigned not null,
+        shop_id int unsigned not null,
+        quantity varchar(250) not null,
+        seller_id varchar(30) not null,
+        primary key(product_id, shop_id),
+        foreign key(product_id) references product(product_id) on delete cascade,
+        foreign key(shop_id) references shop(shop_id) on delete cascade,
+        foreign key(seller_id) references seller(seller_id) on delete cascade
+      );`
+      break;
+  }
 
   db.query(sql, function(err, result) {
-    if(err) {
-      res.send("Table already exists!");
+    if (err) {
+      res.send("Table already exists or wrong query format! Restart the server to try again.");
       throw err;
     }
     console.log(result);
-    res.send("Table created..");
-  })
-});
-
-// address 테이블 생성
-app.get("/cr_tb_address", function(req, res) {
-  var sql = `create table address (
-  	address_id int unsigned not null auto_increment,
-  	address varchar(100) not null,
-  	city varchar(20),
-  	state varchar(20),
-  	zip char(5),
-  	user_id varchar(30) not null,
-  	primary key(address_id),
-  	foreign key(user_id) references member(user_id) on delete cascade
-  );`
-
-  db.query(sql, function(err, result) {
-    if(err) {
-      res.send("Table already exists!");
-      throw err;
-    }
-    console.log(result);
-    res.send("Table created..");
-  })
-});
-
-// product 테이블 생성
-app.get("/cr_tb_product", function(req, res) {
-  var sql = `create table product (
-  	product_id int unsigned not null auto_increment,
-  	product varchar(100) not null,
-    type_avail varchar(100),
-  	info text,
-  	price int unsigned not null,
-    discount int(3) unsigned,
-  	user_id varchar(30) not null,
-  	rating double unsigned,
-  	quantity int unsigned not null,
-    category varchar(50),
-  	qrcode varchar(200),
-  	primary key(product_id),
-  	foreign key(user_id) references member(user_id) on delete cascade
-  );`
-
-  db.query(sql, function(err, result) {
-    if(err) {
-      res.send("Table already exists!");
-      throw err;
-    }
-    console.log(result);
-    res.send("Table created..");
-  })
+    res.send("Table created successfully..");
+  });
 });
 
 /* product 테이블의 더미 데이터 */
@@ -102,96 +173,6 @@ app.get("/cr_tb_product", function(req, res) {
 // INSERT INTO `product`(`product_id`, `product`, `type_avail`, `info`, `price`, `discount`, `user_id`, `rating`, `quantity`, `category`) VALUES (3, "Carryme - Set: Lightweight Backpack + Pouch", "Green,Khaki", "This pretty drawstring bag has a perfect size for transporting man's or woman's swim gear or PE kit or other essentials for the gym, school and other short trips. Put it on your back and you won't even notice it's there when out on short excursions or bike trips..", 54208, 15, "Trencur", "5.0", 20, "Bags");
 //
 // INSERT INTO `product`(`product_id`, `product`, `type_avail`, `info`, `price`, `discount`, `user_id`, `rating`, `quantity`, `category`) VALUES (4, "Aisyi - Blue Light Blocking Glasses", "Red,Gold,Brown", "As practical as they’re stylish, these black-rimmed glasses with thin but study frames are fitted with blue light blocking technology to protect the eyes. Perfect for long days in front of the computer as well as for quick pre-bedtime peeks at your phone!", 14372, 30, "Trencur", "2.6", 192, "Accessories");
-
-// seller 테이블 생성
-app.get("/cr_tb_seller", function(req, res) {
-  var sql = `create table seller (
-  	user_id varchar(30) not null,
-  	product_id int unsigned not null,
-  	address varchar(100) not null,
-  	phone varchar(20),
-  	email varchar(50),
-  	foreign key(user_id) references member(user_id) on delete cascade,
-  	foreign key(product_id) references product(product_id) on delete cascade
-  );`
-
-  db.query(sql, function(err, result) {
-    if(err) {
-      res.send("Table already exists!");
-      throw err;
-    }
-    console.log(result);
-    res.send("Table created..");
-  })
-});
-
-// cart 테이블 생성
-app.get("/cr_tb_cart", function(req, res) {
-  var sql = `create table cart (
-  	cart_id int unsigned not null auto_increment,
-  	user_id varchar(30) not null,
-  	product_id int unsigned not null,
-    type varchar(50),
-    quantity int(10) unsigned,
-  	date date not null,
-    checked int(1),
-  	primary key(cart_id),
-  	foreign key(user_id) references member(user_id) on delete cascade,
-  	foreign key(product_id) references product(product_id) on delete cascade
-  );`
-
-  db.query(sql, function(err, result) {
-    if(err) {
-      res.send("Table already exists!");
-      throw err;
-    }
-    console.log(result);
-    res.send("Table created..");
-  })
-});
-
-// wishlist 테이블 생성
-app.get("/cr_tb_wishlist", function(req, res) {
-  var sql = `create table wishlist (
-  	wishlist_id int unsigned not null auto_increment,
-  	user_id varchar(30) not null,
-  	product_id int unsigned not null,
-  	date date not null,
-  	primary key(wishlist_id),
-  	foreign key(user_id) references member(user_id) on delete cascade,
-  	foreign key(product_id) references product(product_id) on delete cascade
-  );`
-
-  db.query(sql, function(err, result) {
-    if(err) {
-      res.send("Table already exists!");
-      throw err;
-    }
-    console.log(result);
-    res.send("Table created..");
-  })
-});
-
-// coupon 테이블 생성
-app.get("/cr_tb_coupon", function(req, res) {
-  var sql = `create table coupon (
-  	coupon_code varchar(30) not null,
-  	value int unsigned not null,
-  	min_spend int unsigned not null,
-    start_date date,
-  	effective_date date not null,
-  	primary key(coupon_id)
-  );`
-
-  db.query(sql, function(err, result) {
-    if(err) {
-      res.send("Table already exists!");
-      throw err;
-    }
-    console.log(result);
-    res.send("Table created..");
-  })
-});
 
 app.listen(3000, function() {
   console.log("Server has started at port 3000.");

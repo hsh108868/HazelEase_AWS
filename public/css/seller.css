@@ -1,0 +1,23 @@
+/* h4 {
+  padding: 8px 0;
+} */
+
+.table td, .table th {
+  border-top: none;
+}
+
+.subform {
+  display: none;
+}
+
+.hidden {
+  display: none;
+}
+
+.fixed-width-200 {
+  width: 200px;
+}
+
+.fixed-width-300 {
+  width: 300px;
+}

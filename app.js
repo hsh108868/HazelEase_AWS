@@ -11,7 +11,11 @@ const passport = require("passport")
 /* ---------- 정의된 모듈 ------------- */
 const connection = require("./lib/dbconn"); // DB 연결
 const user = require('./routes/user');
+const seller = require('./routes/seller');
+const address = require('./routes/address');
 const product = require('./routes/product');
+const cart = require('./routes/cart');
+const wishlist = require('./routes/wishlist');
 
 /* ----------------------------------- */
 
@@ -54,24 +58,57 @@ app.post("/login", user.login);
 
 app.get("/logout", user.logout);
 
+//주소록 관리
+app.get('/account/manage-address', address.show);
+app.get('/account/manage-address/new', address.saveAddress);
+app.post('/account/manage-address/new', address.saveAddress);
+app.get("/account/manage-address/edit/:addressId", address.updateAddress);
+app.post("/account/manage-address/edit/:addressId", address.updateAddress);
+app.get("/account/manage-address/delete/:addressId", address.delete);
+app.get("/account/manage-address/default/:addressId", address.default);
+
 // 회원정보 수정 페이지의 요청 처리
 app.get("/account/:subPage", user.openSubPage);
+app.get("/account/:subPage/:shopId", user.openSubPage);
 app.post("/profile", user.saveChanges);
 
-// 쇼핑카트, 위시리스트 페이지의 요청 처리
-app.get("/my-cart", product.showMyCart);
-app.get("/cart/add/:productId", product.cartAdd);
-app.get("/cart/delete/:cartId", product.cartDelete);
-app.post("/cart/update/:totalItems", product.cartUpdate);
-app.post("/apply-coupon", product.applyCoupon);
 
-app.get("/my-wishlist", product.showMyWishlist);
-app.get("/wishlist/add/:productId", product.wishlistAdd);
-app.get("/wishlist/delete/:wishlistId", product.wishlistDelete);
-app.get("/wishlist/move/:wishlistId/:productId", product.wishlistMove);
+// 판매자의 과리 시스템 페이지의 요청 처리
+app.post("/seller/manage-info", seller.manageInfo);
+
+app.post("/seller/manage-product", seller.manageProduct);
+app.get("/seller/open-product-info/:productId", seller.openProductInfo);
+app.get("/seller/close-product-info", seller.closeProductInfo);
+app.get("/seller/delete-product/:productId", seller.deleteProduct);
+
+app.post("/seller/manage-shop", seller.manageShop);
+app.get("/seller/open-shop-info/:shopId", seller.openShopInfo);
+app.get("/seller/close-shop-info", seller.closeShopInfo);
+app.get("/seller/delete-shop/:shopId", seller.deleteShop);
+
+app.post("/seller/add-stock", seller.addStock);
+app.get("/seller/update-stock/:productId-:shopId/:productQty", seller.updateStock);
+app.get("/seller/delete-stock/:productId-:shopId", seller.deleteStock);
+app.get("/seller/show-stocks/:shopId", seller.showStocks);
+
+app.get("/seller/withdraw", seller.withdraw);
+
+
+// 쇼핑카트, 위시리스트 페이지의 요청 처리
+app.get("/my-cart", cart.show);
+app.get("/cart/add/:productId", cart.add);
+app.get("/cart/delete/:cartId", cart.delete);
+app.post("/cart/update/:totalItems", cart.update);
+app.post("/apply-coupon", cart.applyCoupon);
+
+app.get("/my-wishlist", wishlist.show);
+app.get("/wishlist/add/:productId", wishlist.add);
+app.get("/wishlist/delete/:wishlistId", wishlist.delete);
+app.get("/wishlist/move/:wishlistId/:productId", wishlist.move);
 
 // 제품 상세내역 페이지의 요청 처리
 app.get("/product/:productId", product.showDetails);
+
 
 // 알림 페이지의 요청 처리
 app.get("/my-notification", function(req, res) {

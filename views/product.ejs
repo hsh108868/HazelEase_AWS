@@ -1,59 +1,41 @@
-<%- include("partials/header"); -%>
+<%-include("partials/header");-%>
 <!-- Custom styles -->
-<link href="css/product.css" rel="stylesheet">
+<link href="/css/product.css" rel="stylesheet">
 </head>
 
 <body class="text-center">
   <%- include("partials/navbar"); -%>
-  <div class="text-center alert-danger" style="margin-top: 56px;"><%= message %></div>
-  <main role="main">
-    <div class="container">
-      <div class="nav-scroller py-1 mb-2">
-        <nav class="nav d-flex justify-content-between">
-          <a class="p-2 text-muted" href="#">World</a>
-          <a class="p-2 text-muted" href="#">U.S.</a>
-          <a class="p-2 text-muted" href="#">Technology</a>
-          <a class="p-2 text-muted" href="#">Design</a>
-          <a class="p-2 text-muted" href="#">Culture</a>
-          <a class="p-2 text-muted" href="#">Business</a>
-          <a class="p-2 text-muted" href="#">Politics</a>
-          <a class="p-2 text-muted" href="#">Opinion</a>
-          <a class="p-2 text-muted" href="#">Science</a>
-          <a class="p-2 text-muted" href="#">Health</a>
-          <a class="p-2 text-muted" href="#">Style</a>
-          <a class="p-2 text-muted" href="#">Travel</a>
-        </nav>
-      </div>
-
-      <br>
-      <br>
-
-      <div class="container-fluid">
-        <div class="card">
-          <div class="row">
-            <aside class="col-sm-5 border-right">
-                <div class="img-big-wrap">
-                  <div> <a href="#"><img src="image.jpg"></a></div>
-            </aside>
-            <aside class="col-sm-7">
-              <article class="card-body p-5">
-                <h3 class="title mb-3 text-left"><%= data[0].product %></h3>
-                <small class="text-muted float-right">
-                  <% for (let j = 0; j < Math.floor(data[0].rating); j++) { %>
-                    <i class="fas fa-star"></i>
-                  <% } %>
-                  <% if (data[0].rating - Math.floor(data[0].rating) >= 0.5) { %>
-                    <i class="fas fa-star-half-alt"></i>
-                  <% } %>
-                  <% for (let j = 1; j <= 5 - (data[0].rating - Math.floor(data[0].rating) < 0.5  ? Math.floor(data[0].rating) : data[0].rating); j++) { %>
-                    <i class="far fa-star"></i>
-                  <% } %>
-                  (0) <!-- 리뷰의 수 -->
-                </small>
-                <br><hr><br>
-                  <h3 class="text-left"><%= formatNum(data[0].price) %> 원 </h3>
-                <br><hr>
-                <h6 class="text-left"><b>할인 금액</b></h6><p>
+  <div class="container">
+    <div class="container-fluid">
+      <div class="card">
+        <div class="row">
+          <aside class="col-sm-5 border-right">
+            <div class="img-big-wrap">
+              <div> <a href="#"><img src="images/product-default.jpg"></a></div>
+          </aside>
+          <aside class="col-sm-7">
+            <article class="card-body p-5">
+              <h3 class="title mb-3 text-left"><%= data[0].product %></h3>
+              <small class="text-muted float-right">
+                <% for (let j = 0; j < Math.floor(data[0].rating); j++) { %>
+                <i class="fas fa-star"></i>
+                <% } %>
+                <% if (data[0].rating - Math.floor(data[0].rating) >= 0.5) { %>
+                <i class="fas fa-star-half-alt"></i>
+                <% } %>
+                <% for (let j = 1; j <= 5 - (data[0].rating - Math.floor(data[0].rating) < 0.5  ? Math.floor(data[0].rating) : data[0].rating); j++) { %>
+                <i class="far fa-star"></i>
+                <% } %>
+                (0)
+                <!-- 리뷰의 수 -->
+              </small>
+              <br>
+              <hr><br>
+              <h3 class="text-left"><%= formatNum(data[0].price) %> 원 </h3>
+              <br>
+              <hr>
+              <h6 class="text-left"><b>할인 금액</b></h6>
+              <p>
                 <%
                 var price = data[0].price;
                 if (data[0].discount > 0) {
@@ -62,67 +44,32 @@
                 <h3 class="text-left"><s><%= formatNum(data[0].price) %> 원</s> <%= formatNum(price) %> 원</h3>
                 <p class="disc-tag mx-1 text-right"><%= data[0].discount %>% off</p>
                 <% }  else { %>
-                  <h3 class="text-left">0원</h3>
-                  <% } %>
+                <h3 class="text-left">0원</h3>
+                <% } %>
               </p>
-                <hr><br>
-                        <select class="form-control form-control-sm" style="width:70px;">
-                          <option> 1 </option>
-                          <option> 2 </option>
-                          <option> 3 </option>
-                        </select>
-                <br><hr><br>
-                <a href="/cart/add/<%= data[0].product_id %>" class="btn btn-lg btn-primary text-uppercase"> 장바구니 </a>
-                <a href="/wishlist/add/<%= data[0].product_id %>" class="btn btn-lg btn-outline-primary text-uppercase"> 위시리스트 </a>
-              </article>
-            </aside>
-          </div>
-        </div>
-
-
-      </div>
-
-      <!--
-
-      <div class="row m-4">
-        <div class="col-md-12">
-          <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
-            <svg class="bd-placeholder-img" width="300" height="250" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail">
-              <title>Placeholder</title>
-              <rect width="100%" height="100%" fill="#55595c" /><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text>
-            </svg>
-            <div class="col p-4 d-flex flex-column position-static">
-              <table class="text-left" height="200">
-                <colgroup>
-                  <col style="width:10%">
-                  <col style=*>
-                </colgroup>
-                <tr>
-                  <th>제품명</th>
-                  <th class="mb-1 text-muted "><%= data[0].product %></th>
-                </tr>
-                <tr>
-                  <th>가격</th>
-                  <th class="mb-1 text-muted"> <%= formatNum(data[0].price) %></th>
-                </tr>
-                <tr>
-                  <th>갯수</th>
-                  <th class="mb-1 text-muted"> <%= data[0].quantity %> 개 남았습니다</th>
-                </tr>
-              </table>
-
-            </div>
-          </div>
+              <hr><br>
+              <select class="form-control form-control-sm" style="width:70px;">
+                <option> 1 </option>
+                <option> 2 </option>
+                <option> 3 </option>
+              </select>
+              <br>
+              <hr><br>
+              <a href="/cart/add/<%= data[0].product_id %>" class="btn btn-primary text-uppercase"> 장바구니 </a>
+              <a href="/wishlist/add/<%= data[0].product_id %>" class="btn btn-outline-primary text-uppercase"> 위시리스트 </a>
+            </article>
+          </aside>
         </div>
       </div>
 
-      !-->
 
-      <br>
-      <br>
-      <br>
+    </div>
 
-      <div>
+    <br>
+    <br>
+    <br>
+
+    <div>
       <section id="tabs">
         <div class="container-fluid">
           <div class="row fixed-width">
@@ -147,10 +94,11 @@
           </div>
         </div>
       </section>
-      </div>
+    </div>
+  </div>
 
-
-      <!-- FOOTER -->
-      <%- include("partials/copyright"); -%>
-  </main>
-  <%- include("partials/footer"); -%>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="js/cart.js"></script>
+<!-- FOOTER -->
+<%- include("partials/copyright"); -%>
+<%- include("partials/footer"); -%>

@@ -69,11 +69,18 @@
             <a href="/product/<%= product[i].product_id %>"><svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">이미지</text></svg></a>
             <div class="card-body">
               <h6 onClick="location.href='/product/<%= product[i].product_id %>'"><strong><%= product[i].product %></strong></h6>
-              <p class="card-text">₩ <%= formatNum(product[i].price) %></p>
+              <p class="card-text">
+                <% if (product[i].discount > 0) { %>
+                  <small><span class="disc-tag mx-1"><%= product[i].discount %>% off</span></small><br>
+                  <small><s>₩ <%= formatNum(product[i].price) %></s></small> → <strong>₩ <%= formatNum(Math.round(product[i].price*((100-product[i].discount)/100))) %></strong>
+                <% } else { %>
+                  <strong>₩ <%= formatNum(product[i].price) %></strong>
+                <% } %>
+              </p>
               <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
-                  <button type="button" class="btn btn-sm btn-outline-secondary" onClick = "location.href = '/cart/add/<%= product[i].product_id %>'">쇼핑카트 담기</button>
-                  <button type="button" class="btn btn-sm btn-outline-secondary" onClick = "location.href = '/wishlist/add/<%= product[i].product_id %>'"><i class="fas fa-heart fa-lg"></i></button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary" onClick="location.href='/cart/add/<%= product[i].product_id %>'">쇼핑카트 담기</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary" onClick="location.href='/wishlist/add/<%= product[i].product_id %>'"><i class="fas fa-heart fa-lg"></i></button>
                 </div>
                 <small class="text-muted">
                   <% for (let j = 0; j < Math.floor(product[i].rating); j++) { %>
