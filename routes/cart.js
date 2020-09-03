@@ -2,13 +2,13 @@ const fn = require("../lib/other"); // 정의된 함수들 가져오기
 
 /* ------------------------------ cart에 있는 제품 출력 ------------------------------ */
 exports.show = function (req, res) {
-    var user_id = req.session.user_id;
+  var user_id = req.session.user_id;
 
-    if (!req.session.loggedin) {
-        res.redirect("/login");
-        res.end();
-    } else {
-        sql = `SELECT p.product, p.product_id, p.price, p.discount, p.rating, p.type_avail, p.seller_id as seller, c.cart_id, c.quantity, c.user_id, c.checked
+  if (!req.session.loggedin) {
+    res.redirect("/login");
+    res.end();
+  } else {
+    sql = `SELECT p.product, p.product_id, p.price, p.discount, p.rating, p.type_avail, p.seller_id as seller, c.cart_id, c.quantity, c.user_id, c.checked
            FROM product AS p RIGHT OUTER JOIN cart AS c ON p.product_id = c.product_id
            WHERE c.user_id = ?
            ORDER BY seller ASC;

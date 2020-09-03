@@ -72,7 +72,6 @@ app.get("/account/:subPage", user.openSubPage);
 app.get("/account/:subPage/:shopId", user.openSubPage);
 app.post("/profile", user.saveChanges);
 
-
 // 판매자의 과리 시스템 페이지의 요청 처리
 app.post("/seller/manage-info", seller.manageInfo);
 
