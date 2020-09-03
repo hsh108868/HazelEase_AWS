@@ -12,6 +12,7 @@ const passport = require("passport")
 const connection = require("./lib/dbconn"); // DB 연결
 const user = require('./routes/user');
 const seller = require('./routes/seller');
+const address = require('./routes/address');
 const product = require('./routes/product');
 const cart = require('./routes/cart');
 const wishlist = require('./routes/wishlist');
@@ -57,6 +58,15 @@ app.post("/login", user.login);
 
 app.get("/logout", user.logout);
 
+//주소록 관리
+app.get('/account/manage-address', address.show);
+app.get('/account/manage-address/new', address.saveAddress);
+app.post('/account/manage-address/new', address.saveAddress);
+app.get("/account/manage-address/edit/:addressId", address.updateAddress);
+app.post("/account/manage-address/edit/:addressId", address.updateAddress);
+app.get("/account/manage-address/delete/:addressId", address.delete);
+app.get("/account/manage-address/default/:addressId", address.default);
+
 // 회원정보 수정 페이지의 요청 처리
 app.get("/account/:subPage", user.openSubPage);
 app.get("/account/:subPage/:shopId", user.openSubPage);
@@ -97,6 +107,7 @@ app.get("/wishlist/move/:wishlistId/:productId", wishlist.move);
 
 // 제품 상세내역 페이지의 요청 처리
 app.get("/product/:productId", product.showDetails);
+
 
 // 알림 페이지의 요청 처리
 app.get("/my-notification", function(req, res) {

@@ -20,10 +20,10 @@
         </h4>
 
         <div class="card mb-3">
-          <div class="card-header">배송지 <span class="btn btn-sm btn-link">(주소 선택)</span></div>
+          <div class="card-header">배송지 <span class="btn btn-sm btn-link" onclick="location.href='/account/manage-address'">(주소 선택)</span></div>
           <div class="card-body">
             <div class="mb-2"><i class="fas fa-address-card mr-1"></i> 홍길동</div>
-            <div class="mb-2">서울특별시 구로구 고척동 95-130 (203호)</div>
+            <div class="mb-2"><%= address[0].state%> <%= address[0].city%> <%= address[0].address%></div>
             <div>연락처: +821042090323</div>
           </div>
         </div>

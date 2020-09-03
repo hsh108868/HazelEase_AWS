@@ -31,11 +31,13 @@ app.get("/cr_tb_:tableName", function(req, res) {
         password varchar(200) not null,
         fullname varchar(50) not null,
         gender char(1),
+        default_address int unsigned,
         birth date,
         email varchar(50),
         phone varchar(20),
         s_money int,
         creation_time timestamp default current_timestamp,
+        foreign key(default_address) references address(address_id) on delete cascade,
         primary key(user_id)
       );`
       break;
@@ -50,7 +52,7 @@ app.get("/cr_tb_:tableName", function(req, res) {
         zip char(5),
         user_id varchar(30) not null,
         primary key(address_id),
-        foreign key(user_id) references member(user_id) on delete cascade
+        foreign key(user_id) references member(user_id) ON DELETE SET NULL
       );`
       break;
 
@@ -109,7 +111,7 @@ app.get("/cr_tb_:tableName", function(req, res) {
         min_spend int unsigned not null,
         start_date date,
         effective_date date not null,
-        primary key(coupon_id)
+        primary key(coupon_code)
       );`
       break;
 
