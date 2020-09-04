@@ -1,3 +1,5 @@
+const fn = require("../lib/other"); // 정의된 함수들 가져오기
+
 /* ------------------------------ 판매자 정보 업데이트/등록 ------------------------------ */
 exports.manageInfo = function(req, res) {
   user_id = req.session.user_id;
@@ -44,24 +46,106 @@ exports.manageProduct = function(req, res) {
     category: req.body.productCategory
   }
 
+  productImages = req.body.photos;
+  var sql = "";
+  var params = [];
+
+  let sampleFile;
+  let uploadPath;
+
+  if (!req.files || Object.keys(req.files).length === 0) {
+    res.status(400).send('No files were uploaded.');
+    return;
+  }
+
+  console.log('req.files >>>', req.files); // eslint-disable-line
+
+  sampleFile = req.files.photos;
+
+  uploadPath = '/../uploads/' + sampleFile.name;
+
+  sampleFile.mv(uploadPath, function(err) {
+    if (err) {
+      return res.status(500).send(err);
+    }
+
+    res.send('File uploaded to ' + uploadPath);
+  });
+
   if (req.session.openProductInfo.product_id == "") {
     db.query('INSERT INTO product SET ?', post, function(err, results, fields) {
-      if (err) throw err;
-      req.session.message = "새 제품을 성공적으로 등록하였습니다.";
-      res.redirect("/account/seller-management");
+        if (err) throw err;
+
+        if (typeof(productImages) == "object") { //여러 파일 업로드하는 경우
+       //서버에 사진 저장
+        //   console.log(req.files);
+        //   try {
+        //     if (!req.files || Object.keys(req.files).length === 0) {
+        //       return res.status(400).send('No files were uploaded.');
+        //     }
+        //     let data = [];
+        //
+        //     //loop all files
+        //     _.forEach(_.keysIn(req.files.photos), (key) => {
+        //       let photo = req.files.photos[key];
+        //
+        //       //move photo to uploads directory
+        //       console.log(__dirname);
+        //       let uploadPath = '../uploads/' + photo.name;
+        //       console.log(uploadPath);
+        //       photo.mv(uploadPath);
+        //
+        //       //push file details
+        //       data.push({
+        //         name: photo.name,
+        //         mimetype: photo.mimetype,
+        //         size: photo.size
+        //       });
+        //     });
+        //
+        //     //return response
+        //     // res.send({
+        //     //     status: true,
+        //     //     message: 'Files are uploaded',
+        //     //     data: data
+        //     // });
+        // } catch (err) {
+        //   res.status(500).send(err);
+        // }
+
+        productImages.forEach(function(image) {
+          let product_id = results.insertId;
+          sql += 'INSERT INTO image SET file = ?, product_id = ?; '
+          params.push(image);
+          params.push(product_id);
+        });
+
+        db.query(sql, params, function(err1, results1, fields1) {
+          if (err1) throw err;
+          req.session.message = "새 제품을 성공적으로 등록하였습니다.";
+          res.redirect("/account/seller-management");
+        });
+
+      } else if (typeof(productImages) == "string") { // 파일 하나만 업로드하는 경우
+        //서버에 사진 저장
+        // fn.fileUpload();
+        req.session.message = "새 제품을 성공적으로 등록하였습니다.";
+        res.redirect("/account/seller-management");
+      }
     });
-  } else {
-    sql =  `UPDATE product SET product = ?, type_avail = ?, info = ?, price = ?,
+} else {
+  sql = `UPDATE product SET product = ?, type_avail = ?, info = ?, price = ?,
             discount = ?, seller_id = ?, category = ? WHERE product_id = ?; `
-    params = [ post.product, post.type_avail, post.info, post.price, post.discount,
-               post.seller_id, post.category, req.session.openProductInfo.product_id ];
-    db.query(sql, params, function(err, results, fields) {
-      if (err) throw err;
-      req.session.message = "제품 정보 변경이 저장도었습니다.";
-      req.session.openProductInfo = null;
-      res.redirect("/account/seller-management");
-    });
-  }
+  params = [post.product, post.type_avail, post.info, post.price, post.discount,
+    post.seller_id, post.category, req.session.openProductInfo.product_id
+  ];
+  db.query(sql, params, function(err, results, fields) {
+    if (err) throw err;
+    req.session.message = "제품 정보 변경이 저장도었습니다.";
+    req.session.openProductInfo = null;
+    res.redirect("/account/seller-management");
+  });
+}
 }
 /* ------------------------------ 판매하는 제품 정보 여는 처리 ------------------------------ */
 exports.openProductInfo = function(req, res) {
@@ -115,8 +199,8 @@ exports.manageShop = function(req, res) {
       res.redirect("/account/seller-management");
     });
   } else {
-    sql =  `UPDATE shop SET shop = ?, address = ?, phone = ? WHERE shop_id = ?; `
-    params = [ post.shop, post.address, post.phone, req.session.openShopInfo.shop_id];
+    sql = `UPDATE shop SET shop = ?, address = ?, phone = ? WHERE shop_id = ?; `
+    params = [post.shop, post.address, post.phone, req.session.openShopInfo.shop_id];
     db.query(sql, params, function(err, results, fields) {
       if (err) throw err;
       req.session.message = "매장 정보 변경이 저장도었습니다.";
@@ -250,7 +334,7 @@ exports.manageCoupon = function(req, res) {
       res.redirect("/account/seller-management");
     });
   } else {
-    sql =  `UPDATE coupon SET value = ?, min_spend = ?, effective_date = ?, expiry_date = ?, seller_id = ? WHERE coupon_code = ?; `
+    sql = `UPDATE coupon SET value = ?, min_spend = ?, effective_date = ?, expiry_date = ?, seller_id = ? WHERE coupon_code = ?; `
     params = [post.value, post.min_spend, post.effective_date, post.expiry_date, post.seller_id, req.session.openCouponInfo.coupon_code];
     db.query(sql, params, function(err, results, fields) {
       if (err) throw err;
@@ -299,7 +383,7 @@ exports.openCouponInfo = function(req, res) {
     }
 
     req.session.couponValidPeriod = {
-      effectiveDate:  sYYYY + '-' + sMM + '-' + sDD,
+      effectiveDate: sYYYY + '-' + sMM + '-' + sDD,
       expiryDate: eYYYY + '-' + eMM + '-' + eDD
     }
 

@@ -5,8 +5,12 @@ const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mysql = require("mysql");
 const session = require("express-session");
-const passport = require("passport")
-  , LocalStrategy = require('passport-local').Strategy;
+const passport = require("passport"),
+  LocalStrategy = require('passport-local').Strategy;
+const fileUpload = require('express-fileupload');
+const cors = require('cors');
+// const morgan = require('morgan');
+const _ = require('lodash');
 
 /* ---------- 정의된 모듈 ------------- */
 const connection = require("./lib/dbconn"); // DB 연결
@@ -24,6 +28,9 @@ app.set('view engine', 'ejs');
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+app.use(fileUpload({createParentPath: true}));
+app.use(cors());
+// app.use(morgan('dev'));
 
 // DB연결와 체크
 db = connection.db;
@@ -63,12 +70,6 @@ app.post('/account/manage-address/:addressId', address.update);
 app.get('/account/delete-address/:addressId', address.delete);
 app.get('/account/default-address/:addressId', address.default);
 app.get('/account/edit-address/:mode/:addressId', address.edit);
-// app.get('/account/manage-address/new', address.saveAddress);
-// app.post('/account/manage-address/new', address.saveAddress);
-// app.get("/account/manage-address/edit/:addressId", address.updateAddress);
-// app.post("/account/manage-address/edit/:addressId", address.updateAddress);
-// app.get("/account/manage-address/delete/:addressId", address.delete);
-// app.get("/account/manage-address/default/:addressId", address.default);
 
 // 회원정보 수정 페이지의 요청 처리
 app.get("/account/:subPage", user.openSubPage);

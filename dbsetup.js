@@ -157,6 +157,20 @@ app.get("/cr_tb_:tableName", function(req, res) {
         foreign key(seller_id) references seller(seller_id) on delete cascade
       );`
       break;
+
+    // image 테이블 생성 쿼리
+    case "image":
+      sql = `create table image (
+        image_id int unsigned not null auto_increment,
+        file varchar(100) not null,
+        user_id varchar(30),
+    	  seller_id varchar(30),
+    	  product_id int unsigned,
+        primary key(image_id),
+        foreign key(product_id) references product(product_id) on delete cascade,
+        foreign key(user_id) references member(user_id) on delete cascade,
+        foreign key(seller_id) references seller(seller_id) on delete cascade
+      );`
   }
 
   db.query(sql, function(err, result) {

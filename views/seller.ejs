@@ -48,7 +48,7 @@
           <div id="manageInfo" class="subform">
             <form class="row" method="post" action="/seller/manage-info">
               <div class="col-md-12">
-                <h4 class="font-weight-normal"><b>판매자 정보</b></h4>
+                <h4 class="font-weight-normal px-0 mb-3 mt-2"><b>판매자 정보</b></h4>
               </div>
               <div class="col-md-6">
                 <label for="sellerName" >판매자/브랜드명</label>
@@ -73,9 +73,9 @@
           </div>
 
           <div id="manageProduct" class="subform">
-            <form class="row" method="post" action="/seller/manage-product">
+            <form class="row" method="post" action="/seller/manage-product" encType="multipart/form-data">
               <div class="col-md-12">
-                <h4 class="font-weight-normal"><b><%= sess.openProductInfo.product_id == "" ? "판매하는 제품 추가" : "제품 정보 수정" %></b></h4>
+                <h4 class="font-weight-normal px-0 mb-3 mt-2"><b><%= sess.openProductInfo.product_id == "" ? "판매하는 제품 추가" : "제품 정보 수정" %></b></h4>
               </div>
 
               <div class="col-md-6">
@@ -105,7 +105,8 @@
               </div>
               <div class="col-md-6">
                 <label for="productImg">제품 사진</label>
-                <input type="file" class="form-control-file" id="productImg">
+                <input type="file" class="form-control-file" id="productImages" accept="image/png, image/jpeg" name="photos" multiple required>
+                <small class="form-text text-muted mb-3" align="left">(가능한 파일 확장자: .png, .jpg, .jpeg, .jfif, .pjpeg, .pjp)</small>
               </div>
               <div class="col-md-12 clearfix mb-3">
                 <% if (sess.openProductInfo.product_id == "") { %>
@@ -118,7 +119,7 @@
               </div>
             </form>
 
-            <h4 class="font-weight-normal"><b>판매하는 제품 목록</b></h4>
+            <h4 class="font-weight-normal px-0 mb-3 mt-2"><b>판매하는 제품 목록</b></h4>
             <table class="table table-light" style="border-radius: 10px">
               <thead>
                 <tr style="border: none">
@@ -171,7 +172,7 @@
           <div id="manageShop" class="subform">
             <form class="row" method="post" action="/seller/manage-shop">
               <div class="col-md-12">
-                <h4 class="font-weight-normal"><b><%= sess.openShopInfo.shop_id == "" ? "매장/가게 등록" : "매장 정보 수정" %></b></h4>
+                <h4 class="font-weight-normal px-0 mb-3 mt-2"><b><%= sess.openShopInfo.shop_id == "" ? "매장/가게 등록" : "매장 정보 수정" %></b></h4>
               </div>
               <div class="col-md-6">
                 <label for="productName" >매장/가게명</label>
@@ -196,7 +197,7 @@
               </div>
             </form>
 
-            <h4 class="font-weight-normal"><b>매장 목록</b></h4>
+            <h4 class="font-weight-normal px-0 mb-3 mt-2"><b>매장 목록</b></h4>
             <table class="table table-light" style="border-radius: 10px">
               <thead>
                 <tr style="border: none">
@@ -242,7 +243,7 @@
           <div id="manageStock" class="subform">
             <form class="row" method="post" action="/seller/add-stock">
               <div class="col-md-12">
-                <h4 class="font-weight-normal"><b>재고품 관리</b></h4>
+                <h4 class="font-weight-normal px-0 mb-3 mt-2"><b>재고품 관리</b></h4>
               </div>
               <div class="col-md-12">
                 <select id="shopId" name="shopId" class="form-control mb-3">
@@ -322,7 +323,7 @@
           <div id="manageCoupon" class="subform">
             <form class="row" method="post" action="/seller/manage-coupon">
               <div class="col-md-12">
-                <h4 class="font-weight-normal"><b><%= sess.openCouponInfo.coupon_code == "" ? "쿠폰 발행" : "쿠폰 정보 수정" %></b></h4>
+                <h4 class="font-weight-normal px-0 mb-3 mt-2"><b><%= sess.openCouponInfo.coupon_code == "" ? "쿠폰 발행" : "쿠폰 정보 수정" %></b></h4>
               </div>
               <div class="col-md-6">
                 <label for="couponCode">쿠폰 코드</label>
@@ -356,7 +357,7 @@
               </div>
             </form>
 
-            <h4 class="font-weight-normal"><b>발행된 쿠폰 목록</b></h4>
+            <h4 class="font-weight-normal p-0"><b>발행된 쿠폰 목록</b></h4>
             <table class="table table-light" style="border-radius: 10px">
               <thead>
                 <tr>
