@@ -46,106 +46,57 @@ exports.manageProduct = function(req, res) {
     category: req.body.productCategory
   }
 
-  productImages = req.body.photos;
+  productImages = req.files.photos;
   var sql = "";
   var params = [];
 
-  let sampleFile;
-  let uploadPath;
-
-  if (!req.files || Object.keys(req.files).length === 0) {
-    res.status(400).send('No files were uploaded.');
+  // 이미지 10개 이상 차단
+  if (productImages.length > 10) {
+    req.session.messageErr = "이미지 파일이 10 개 이상 불가능합니다.";
+    res.redirect("/account/seller-management");
     return;
   }
 
-  console.log('req.files >>>', req.files); // eslint-disable-line
-
-  sampleFile = req.files.photos;
-
-  uploadPath = '/../uploads/' + sampleFile.name;
-
-  sampleFile.mv(uploadPath, function(err) {
-    if (err) {
-      return res.status(500).send(err);
-    }
-
-    res.send('File uploaded to ' + uploadPath);
-  });
+  //모든 사진 서버에 저장
+  fn.fileUpload(req, res);
 
   if (req.session.openProductInfo.product_id == "") {
     db.query('INSERT INTO product SET ?', post, function(err, results, fields) {
-        if (err) throw err;
+      if (err) throw err;
+      let product_id = results.insertId;
 
-        if (typeof(productImages) == "object") { //여러 파일 업로드하는 경우
-       //서버에 사진 저장
-        //   console.log(req.files);
-        //   try {
-        //     if (!req.files || Object.keys(req.files).length === 0) {
-        //       return res.status(400).send('No files were uploaded.');
-        //     }
-        //     let data = [];
-        //
-        //     //loop all files
-        //     _.forEach(_.keysIn(req.files.photos), (key) => {
-        //       let photo = req.files.photos[key];
-        //
-        //       //move photo to uploads directory
-        //       console.log(__dirname);
-        //       let uploadPath = '../uploads/' + photo.name;
-        //       console.log(uploadPath);
-        //       photo.mv(uploadPath);
-        //
-        //       //push file details
-        //       data.push({
-        //         name: photo.name,
-        //         mimetype: photo.mimetype,
-        //         size: photo.size
-        //       });
-        //     });
-        //
-        //     //return response
-        //     // res.send({
-        //     //     status: true,
-        //     //     message: 'Files are uploaded',
-        //     //     data: data
-        //     // });
-        // } catch (err) {
-        //   res.status(500).send(err);
-        // }
-
+      if (productImages.length > 1) { //여러 파일 업로드하는 경우
+        // 쿼리 반복
         productImages.forEach(function(image) {
-          let product_id = results.insertId;
           sql += 'INSERT INTO image SET file = ?, product_id = ?; '
-          params.push(image);
+          params.push(image.name);
           params.push(product_id);
         });
 
-        db.query(sql, params, function(err1, results1, fields1) {
-          if (err1) throw err;
-          req.session.message = "새 제품을 성공적으로 등록하였습니다.";
-          res.redirect("/account/seller-management");
-        });
+      } else { // 파일 하나만 업로드하는 경우
+        sql = 'INSERT INTO image SET file = ?, product_id = ?; '
+        params = [productImages.name, product_id];
+      }
 
-      } else if (typeof(productImages) == "string") { // 파일 하나만 업로드하는 경우
-        //서버에 사진 저장
-        // fn.fileUpload();
+      db.query(sql, params, function(err1, results1, fields1) {
+        if (err1) throw err;
         req.session.message = "새 제품을 성공적으로 등록하였습니다.";
         res.redirect("/account/seller-management");
-      }
+      });
     });
-} else {
-  sql = `UPDATE product SET product = ?, type_avail = ?, info = ?, price = ?,
+  } else {
+    sql = `UPDATE product SET product = ?, type_avail = ?, info = ?, price = ?,
             discount = ?, seller_id = ?, category = ? WHERE product_id = ?; `
-  params = [post.product, post.type_avail, post.info, post.price, post.discount,
-    post.seller_id, post.category, req.session.openProductInfo.product_id
-  ];
-  db.query(sql, params, function(err, results, fields) {
-    if (err) throw err;
-    req.session.message = "제품 정보 변경이 저장도었습니다.";
-    req.session.openProductInfo = null;
-    res.redirect("/account/seller-management");
-  });
-}
+    params = [post.product, post.type_avail, post.info, post.price, post.discount,
+      post.seller_id, post.category, req.session.openProductInfo.product_id
+    ];
+    db.query(sql, params, function(err, results, fields) {
+      if (err) throw err;
+      req.session.message = "제품 정보 변경이 저장도었습니다.";
+      req.session.openProductInfo = null;
+      res.redirect("/account/seller-management");
+    });
+  }
 }
 /* ------------------------------ 판매하는 제품 정보 여는 처리 ------------------------------ */
 exports.openProductInfo = function(req, res) {
@@ -426,3 +377,32 @@ exports.withdraw = function(req, res) {
     res.redirect('/account/seller-management');
   });
 }
+
+/* ------------------------------ EXTRA ------------------------------ */
+// 이미지 업로드 처리 함수
+// function fileUpload(req, res) {
+//   let uploadedFiles;
+//   let uploadPath;
+//
+//   if (!req.files || Object.keys(req.files).length === 0) {
+//     res.status(400).send('No files were uploaded.');
+//     return;
+//   }
+//
+//   if (req.files.photos.length > 1) {
+//     uploadedFiles = req.files.photos;
+//   } else {
+//     uploadedFiles = [req.files.photos];
+//   }
+//
+//   uploadedFiles.forEach(function(file) {
+//     uploadPath = __dirname + '/../public/uploads/' + file.name;
+//     console.log('File uploaded to ' + uploadPath);
+//
+//     file.mv(uploadPath, function(err) {
+//       if (err) {
+//         return res.status(500).send(err);
+//       }
+//     });
+//   });
+// }
