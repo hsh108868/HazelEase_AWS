@@ -103,10 +103,24 @@
                 <label for="productDesc" >제품 설명</label>
                 <textarea name="productDesc" rows="8" cols="80" class="form-control mb-3"><%= sess.openProductInfo.info %></textarea>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-12">
                 <label for="productImg">제품 사진</label>
-                <input type="file" class="form-control-file" id="productImages" accept="image/png, image/jpeg" name="photos" multiple required>
+                <input type="file" class="form-control-file" id="productImages" accept="image/png, image/jpeg" name="photos" multiple <%= sess.openProductInfo.noOfImg == "" ? 'required' : '' %>>
                 <small class="form-text text-muted mb-3" align="left">(가능한 파일 확장자: .png, .jpg, .jpeg, .jfif, .pjpeg, .pjp)</small>
+                <% if (sess.openProductInfo.noOfImg != "") { %>
+                <div>이 제품은 <span class="text-danger"><%= sess.openProductInfo.noOfImg %></span> 개 이미지가 있습니다.</div>
+                <div class="row">
+                  <% for(let i = 0; i < sess.openProductInfo.images.length; i++) { %>
+                    <div class="card m-2 col-lg-2 col-md-4 col-sm-6">
+                      <a href="/seller/manage-product/delete-image/<%= sess.openProductInfo.images[i].image_id %>"
+                        class="m-1 text-danger" style="position: absolute; right: 0px"><i class="far fa-times-circle fa-lg"></i></a>
+                      <div class="card-body">
+                        <img src="<%= '/uploads/' + sess.openProductInfo.images[i].file %>" alt="product-image" width="100px">
+                      </div>
+                    </div>
+                  <% } %>
+                </div>
+                <% } %>
               </div>
               <div class="col-md-12 clearfix mb-3">
                 <% if (sess.openProductInfo.product_id == "") { %>

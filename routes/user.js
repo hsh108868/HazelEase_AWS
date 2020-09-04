@@ -268,7 +268,8 @@ exports.openSubPage = function(req, res) {
 
       if (req.session.openProductInfo == null) {
         req.session.openProductInfo = { product_id: "", product: "", type_avail: "", info: "", price: "",
-                                        discount: "", seller_id: "", rating: "", category: "", qrcode: "" };
+                                        discount: "", seller_id: "", rating: "", category: "", qrcode: "", noOfImg: "",
+                                        images: [] };
       }
 
       if (req.session.openShopInfo == null) {

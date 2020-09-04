@@ -83,6 +83,7 @@ app.post("/seller/manage-product", seller.manageProduct);
 app.get("/seller/open-product-info/:productId", seller.openProductInfo);
 app.get("/seller/close-product-info", seller.closeProductInfo);
 app.get("/seller/delete-product/:productId", seller.deleteProduct);
+app.get("/seller/manage-product/delete-image/:imageId", seller.deleteImage);
 
 app.post("/seller/manage-shop", seller.manageShop);
 app.get("/seller/open-shop-info/:shopId", seller.openShopInfo);

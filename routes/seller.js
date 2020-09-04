@@ -46,19 +46,31 @@ exports.manageProduct = function(req, res) {
     category: req.body.productCategory
   }
 
-  productImages = req.files.photos;
+  if (req.files) {
+    productImages = req.files.photos;
+  } else {
+    productImages = [];
+  }
+
   var sql = "";
   var params = [];
+  var max = 10;
 
   // 이미지 10개 이상 차단
-  if (productImages.length > 10) {
-    req.session.messageErr = "이미지 파일이 10 개 이상 불가능합니다.";
+  if (req.session.openProductInfo.noOfImg != "") {
+    max = 10 - eval(req.session.openProductInfo.noOfImg);
+  }
+
+  if (productImages.length > max) {
+    req.session.messageErr = "제품의 이미지가 10 개 이상 불가능합니다.";
     res.redirect("/account/seller-management");
     return;
   }
 
   //모든 사진 서버에 저장
+  if (req.files) {
   fn.fileUpload(req, res);
+  }
 
   if (req.session.openProductInfo.product_id == "") {
     db.query('INSERT INTO product SET ?', post, function(err, results, fields) {
@@ -86,15 +98,40 @@ exports.manageProduct = function(req, res) {
     });
   } else {
     sql = `UPDATE product SET product = ?, type_avail = ?, info = ?, price = ?,
-            discount = ?, seller_id = ?, category = ? WHERE product_id = ?; `
+           discount = ?, seller_id = ?, category = ? WHERE product_id = ?; `
     params = [post.product, post.type_avail, post.info, post.price, post.discount,
-      post.seller_id, post.category, req.session.openProductInfo.product_id
-    ];
+              post.seller_id, post.category, req.session.openProductInfo.product_id];
     db.query(sql, params, function(err, results, fields) {
       if (err) throw err;
-      req.session.message = "제품 정보 변경이 저장도었습니다.";
-      req.session.openProductInfo = null;
-      res.redirect("/account/seller-management");
+      let product_id = req.session.openProductInfo.product_id;
+
+      if (productImages.length == 0) {
+        req.session.message = "제품 정보 변경이 저장도었습니다.";
+        req.session.openProductInfo = null;
+        res.redirect("/account/seller-management");
+        return;
+      } else if (productImages.length > 1) { //여러 파일 업로드하는 경우
+        sql = "";
+        params = [];
+
+        // 쿼리 반복
+        productImages.forEach(function(image) {
+          sql += 'INSERT INTO image SET file = ?, product_id = ?; '
+          params.push(image.name);
+          params.push(product_id);
+        });
+
+      } else { // 파일 하나만 업로드하는 경우
+        sql = 'INSERT INTO image SET file = ?, product_id = ?; '
+        params = [productImages.name, product_id];
+      }
+
+      db.query(sql, params, function(err1, results1, fields1) {
+        if (err1) throw err;
+        req.session.message = "제품 정보 변경이 저장도었습니다.";
+        req.session.openProductInfo = null;
+        res.redirect("/account/seller-management");
+      });
     });
   }
 }
@@ -103,8 +140,17 @@ exports.openProductInfo = function(req, res) {
   var reqProductId = req.params.productId;
   req.session.openForm = 1;
 
-  db.query('SELECT * FROM product WHERE product_id = ?', [reqProductId], function(err, results) {
-    req.session.openProductInfo = results[0];
+  sql = `SELECT * FROM product WHERE product_id = ?;
+         SELECT * FROM image WHERE product_id = ?; `
+  params = [reqProductId, reqProductId];
+  db.query(sql, params, function(err, results) {
+    req.session.openProductInfo = results[0][0];
+    req.session.openProductInfo.noOfImg = results[1].length;
+    req.session.openProductInfo.images = [];
+
+    results[1].forEach(function(e) {
+      req.session.openProductInfo.images.push(e);
+    });
     res.redirect('/account/seller-management');
   });
 }
@@ -122,11 +168,33 @@ exports.deleteProduct = function(req, res) {
   req.session.openForm = 1;
 
   var sql = `DELETE FROM product WHERE product_id = ?;
-             DELETE FROM stock WHERE product_id = ?;`
-  var params = [reqProductId, reqProductId];
+             DELETE FROM stock WHERE product_id = ?;
+             DELETE FROM image WHERE product_id = ?`;
+  var params = [reqProductId, reqProductId, reqProductId];
 
   db.query(sql, params, function(err, results) {
     req.session.message = "제품이 삭제되었습니다.";
+    res.redirect('/account/seller-management');
+  });
+}
+
+/* ------------------------------ 제품의 이미지 삭제 처리 ------------------------------ */
+exports.deleteImage = function(req, res) {
+  var reqImageId = req.params.imageId;
+  req.session.openForm = 1;
+  req.session.openProductInfo.images = [];
+
+  var sql = `DELETE FROM image WHERE image_id = ?;
+             SELECT * FROM image WHERE product_id = ?; `
+  var params = [reqImageId, req.session.openProductInfo.product_id];
+
+  db.query(sql, params, function(err, results) {
+    req.session.message = "이미지가 삭제되었습니다.";
+    req.session.openProductInfo.noOfImg = results[1].length;
+
+    results[1].forEach(function(e) {
+      req.session.openProductInfo.images.push(e);
+    });
     res.redirect('/account/seller-management');
   });
 }
@@ -377,32 +445,3 @@ exports.withdraw = function(req, res) {
     res.redirect('/account/seller-management');
   });
 }
-
-/* ------------------------------ EXTRA ------------------------------ */
-// 이미지 업로드 처리 함수
-// function fileUpload(req, res) {
-//   let uploadedFiles;
-//   let uploadPath;
-//
-//   if (!req.files || Object.keys(req.files).length === 0) {
-//     res.status(400).send('No files were uploaded.');
-//     return;
-//   }
-//
-//   if (req.files.photos.length > 1) {
-//     uploadedFiles = req.files.photos;
-//   } else {
-//     uploadedFiles = [req.files.photos];
-//   }
-//
-//   uploadedFiles.forEach(function(file) {
-//     uploadPath = __dirname + '/../public/uploads/' + file.name;
-//     console.log('File uploaded to ' + uploadPath);
-//
-//     file.mv(uploadPath, function(err) {
-//       if (err) {
-//         return res.status(500).send(err);
-//       }
-//     });
-//   });
-// }
