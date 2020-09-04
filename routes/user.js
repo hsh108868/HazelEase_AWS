@@ -230,7 +230,7 @@ exports.openSubPage = function(req, res) {
       });
     } else if (reqSubPage === "purchase-history") {
       db.query('SELECT * FROM ?? WHERE user_id = ?', ['member', user_id], function(err, results, fields) {
-        res.render('purchases.ejs', {
+        res.render('purchase.ejs', {
           user_id: user_id,
           data: results,
           message: req.session.message,

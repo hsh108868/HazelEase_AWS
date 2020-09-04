@@ -29,16 +29,18 @@ exports.show = function (req, res) {
            SELECT a.address_id, a.recipient, a.address, a.state, a.city, a.zip, a.phone, m.default_address
            FROM address as a
               RIGHT OUTER JOIN member as m ON a.address_id = m.default_address
-           WHERE m.user_id = ?; `
+           WHERE m.user_id = ?;
+
+           SELECT * FROM image;`
     params = [user_id, user_id, user_id, user_id];
     db.query(sql, params, function (err, results, fields) {
       if (err) throw err;
-      console.log(results[3]);
       res.render('cart.ejs', {
         user_id: user_id,
         data: results[0],
         rep: results[1],
         address: results[3],
+        images: results[4],
         noOfCheckedItems: results[2].length > 0 ? results[2][0].count : 0,
         noOfCartItems: req.session.noOfCartItems,
         noOfWishlistItems: req.session.noOfWishlistItems,

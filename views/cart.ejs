@@ -124,7 +124,18 @@
           <div class="card-body cart-item">
             <div class="row">
               <div class="col-sm-3">
-                <a href="/product/<%= data[i].product_id %>"><img src="images/product-default.jpg" alt="product-img" width="110%" /></a>
+                <a href="/product/<%= data[i].product_id %>">
+                  <% var isExist = false; %>
+                  <% for(let j = 0; j < images.length; j++) { %>
+                    <% if (images[j].product_id == data[i].product_id) { %>
+                      <img class="border rounded" src="uploads/<%= images[j].file %>" alt="product-image" width="110%" />
+                      <% isExist = true; break; %>
+                    <% } %>
+                  <% } %>
+                  <% if(!isExist) { %>
+                  <img class="border rounded" src="images/product-default.jpg" alt="product-image" width="110%" />
+                  <% } %>
+                </a>
               </div>
               <div class="col-sm-9">
                 <div class="row">
