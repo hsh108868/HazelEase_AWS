@@ -35,17 +35,17 @@ exports.show = function (req, res) {
     params = [user_id, user_id, user_id, user_id];
     db.query(sql, params, function (err, results, fields) {
       if (err) throw err;
+      req.session.noOfCheckedItems = results[2].length > 0 ? results[2][0].count : 0;
+
       res.render('cart.ejs', {
         user_id: user_id,
         data: results[0],
         rep: results[1],
         address: results[3],
         images: results[4],
-        noOfCheckedItems: results[2].length > 0 ? results[2][0].count : 0,
-        noOfCartItems: req.session.noOfCartItems,
-        noOfWishlistItems: req.session.noOfWishlistItems,
         formatNum: fn.formatNum,
-        couponResult: [req.session.couponCode, req.session.couponValue, req.session.couponMsg, req.session.couponStatus]
+        couponResult: [req.session.couponCode, req.session.couponValue, req.session.couponMsg, req.session.couponStatus],
+        sess: req.session
       });
     });
   }
@@ -73,7 +73,7 @@ exports.add = function (req, res) {
                 params = [user_id, reqProductId, now, '1', '1'];
                 db.query(sql, params, function (err, results1) {
                     if (err) throw err;
-                    res.redirect('/my-cart');
+                    res.redirect('/product/' + reqProductId);
                 });
             } else {
                 var qty = results[0].quantity;

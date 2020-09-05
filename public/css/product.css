@@ -1,10 +1,14 @@
 body {
-  padding-top: 90px;
+  padding-top: 60px;
 }
 
 .disc-tag {
   background-color: #ea5455;
-  border-radius: 10px;
+  border-radius: 20px;
   color: #e5e5e5;
-  padding: 2px 5px;
+  padding: 2px 10px;
+}
+
+a:hover {
+  text-decoration: none;
 }

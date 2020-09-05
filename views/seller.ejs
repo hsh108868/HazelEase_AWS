@@ -157,7 +157,7 @@
                 <% for(let i = 0; i < products.length; i++) { %>
                 <tr>
                   <th scope="row"><%= products[i].product_id %></th>
-                  <td><%= products[i].product.length > 15 ? products[i].product.substring(0, 15) + "..." : products[i].product %></td>
+                  <td><a style="color: black" href="/product/<%= products[i].product_id %>"><%= products[i].product.length > 15 ? products[i].product.substring(0, 15) + "..." : products[i].product %></a></td>
                   <td><%= products[i].type_avail.length > 15 ? products[i].type_avail.substring(0, 15) + "..." : products[i].type_avail %></td>
                   <td><%= products[i].info.length > 30 ? products[i].info.substring(0, 30) + "..." : products[i].info %></td>
                   <td><%= formatNum(products[i].price) %></td>
@@ -311,7 +311,7 @@
                     <% for(let i = 0; i < stocks.length; i++) { %>
                     <tr>
                       <th scope="row"><%= stocks[i].product_id %></th>
-                      <td><%= stocks[i].product %></td>
+                      <td><a style="color: black" href="/product/<%= products[i].product_id %>"><%= stocks[i].product %></a></td>
                       <td><%= stocks[i].type_avail %></td>
                       <td>
                         <div class="input-group input-group-sm mb-3">

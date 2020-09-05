@@ -11,10 +11,10 @@ exports.showOutlines = function(req, res) {
   req.session.openForm = 0;
 
   const user_id = req.session.user_id;
-  sql = "SELECT * FROM product; "
-  sql += "SELECT user_id, COUNT(*) as count FROM cart WHERE user_id = ? GROUP BY user_id; "
-  sql += "SELECT user_id, COUNT(*) as count FROM wishlist WHERE user_id = ? GROUP BY user_id; "
-  sql += "SELECT * FROM image; "
+  sql = `SELECT * FROM product;
+         SELECT user_id, COUNT(*) as count FROM cart WHERE user_id = ? GROUP BY user_id;
+         SELECT user_id, COUNT(*) as count FROM wishlist WHERE user_id = ? GROUP BY user_id;
+         SELECT * FROM image;`
   params = [user_id, user_id];
 
   db.query(sql, params, function(err, results, fields) {
@@ -25,10 +25,9 @@ exports.showOutlines = function(req, res) {
     res.render('home.ejs', {
       user_id: user_id,
       product: results[0],
-      noOfCartItems: results[1].length > 0 ? results[1][0].count : "",
-      noOfWishlistItems: results[2].length > 0 ? results[2][0].count : "",
       images: results[3],
-      formatNum: fn.formatNum
+      formatNum: fn.formatNum,
+      sess: req.session
     });
   });
 };
@@ -40,28 +39,39 @@ exports.showDetails = function(req, res) {
   var message = req.session.message;
   const reqProductId = req.params.productId;
 
-  sql = `SELECT * FROM ?? WHERE product_id = ?; `;
-  params = ['product', reqProductId];
+  sql = `SELECT p.*, s.name as seller
+         FROM product as p RIGHT OUTER JOIN seller as s ON p.seller_id = s.seller_id
+         WHERE product_id = ?;
+
+         SELECT * FROM image WHERE product_id = ?;
+         SELECT * FROM wishlist WHERE product_id = ? AND user_id = ?;
+         SELECT user_id, COUNT(*) as count FROM cart WHERE user_id = ? GROUP BY user_id;
+         SELECT user_id, COUNT(*) as count FROM wishlist WHERE user_id = ? GROUP BY user_id;
+
+         SELECT *
+         FROM stock as st RIGHT OUTER JOIN shop as sh ON st.shop_id = sh.shop_id
+         WHERE product_id = ?;`
+  params = [reqProductId, reqProductId, reqProductId, user_id, user_id, user_id, reqProductId];
   db.query(sql, params, function(err, results, fields) {
     if (err) throw err;
-    if (results.length > 0) { // 제품 아이디가 존재하는 경우
-      message = "요청한 제품의 정보가 여기입니다.";
+    req.session.noOfCartItems = results[3].length > 0 ? results[3][0].count : 0;
+    req.session.noOfWishlistItems = results[4].length > 0 ? results[4][0].count : 0;
+
+    var typeAvailable = results[0][0].type_avail.split('/');
+
+    if (results[0].length > 0) { // 제품 아이디가 존재하는 경우
       res.render('product.ejs', {
         user_id: user_id,
-        data: results,
-        message: message,
-        noOfCartItems: req.session.noOfCartItems,
-        noOfWishlistItems: req.session.noOfWishlistItems,
+        data: results[0][0],
+        images: results[1],
+        wishlisted: results[2].length,
+        stock: results[5],
+        typeAvailable: typeAvailable,
+        sess: req.session,
         formatNum: fn.formatNum
       });
     } else { // 제품 아이디가 없는 경우
-      message = "요청한 제품의 정보가 없습니다.";
-      res.render('product.ejs', {
-        user_id: user_id,
-        message: message,
-        noOfCartItems: req.session.noOfCartItems,
-        noOfWishlistItems: req.session.noOfWishlistItems
-      });
+      res.redirect("/");
     }
   });
 };

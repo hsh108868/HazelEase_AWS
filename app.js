@@ -112,6 +112,7 @@ app.post("/apply-coupon", cart.applyCoupon);
 app.get("/my-wishlist", wishlist.show);
 app.get("/wishlist/add/:productId", wishlist.add);
 app.get("/wishlist/delete/:wishlistId", wishlist.delete);
+app.get("/wishlist/delete-toggle/:productId/", wishlist.delete);
 app.get("/wishlist/move/:wishlistId/:productId", wishlist.move);
 
 // 제품 상세내역 페이지의 요청 처리

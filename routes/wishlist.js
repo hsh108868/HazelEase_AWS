@@ -21,9 +21,8 @@ exports.show = function(req, res) {
           user_id: user_id,
           data: results[0],
           images: results[1],
-          noOfCartItems: req.session.noOfCartItems,
-          noOfWishlistItems: req.session.noOfWishlistItems,
-          formatNum: fn.formatNum
+          formatNum: fn.formatNum,
+          sess: req.session
         });
       });
   }
@@ -34,6 +33,8 @@ exports.add = function(req, res) {
   const user_id = req.session.user_id;
   let reqProductId = req.params.productId;
   var now = new Date();
+
+  console.log(req.header);
 
   if (!req.session.loggedin) {
     res.redirect("/login");
@@ -51,7 +52,7 @@ exports.add = function(req, res) {
           }
         });
       }
-      res.redirect('/my-wishlist');
+      res.redirect('/product/' + reqProductId);
     });
   }
 }
@@ -61,10 +62,20 @@ exports.add = function(req, res) {
 
 /* ------------------------------ wishlist에세 항목 삭제 처리 ------------------------------ */
 exports.delete = function(req, res) {
+  const user_id = req.session.user_id;
   var reqWishlistId = req.params.wishlistId;
+  var reqProductId = req.params.productId;
 
-  var sql = 'delete from wishlist where wishlist_id=?;';
-  var params = [reqWishlistId];
+  var sql = 'DELETE FROM wishlist WHERE ';
+  var params = [];
+  if (reqWishlistId) {
+    sql += 'wishlist_id = ?; '
+    params = [reqWishlistId];
+  } else {
+    sql += 'product_id = ? AND user_id = ?; '
+    params = [reqProductId, user_id];
+  }
+
   if (!req.session.loggedin) {
     res.redirect("/login");
     res.end();
@@ -76,7 +87,12 @@ exports.delete = function(req, res) {
       } else {
         console.log("성공적으로 삭제되었습니다.");
       }
-      res.redirect('/my-wishlist');
+
+      if (reqWishlistId) {
+        res.redirect('/my-wishlist');
+      } else {
+        res.redirect('/product/' + reqProductId);
+      }
     })
   }
 }

@@ -199,9 +199,7 @@ exports.openSubPage = function(req, res) {
         res.render('profile.ejs', {
           user_id: user_id,
           data: results,
-          message: req.session.message,
-          noOfCartItems: req.session.noOfCartItems,
-          noOfWishlistItems: req.session.noOfWishlistItems,
+          sess: req.session
         });
       });
     } else if (reqSubPage === "manage-address") {
@@ -222,9 +220,6 @@ exports.openSubPage = function(req, res) {
           user_id: user_id,
           defAddr: results[0][0],
           othAddr: results[1],
-          message: req.session.message,
-          noOfCartItems: req.session.noOfCartItems,
-          noOfWishlistItems: req.session.noOfWishlistItems,
           sess: req.session
         });
       });
@@ -233,9 +228,7 @@ exports.openSubPage = function(req, res) {
         res.render('purchase.ejs', {
           user_id: user_id,
           data: results,
-          message: req.session.message,
-          noOfCartItems: req.session.noOfCartItems,
-          noOfWishlistItems: req.session.noOfWishlistItems,
+          sess: req.session
         });
       });
     } else if (reqSubPage === "payment-method") {
@@ -243,9 +236,7 @@ exports.openSubPage = function(req, res) {
         res.render('paymeth.ejs', {
           user_id: user_id,
           data: results,
-          message: req.session.message,
-          noOfCartItems: req.session.noOfCartItems,
-          noOfWishlistItems: req.session.noOfWishlistItems,
+          sess: req.session
         });
       });
     } else if (reqSubPage === "seller-management") {

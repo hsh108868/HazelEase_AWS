@@ -15,9 +15,9 @@
       </div>
       <div class="tab-subcontent">
         <form class="info-wrap" method="post" action="/profile">
-          <% if (message) { %>
+          <% if (sess.message) { %>
           <div class="alert alert-warning" role="alert">
-            <%= message %>
+            <%= sess.message %>
           </div>
           <%}%>
           <table>
