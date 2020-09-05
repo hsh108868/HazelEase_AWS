@@ -273,6 +273,7 @@ exports.openSubPage = function(req, res) {
       }
 
       db.query(sql, params, function(err, results, fields) {
+        if (err) throw err;
         if (results[0].length > 0) {
           res.render('seller.ejs', {
             user_id: user_id,
@@ -294,6 +295,10 @@ exports.openSubPage = function(req, res) {
             user_id: user_id,
             noOfCartItems: req.session.noOfCartItems,
             noOfWishlistItems: req.session.noOfWishlistItems,
+            products: [],
+            shops: [],
+            stocks: [],
+            coupons: [],
             isSeller: "no",
             seller: emptySeller,
             sess: req.session
