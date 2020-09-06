@@ -122,8 +122,7 @@ app.get("/product/:productId", product.showDetails);
 app.get("/my-notification", function(req, res) {
   res.render("notification", {
     user_id: req.session.user_id,
-    noOfCartItems: req.session.noOfCartItems,
-    noOfWishlistItems: req.session.noOfWishlistItems
+    sess: req.session
   });
 });
 
@@ -131,8 +130,7 @@ app.get("/my-notification", function(req, res) {
 app.get("/my-receipt", function(req, res) {
   res.render("receipt", {
     user_id: req.session.user_id,
-    noOfCartItems: req.session.noOfCartItems,
-    noOfWishlistItems: req.session.noOfWishlistItems
+    sess: req.session
   });
 });
 
