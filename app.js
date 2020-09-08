@@ -20,6 +20,7 @@ const address = require('./routes/address');
 const product = require('./routes/product');
 const cart = require('./routes/cart');
 const wishlist = require('./routes/wishlist');
+const paymeth = require('./routes/paymeth');
 
 /* ----------------------------------- */
 const app = express();
@@ -76,6 +77,9 @@ app.get("/account/:subPage", user.openSubPage);
 app.get("/account/:subPage/:shopId", user.openSubPage);
 app.post("/profile", user.saveChanges);
 
+// 결제 수단 페이지의 요청 처리
+app.post("/account/payment-method", paymeth.hazelPay);
+
 // 판매자의 과리 시스템 페이지의 요청 처리
 app.post("/seller/manage-info", seller.manageInfo);
 
@@ -104,7 +108,7 @@ app.get("/seller/withdraw", seller.withdraw);
 
 // 쇼핑카트, 위시리스트 페이지의 요청 처리
 app.get("/my-cart", cart.show);
-app.get("/cart/add/:productId", cart.add);
+app.post("/cart/add/:productId", cart.add);
 app.get("/cart/delete/:cartId", cart.delete);
 app.post("/cart/update/:totalItems", cart.update);
 app.post("/apply-coupon", cart.applyCoupon);

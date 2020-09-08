@@ -8,8 +8,12 @@ exports.show = function (req, res) {
     res.redirect("/login");
     res.end();
   } else {
-    sql = `SELECT p.product, p.product_id, p.price, p.discount, p.rating, p.type_avail, p.seller_id as seller, c.quantity, c.cart_id, c.user_id, c.checked
-           FROM product AS p RIGHT OUTER JOIN cart AS c ON p.product_id = c.product_id
+    sql = `SELECT p.product_id, p.product, p.price, p.discount, p.rating, p.seller_id as seller,
+                  c.cart_id, c.quantity, c.type, c.shop_id, c.checked,
+                  s.shop
+           FROM product AS p
+              RIGHT OUTER JOIN cart AS c ON p.product_id = c.product_id
+              RIGHT OUTER JOIN shop AS s ON c.shop_id = s.shop_id
            WHERE c.user_id = ?
            ORDER BY seller ASC;
 
@@ -55,36 +59,71 @@ exports.show = function (req, res) {
 exports.add = function (req, res) {
     const user_id = req.session.user_id;
     let reqProductId = req.params.productId;
+    let reqType = req.body.type;
+    let reqQuantity = eval(req.body.quantity);
+    let reqShopId = req.body.shopId;
     var now = new Date();
 
-    var sql = 'SELECT * FROM cart WHERE product_id = ? AND user_id = ?'
-    var params = [reqProductId, user_id];
+    var sql = `SELECT p.type_avail, s.quantity
+               FROM stock as s
+                  RIGHT OUTER JOIN product as p ON s.product_id = p.product_id
+               WHERE s.product_id = ? AND s.shop_id = ?; `
+    var params = [reqProductId, reqShopId];
 
     if (!req.session.loggedin) {
         res.redirect("/login");
         res.end();
     } else {
-        db.query(sql, params, function (err, results) {
+      db.query(sql, params, function (err, results) {
+        let listOfType = results[0].type_avail.split('/');
+        let listOfQty = results[0].quantity.split(',');
+        let index = listOfType.indexOf(reqType);
+
+        if (listOfQty[index] == 0) {
+            req.session.message = "원하는 종류가 선택한 매장에 품절되었습니다."
+            res.redirect('/product/' + reqProductId);
+            return;
+        } else if (reqQuantity > listOfQty[index]) {
+          req.session.message = "요청한 수량이 매장에 있는 수량보다 많습니다."
+          res.redirect('/product/' + reqProductId);
+          return;
+        }
+
+        sql = 'SELECT * FROM cart WHERE product_id = ? AND type = ? AND shop_id = ? AND user_id = ?'
+        params = [reqProductId, reqType, reqShopId, user_id];
+        db.query(sql, params, function (err, resultsA) {
             if (err) {
                 res.send('쇼핑카트 항목 추가에 실패');
                 throw err;
-            } else if (results.length == 0) {
-                sql = 'insert into cart(user_id, product_id, date, quantity, checked) values (?,?,?,?,?);';
-                params = [user_id, reqProductId, now, '1', '1'];
-                db.query(sql, params, function (err, results1) {
-                    if (err) throw err;
-                    res.redirect('/product/' + reqProductId);
-                });
-            } else {
-                var qty = results[0].quantity;
-                sql = 'UPDATE cart SET quantity = ?, checked = ? WHERE cart_id = ?;';
-                params = [qty + 1, 1, results[0].cart_id];
-                db.query(sql, params, function (err, results1) {
+            } else if (resultsA.length == 0) {
+                sql = 'INSERT INTO cart(user_id, product_id, type, shop_id, quantity, date, checked) values (?,?,?,?,?,?,?);';
+                params = [user_id, reqProductId, reqType, reqShopId, reqQuantity, now, '1'];
+                db.query(sql, params, function (err, resultsB) {
                     if (err) throw err;
                     res.redirect('/my-cart');
                 });
+            } else {
+                var qty = eval(resultsA[0].quantity) + reqQuantity;
+
+                if (listOfQty[index] == 0) {
+                    req.session.message = "원하는 종류가 선택한 매장에 품절되었습니다."
+                    res.redirect('/product/' + reqProductId);
+                    return;
+                } else if (qty > listOfQty[index]) {
+                  req.session.message = "카트에 이미 담은 수량과 합해서 수량이 매장에 있는 수량보다 많습니다."
+                  res.redirect('/product/' + reqProductId);
+                  return;
+                }
+                
+                sql = 'UPDATE cart SET quantity = ?, checked = ? WHERE cart_id = ?;'
+                params = [qty, 1, resultsA[0].cart_id];
+                db.query(sql, params, function (err, resultsB) {
+                  if (err) throw err;
+                  res.redirect('/my-cart');
+                });
             }
-        })
+        });
+      });
     }
 }
 /* 오류 발생시 product auto_increment 초기화

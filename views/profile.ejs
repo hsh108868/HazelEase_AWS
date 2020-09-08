@@ -126,6 +126,10 @@
               <td>연락처</td>
               <td><input name="no_tel" type="tel" id="no_tel" class="form-control" placeholder="전화번호" maxlength="20" value="<%= data[0].phone %>" required></td>
             </tr>
+            <tr>
+              <td>하젤페이 머니</td>
+              <td><%= formatNum(data[0].s_money) %> 원</td>
+            </tr>
           </table>
 
           <div class="center-content btn-edit">

@@ -102,8 +102,8 @@
               </p>
               <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
-                  <button type="button" class="btn btn-sm btn-outline-secondary" onClick="location.href='/cart/add/<%= product[i].product_id %>'"><i class="fas fa-shopping-bag fa-lg"></i></button>
-                  <button type="button" class="btn btn-sm btn-outline-secondary" onClick="location.href='/wishlist/add/<%= product[i].product_id %>'"><i class="fas fa-heart fa-lg"></i></button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary" onClick="location.href='/product/<%= product[i].product_id %>'"><i class="fas fa-shopping-bag fa-lg"></i></button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary" onClick="location.href='/product/<%= product[i].product_id %>'"><i class="fas fa-heart fa-lg"></i></button>
                 </div>
                 <small class="text-muted">
                   <% for (let j = 0; j < Math.floor(product[i].rating); j++) { %>

@@ -20,7 +20,7 @@
           <div class="carousel-inner">
             <% for (let i = 0; i < images.length; i++) { %>
             <div class="carousel-item <%= i == 0 ? 'active' : '' %>">
-              <svg class="bd-placeholder-img card-img-top" width="100%" height="500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail" viewBox="0 0 100 100">
+              <svg class="bd-placeholder-img card-img-top" width="100%" height="520" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail" viewBox="0 0 100 100">
                 <image href="/uploads/<%= images[i].file %>" alt="product-image" width="100px" />
               </svg>
             </div>
@@ -36,7 +36,7 @@
           </a>
         </div>
       </div>
-      <div class="col-lg-6 p-4">
+      <form class="col-lg-6 p-4" method="POST" action="/cart/add/<%= data.product_id %>">
         <div class="p-4" style="position: absolute; top: 0; right: 0px;">
           <h3>
             <a style="color: #ea5455;" type="button" href="/wishlist/<%= wishlisted == 1 ? 'delete-toggle' : 'add' %>/<%= data.product_id %>">
@@ -45,7 +45,7 @@
           </h3>
           <h3><i class="fas fa-share-alt"></i></h3>
         </div>
-        <h3 class="title mb-3 text-left"><%= data.product %></h3>
+        <h3 class="title mb-3 text-left" style="width: 95%"><%= data.product %></h3>
         <p>
           <span style="color: #fbd46d;">
             <% for (let j = 0; j < Math.floor(data.rating); j++) { %>
@@ -78,7 +78,7 @@
               <option value=""> 종류 선택 </option>
               <% } %>
               <% for (let i = 0; i < typeAvailable.length; i++) { %>
-                <option value="<%= typeAvailable[i] != '' ? typeAvailable[i] : 'none' %>"><%= typeAvailable[i] != '' ? typeAvailable[i] : '종류 없음' %></option>
+                <option value="<%= typeAvailable[i] != '' ? typeAvailable[i] : 'None' %>"><%= typeAvailable[i] != '' ? typeAvailable[i] : '종류 없음' %></option>
               <% } %>
             </select>
           </div>
@@ -98,6 +98,9 @@
                 <option value="<%= stock[i].shop_id %>"><%= stock[i].shop %></option>
               <% } %>
             </select>
+            <small class="text-danger"><%= sess.message %></small>
+            <small class="text-warning"><%= sess.notice %></small>
+            <% sess.message = ""; sess.notice = ""; %>
           </div>
           <div class="col-sm-12">
             <div class="my-3 text-secondary">
@@ -109,9 +112,9 @@
           </div>
         </div>
         <div class="clearfix">
-          <a href="/cart/add/<%= data.product_id %>" class="btn btn-primary btn-block text-uppercase float-left">쇼핑가트 담기 <i class="fas fa-shopping-bag pl-2"></i></a>
+          <button type="submit" class="btn btn-primary btn-block text-uppercase float-left">쇼핑가트 담기 <i class="fas fa-shopping-bag pl-2"></i></button>
         </div>
-      </div>
+      </form>
     </div>
   </div>
 
@@ -119,9 +122,9 @@
     <div class="row">
       <div class="col-sm-12 p-0">
         <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
-          <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-info" role="tab" aria-controls="nav-info" aria-selected="true">상세 정보</a>
-          <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-shop" role="tab" aria-controls="nav-shop" aria-selected="false">매장</a>
-          <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-review" role="tab" aria-controls="nav-review" aria-selected="false">리뷰</a>
+          <a class="nav-item nav-link active" id="nav-info-tab" data-toggle="tab" href="#nav-info" role="tab" aria-controls="nav-info" aria-selected="true">상세 정보</a>
+          <a class="nav-item nav-link" id="nav-shop-tab" data-toggle="tab" href="#nav-shop" role="tab" aria-controls="nav-shop" aria-selected="false">매장</a>
+          <a class="nav-item nav-link" id="nav-review-tab" data-toggle="tab" href="#nav-review" role="tab" aria-controls="nav-review" aria-selected="false">리뷰</a>
         </div>
       </div>
       <div class="col-sm-12 border border-top-0 rounded-bottom">

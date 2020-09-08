@@ -18,167 +18,6 @@ db.connect(function(err) {
   console.log("Database connected!");
 });
 
-app.get("/cr_tb_:tableName", function(req, res) {
-  var tableName = req.params.tableName;
-  var sql;
-
-  switch (tableName) {
-
-    // (사용자)address 테이블 생성 쿼리
-    case "address":
-      sql = `create table address (
-        address_id int unsigned not null auto_increment,
-        recipient varchar(30),
-        address varchar(100) not null,
-        city varchar(20),
-        state varchar(20),
-        zip char(5),
-        phone varchar(20),
-        primary key(address_id)
-      );`
-      break;
-
-      // member 테이블 생성 쿼리
-    case "member":
-      sql = `create table member (
-        user_id varchar(30) not null,
-        password varchar(200) not null,
-        fullname varchar(50) not null,
-        gender char(1),
-        birth date,
-        email varchar(50),
-        phone varchar(20),
-        s_money int,
-        creation_time timestamp default current_timestamp,
-        primary key(user_id)
-      );`
-      break;
-
-      // seller 테이블 생성 쿼리
-    case "seller":
-      sql = `create table seller (
-        seller_id varchar(30) not null,
-        name varchar(50) not null,
-        address varchar(100) not null,
-        phone varchar(20) not null,
-        email varchar(50) not null,
-        primary key(seller_id)
-      );`
-      break;
-
-      // product 테이블 생성 쿼리
-    case "product":
-      sql = `create table product (
-        product_id int unsigned not null auto_increment,
-        product varchar(100) not null,
-        type_avail varchar(100),
-        info text,
-        price int unsigned not null,
-        discount int(3) unsigned,
-        seller_id varchar(30) not null,
-        rating double unsigned,
-        category varchar(50),
-        qrcode varchar(200),
-        primary key(product_id),
-        foreign key(seller_id) references seller(seller_id) on delete cascade
-      );`
-      break;
-
-      // cart 테이블 생성 쿼리
-    case "cart":
-      sql = `create table cart (
-        cart_id int unsigned not null auto_increment,
-        user_id varchar(30) not null,
-        product_id int unsigned not null,
-        type varchar(50),
-        quantity int(10) unsigned,
-        date date not null,
-        checked int(1),
-        primary key(cart_id),
-        foreign key(user_id) references member(user_id) on delete cascade,
-        foreign key(product_id) references product(product_id) on delete cascade
-      );`
-      break;
-
-      // wishlist 테이블 생성 쿼리
-    case "wishlist":
-      sql = `create table wishlist (
-        wishlist_id int unsigned not null auto_increment,
-        user_id varchar(30) not null,
-        product_id int unsigned not null,
-        date date not null,
-        primary key(wishlist_id),
-        foreign key(user_id) references member(user_id) on delete cascade,
-        foreign key(product_id) references product(product_id) on delete cascade
-      );`
-      break;
-
-      // coupon 테이블 생성 쿼리
-    case "coupon":
-      sql = `create table coupon (
-        coupon_code varchar(30) not null,
-        value int unsigned not null,
-        min_spend int unsigned not null,
-        effective_date date not null,
-        expiry_date date not null,
-        seller_id varchar(30) not null,
-        primary key(coupon_code),
-        foreign key(seller_id) references seller(seller_id) on delete cascade
-      );`
-      break;
-
-      // shop 테이블 생성 쿼리
-    case "shop":
-      sql = `create table shop (
-        shop_id int unsigned not null auto_increment,
-        shop varchar(50) not null,
-        address varchar(100) not null,
-        phone varchar(20) not null,
-        seller_id varchar(30) not null,
-        primary key(shop_id),
-        foreign key(seller_id) references seller(seller_id) on delete cascade
-      );`
-      break;
-
-      // stock 테이블 생성 쿼리
-    case "stock":
-      sql = `create table stock (
-        product_id int unsigned not null,
-        shop_id int unsigned not null,
-        quantity varchar(250) not null,
-        seller_id varchar(30) not null,
-        primary key(product_id, shop_id),
-        foreign key(product_id) references product(product_id) on delete cascade,
-        foreign key(shop_id) references shop(shop_id) on delete cascade,
-        foreign key(seller_id) references seller(seller_id) on delete cascade
-      );`
-      break;
-
-      // image 테이블 생성 쿼리
-    case "image":
-      sql = `create table image (
-        image_id int unsigned not null auto_increment,
-        file varchar(100) not null,
-        user_id varchar(30),
-    	  seller_id varchar(30),
-    	  product_id int unsigned,
-        primary key(image_id),
-        foreign key(product_id) references product(product_id) on delete cascade,
-        foreign key(user_id) references member(user_id) on delete cascade,
-        foreign key(seller_id) references seller(seller_id) on delete cascade
-      );`
-  }
-
-  db.query(sql, function(err, result) {
-    if (err) {
-      res.send("Table already exists or wrong query format! Restart the server to try again.");
-      throw err;
-    }
-    console.log(result);
-    res.send("Table created successfully..");
-  });
-});
-
 app.get("/setup_db", function(req, res) {
   var sql = `
       create table address (
@@ -229,40 +68,6 @@ app.get("/setup_db", function(req, res) {
           foreign key(seller_id) references seller(seller_id) on delete cascade
     );
 
-    create table cart (
-          cart_id int unsigned not null auto_increment,
-          user_id varchar(30) not null,
-          product_id int unsigned not null,
-          type varchar(50),
-          quantity int(10) unsigned,
-          date date not null,
-          checked int(1),
-          primary key(cart_id),
-          foreign key(user_id) references member(user_id) on delete cascade,
-          foreign key(product_id) references product(product_id) on delete cascade
-    );
-
-    create table wishlist (
-          wishlist_id int unsigned not null auto_increment,
-          user_id varchar(30) not null,
-          product_id int unsigned not null,
-          date date not null,
-          primary key(wishlist_id),
-          foreign key(user_id) references member(user_id) on delete cascade,
-          foreign key(product_id) references product(product_id) on delete cascade
-    );
-
-    create table coupon (
-          coupon_code varchar(30) not null,
-          value int unsigned not null,
-          min_spend int unsigned not null,
-          effective_date date not null,
-          expiry_date date not null,
-          seller_id varchar(30) not null,
-          primary key(coupon_code),
-          foreign key(seller_id) references seller(seller_id) on delete cascade
-    );
-
     create table shop (
           shop_id int unsigned not null auto_increment,
           shop varchar(50) not null,
@@ -281,6 +86,43 @@ app.get("/setup_db", function(req, res) {
           primary key(product_id, shop_id),
           foreign key(product_id) references product(product_id) on delete cascade,
           foreign key(shop_id) references shop(shop_id) on delete cascade,
+          foreign key(seller_id) references seller(seller_id) on delete cascade
+    );
+
+    create table cart (
+          cart_id int unsigned not null auto_increment,
+          user_id varchar(30) not null,
+          product_id int unsigned not null,
+          type varchar(50) not null,
+          shop_id int unsigned not null,
+          quantity int(10) unsigned,
+          date date not null,
+          checked int(1),
+          primary key(cart_id),
+          foreign key(user_id) references member(user_id) on delete cascade,
+          foreign key(product_id) references product(product_id) on delete cascade,
+          foreign key(shop_id) references shop(shop_id) on delete cascade
+    );
+
+    create table wishlist (
+          wishlist_id int unsigned not null auto_increment,
+          user_id varchar(30) not null,
+          product_id int unsigned not null,
+          shop_id int unsigned not null,
+          date date not null,
+          primary key(wishlist_id),
+          foreign key(user_id) references member(user_id) on delete cascade,
+          foreign key(product_id) references product(product_id) on delete cascade
+    );
+
+    create table coupon (
+          coupon_code varchar(30) not null,
+          value int unsigned not null,
+          min_spend int unsigned not null,
+          effective_date date not null,
+          expiry_date date not null,
+          seller_id varchar(30) not null,
+          primary key(coupon_code),
           foreign key(seller_id) references seller(seller_id) on delete cascade
     );
 
@@ -339,3 +181,164 @@ app.get("/populate_db", function(req, res) {
 app.listen(3000, function() {
   console.log("Server has started at port 3000.");
 });
+
+// app.get("/cr_tb_:tableName", function(req, res) {
+//   var tableName = req.params.tableName;
+//   var sql;
+//
+//   switch (tableName) {
+//
+//     // (사용자)address 테이블 생성 쿼리
+//     case "address":
+//       sql = `create table address (
+//         address_id int unsigned not null auto_increment,
+//         recipient varchar(30),
+//         address varchar(100) not null,
+//         city varchar(20),
+//         state varchar(20),
+//         zip char(5),
+//         phone varchar(20),
+//         primary key(address_id)
+//       );`
+//       break;
+//
+//       // member 테이블 생성 쿼리
+//     case "member":
+//       sql = `create table member (
+//         user_id varchar(30) not null,
+//         password varchar(200) not null,
+//         fullname varchar(50) not null,
+//         gender char(1),
+//         birth date,
+//         email varchar(50),
+//         phone varchar(20),
+//         s_money int,
+//         creation_time timestamp default current_timestamp,
+//         primary key(user_id)
+//       );`
+//       break;
+//
+//       // seller 테이블 생성 쿼리
+//     case "seller":
+//       sql = `create table seller (
+//         seller_id varchar(30) not null,
+//         name varchar(50) not null,
+//         address varchar(100) not null,
+//         phone varchar(20) not null,
+//         email varchar(50) not null,
+//         primary key(seller_id)
+//       );`
+//       break;
+//
+//       // product 테이블 생성 쿼리
+//     case "product":
+//       sql = `create table product (
+//         product_id int unsigned not null auto_increment,
+//         product varchar(100) not null,
+//         type_avail varchar(100),
+//         info text,
+//         price int unsigned not null,
+//         discount int(3) unsigned,
+//         seller_id varchar(30) not null,
+//         rating double unsigned,
+//         category varchar(50),
+//         qrcode varchar(200),
+//         primary key(product_id),
+//         foreign key(seller_id) references seller(seller_id) on delete cascade
+//       );`
+//       break;
+//
+//       // cart 테이블 생성 쿼리
+//     case "cart":
+//       sql = `create table cart (
+//         cart_id int unsigned not null auto_increment,
+//         user_id varchar(30) not null,
+//         product_id int unsigned not null,
+//         type varchar(50) not null,
+//         quantity int(10) unsigned,
+//         date date not null,
+//         checked int(1),
+//         primary key(cart_id),
+//         foreign key(user_id) references member(user_id) on delete cascade,
+//         foreign key(product_id) references product(product_id) on delete cascade
+//       );`
+//       break;
+//
+//       // wishlist 테이블 생성 쿼리
+//     case "wishlist":
+//       sql = `create table wishlist (
+//         wishlist_id int unsigned not null auto_increment,
+//         user_id varchar(30) not null,
+//         product_id int unsigned not null,
+//         date date not null,
+//         primary key(wishlist_id),
+//         foreign key(user_id) references member(user_id) on delete cascade,
+//         foreign key(product_id) references product(product_id) on delete cascade
+//       );`
+//       break;
+//
+//       // coupon 테이블 생성 쿼리
+//     case "coupon":
+//       sql = `create table coupon (
+//         coupon_code varchar(30) not null,
+//         value int unsigned not null,
+//         min_spend int unsigned not null,
+//         effective_date date not null,
+//         expiry_date date not null,
+//         seller_id varchar(30) not null,
+//         primary key(coupon_code),
+//         foreign key(seller_id) references seller(seller_id) on delete cascade
+//       );`
+//       break;
+//
+//       // shop 테이블 생성 쿼리
+//     case "shop":
+//       sql = `create table shop (
+//         shop_id int unsigned not null auto_increment,
+//         shop varchar(50) not null,
+//         address varchar(100) not null,
+//         phone varchar(20) not null,
+//         seller_id varchar(30) not null,
+//         primary key(shop_id),
+//         foreign key(seller_id) references seller(seller_id) on delete cascade
+//       );`
+//       break;
+//
+//       // stock 테이블 생성 쿼리
+//     case "stock":
+//       sql = `create table stock (
+//         product_id int unsigned not null,
+//         shop_id int unsigned not null,
+//         quantity varchar(250) not null,
+//         seller_id varchar(30) not null,
+//         primary key(product_id, shop_id),
+//         foreign key(product_id) references product(product_id) on delete cascade,
+//         foreign key(shop_id) references shop(shop_id) on delete cascade,
+//         foreign key(seller_id) references seller(seller_id) on delete cascade
+//       );`
+//       break;
+//
+//       // image 테이블 생성 쿼리
+//     case "image":
+//       sql = `create table image (
+//         image_id int unsigned not null auto_increment,
+//         file varchar(100) not null,
+//         user_id varchar(30),
+//     	  seller_id varchar(30),
+//     	  product_id int unsigned,
+//         primary key(image_id),
+//         foreign key(product_id) references product(product_id) on delete cascade,
+//         foreign key(user_id) references member(user_id) on delete cascade,
+//         foreign key(seller_id) references seller(seller_id) on delete cascade
+//       );`
+//   }
+//
+//   db.query(sql, function(err, result) {
+//     if (err) {
+//       res.send("Table already exists or wrong query format! Restart the server to try again.");
+//       throw err;
+//     }
+//     console.log(result);
+//     res.send("Table created successfully..");
+//   });
+// });

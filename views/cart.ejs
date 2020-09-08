@@ -142,7 +142,10 @@
                   <div class="col-sm-10">
                     <h5 class="card-title">
                       <a href="/product/<%= data[i].product_id %>"><%= data[i].product %></a>
-                      <br><small><%= data[i].type_avail %></small>
+                      <br><small><a href="#" class="text-success">(<%= data[i].shop %>)</a></small>
+                      <% if (data[i].type != "None") { %>
+                      <br><small>종류: <%= data[i].type %></small>
+                      <% } %>
                     </h5>
                   </div>
                   <div class="col-sm-2">

@@ -199,7 +199,8 @@ exports.openSubPage = function(req, res) {
         res.render('profile.ejs', {
           user_id: user_id,
           data: results,
-          sess: req.session
+          sess: req.session,
+          formatNum: fn.formatNum
         });
       });
     } else if (reqSubPage === "manage-address") {
@@ -232,10 +233,11 @@ exports.openSubPage = function(req, res) {
         });
       });
     } else if (reqSubPage === "payment-method") {
-      db.query('SELECT * FROM ?? WHERE user_id = ?', ['member', user_id], function(err, results, fields) {
+      db.query('SELECT s_money FROM ?? WHERE user_id = ?', ['member', user_id], function(err, results, fields) {
         res.render('paymeth.ejs', {
           user_id: user_id,
-          data: results,
+          hazelMoney: results[0].s_money,
+          formatNum: fn.formatNum,
           sess: req.session
         });
       });

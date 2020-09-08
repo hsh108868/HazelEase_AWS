@@ -110,16 +110,15 @@ exports.move = function(req, res) {
     res.redirect("/login");
     res.end();
   } else {
-    var sql = `SELECT product_id FROM wishlist WHERE wishlist_id = ?;
-               INSERT INTO cart(user_id, product_id, date, quantity) values (?, ?, ?, ?);
-               DELETE FROM wishlist WHERE wishlist_id = ?;`
-    var params = [reqWishlistId, user_id, reqProductId, now, 1, reqWishlistId];
+    var sql = `DELETE FROM wishlist WHERE wishlist_id = ?;`
+    var params = [reqWishlistId];
     db.query(sql, params, function(err, results) {
       if (err) {
         console.log('쇼핑카트 담기에 실패');
         throw err;
       }
-      res.redirect('/my-wishlist');
+      req.session.notice = "종류와 매장을 선택하세요."
+      res.redirect('/product/' + reqProductId);
     });
   }
 }
