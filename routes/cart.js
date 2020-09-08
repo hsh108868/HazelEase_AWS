@@ -114,7 +114,7 @@ exports.add = function (req, res) {
                   res.redirect('/product/' + reqProductId);
                   return;
                 }
-                
+
                 sql = 'UPDATE cart SET quantity = ?, checked = ? WHERE cart_id = ?;'
                 params = [qty, 1, resultsA[0].cart_id];
                 db.query(sql, params, function (err, resultsB) {
@@ -177,6 +177,11 @@ exports.update = function (req, res) {
         refVarCart = "req.body.cart" + i.toString();
         refVarQty = "req.body.qty" + i.toString();
         refVarCb = "req.body.cb" + i.toString();
+
+        if (eval(refVarQty) == "" || "0") {
+          refVarQty = '1';
+        }
+
         cartIds.push(eval(refVarCart));
         qtyValues.push(eval(refVarQty));
         cbCond.push(eval(refVarCb));

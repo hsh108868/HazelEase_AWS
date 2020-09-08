@@ -138,6 +138,37 @@ app.get("/setup_db", function(req, res) {
           foreign key(seller_id) references seller(seller_id) on delete cascade
     );
 
+    create table transaction (
+          trans_id varchar(10) not null,
+          user_id varchar(30) not null,
+          total_discount int unsigned,
+          total_paid int unsigned,
+          coupon_code varchar(30),
+          date date not null,
+          primary key(trans_id),
+          foreign key(user_id) references member(user_id) on delete cascade,
+          foreign key(coupon_code) references coupon(coupon_code) on delete cascade
+    );
+
+    create table orders (
+          trans_id varchar(10) not null,
+          order_id varchar(10) not null,
+          seller_id varchar(30) not null,
+          product_id int unsigned not null,
+          type varchar(30) not null,
+          quantity int unsigned not null,
+          subtotal int unsigned not null,
+          shop_id int unsigned not null,
+          user_id varchar(30) not null,
+          status varchar(10) not null,
+          primary key(order_id),
+          foreign key(trans_id) references transaction(trans_id) on delete cascade,
+          foreign key(seller_id) references seller(seller_id),
+          foreign key(product_id) references product(product_id),
+          foreign key(shop_id) references shop(shop_id),
+          foreign key(user_id) references member(user_id) on delete cascade
+    );
+
     ALTER TABLE member ADD COLUMN default_address int unsigned AFTER s_money;
     ALTER TABLE member ADD FOREIGN KEY (default_address) REFERENCES address(address_id) ON DELETE CASCADE;
     ALTER TABLE address ADD COLUMN user_id varchar(30) not null AFTER phone;
