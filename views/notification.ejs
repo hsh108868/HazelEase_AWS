@@ -9,20 +9,55 @@
   <div class="container py-4">
 
     <div class="row">
-
-      <div class="col-md-12 mt-4">
+      <% if( cartCount.length === 0) { %>
+        <h4 class="mb-3">구매된 상품이 없습니다.</h4>
+      <% }  else {%>
+        <div class="col-md-12 mt-4">
         <h4 class="mb-3">상품이 구매되었습니다.</h4>
-
-        <!-- 판매자 1 -->
+          <% var i = 0;%>
+          <% for (let p = 0; p < cartCount.length; p++) {%>
+          <!-- 판매자 1 -->
         <div class="card mb-4">
           <div class="card-header clearfix">
-            판매자명
+            <%= cartCount[p].sellername %>
             <div class="float-right">
-              No. 24030255240
+              <%= result[p].order_id %>
             </div>
+            <% for (let q = 0; q < data.length; q++, i++) {%>
           </div>
           <div class="row">
             <!-- 상품 1 -->
+            <div class="col-md-6">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-sm-3">
+                    <% var isExist = false; %>
+                    <% for(let j = 0; j < images.length; j++) { %>
+                      <% if (images[j].product_id == data[i].product_id) { %>
+                        <img class="border rounded" src="uploads/<%= images[j].file %>"
+                             alt="product-image" width="110%"/>
+                        <% isExist = true; break; %>
+                      <% } %>
+                    <% } %>
+                    <% if(!isExist) { %>
+                      <img class="border rounded" src="images/product-default.jpg"
+                           alt="product-image" width="110%"/>
+                    <% } %>
+                  </div>
+                  <div class="col-sm-9">
+                    <h5 class="card-title">
+                      <%= data[i].product%>
+                      <% if (data[i].type != "None") { %>
+                      <br><small><%= data[i].type %></small>
+                      <% } %>
+                    </h5>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <% } %>
+            <!--
+             상품 2
             <div class="col-md-6">
               <div class="card-body">
                 <div class="row">
@@ -38,7 +73,53 @@
                 </div>
               </div>
             </div>
-            <!-- 상품 2 -->
+            !-->
+          </div>
+          <div class="clear-fix my-2 mx-1">
+            <div class="float-left">
+              <button type="button" class="btn btn-link mx-2">취소</button>
+            </div>
+            <div class="float-right">
+              <small class="mr-3 text-danger">수령법 선택 0000-00-00까지</small>
+              <button type="button" class="btn btn-outline-secondary mb-1 mr-2" onclick="location.href='my-notification/delivery/<%= result[p].trans_id%>'">배송</button>
+              <button type="button" class="btn btn-outline-secondary mb-1 mr-2" onclick="location.href='my-notification/pickup/<%= result[p].trans_id%>'">픽업</button>
+              <button type="button" class="btn btn-outline-secondary mb-1 mr-3">바로 가져가기</button>
+            </div>
+          </div>
+        </div>
+          <% }
+          }%>
+        </div>
+    </div>
+  </div>
+</body>
+
+        <!-- 판매자 2
+        <div class="card mb-4">
+          <div class="card-header clearfix">
+            판매자명
+            <div class="float-right">
+              No. 24030255240
+            </div>
+          </div>
+          <div class="row">
+             상품 1
+            <div class="col-md-6">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-sm-3">
+                    <img src="images/product-default.jpg" alt="product-img" width="110%"/>
+                  </div>
+                  <div class="col-sm-9">
+                    <h5 class="card-title">
+                      상품명 x 1
+                      <br><small>종류</small>
+                    </h5>
+                  </div>
+                </div>
+              </div>
+            </div>
+             상품 2
             <div class="col-md-6">
               <div class="card-body">
                 <div class="row">
@@ -66,62 +147,7 @@
               <button type="button" class="btn btn-outline-secondary mb-1 mr-3">바로 가져가기</button>
             </div>
           </div>
-        </div>
-
-        <!-- 판매자 2 -->
-        <div class="card mb-4">
-          <div class="card-header clearfix">
-            판매자명
-            <div class="float-right">
-              No. 24030255240
-            </div>
-          </div>
-          <div class="row">
-            <!-- 상품 1 -->
-            <div class="col-md-6">
-              <div class="card-body">
-                <div class="row">
-                  <div class="col-sm-3">
-                    <img src="images/product-default.jpg" alt="product-img" width="110%"/>
-                  </div>
-                  <div class="col-sm-9">
-                    <h5 class="card-title">
-                      상품명 x 1
-                      <br><small>종류</small>
-                    </h5>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- 상품 2 -->
-            <div class="col-md-6">
-              <div class="card-body">
-                <div class="row">
-                  <div class="col-sm-3">
-                    <img src="images/product-default.jpg" alt="product-img" width="110%"/>
-                  </div>
-                  <div class="col-sm-9">
-                    <h5 class="card-title">
-                      상품명 x 1
-                      <br><small>종류</small>
-                    </h5>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="clear-fix my-2 mx-1">
-            <div class="float-left">
-              <button type="button" class="btn btn-link mx-2">취소</button>
-            </div>
-            <div class="float-right">
-              <small class="mr-3 text-danger">수령법 선택 0000-00-00까지</small>
-              <button type="button" class="btn btn-outline-secondary mb-1 mr-2 ">배송</button>
-              <button type="button" class="btn btn-outline-secondary mb-1 mr-2">픽업</button>
-              <button type="button" class="btn btn-outline-secondary mb-1 mr-3">바로 가져가기</button>
-            </div>
-          </div>
-        </div>
+        </div> -->
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="js/cart.js"></script>

@@ -6,6 +6,10 @@
   border-top: none;
 }
 
+.table {
+  background-color: #f1f3f8;
+}
+
 .subform {
   display: none;
 }

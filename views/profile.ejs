@@ -15,9 +15,9 @@
       </div>
       <div class="tab-subcontent">
         <form class="info-wrap" method="post" action="/profile">
-          <% if (message) { %>
+          <% if (sess.message) { %>
           <div class="alert alert-warning" role="alert">
-            <%= message %>
+            <%= sess.message %>
           </div>
           <%}%>
           <table>
@@ -125,6 +125,10 @@
             <tr>
               <td>연락처</td>
               <td><input name="no_tel" type="tel" id="no_tel" class="form-control" placeholder="전화번호" maxlength="20" value="<%= data[0].phone %>" required></td>
+            </tr>
+            <tr>
+              <td>하젤페이 머니</td>
+              <td><%= formatNum(data[0].s_money) %> 원</td>
             </tr>
           </table>
 

@@ -31,7 +31,7 @@
           <a class="navbar-brand" style="color: #c7b198;" href="/my-receipt"><i class="fas fa-box"></i><span style="position: relative; top: 5px; font-size: 16px;"> <%= "" %></span></a>
         </li>
         <li class="nav-item ml-2">
-          <a class="navbar-brand" style="background-color: #0f4c75; padding: 5px 10px; border-radius: 20px; font-size: 16px; position: relative; top: 3px" href="/account/seller-management">판매자 신청</a>
+          <a class="navbar-brand" style="background-color: #0f4c75; padding: 5px 10px; border-radius: 20px; font-size: 16px; position: relative; top: 3px" href="/account/seller-management">판매자 관리</a>
         </li>
 
     </ul>
@@ -40,8 +40,8 @@
       <button class="btn btn-secondary my-2 my-sm-0" type="submit"><i class="fas fa-search"></i></button>
     </form>
     <div>
-      <a class="mx-2" style="color: #24a19c;" href="/my-cart"><i class="fas fa-shopping-cart fa-lg"></i><span style="position: relative; top: 5px"> <%= noOfCartItems > 0 ? noOfCartItems : "" %></span></a>
-      <a class="mx-2" style="color: #ea5455;" href="/my-wishlist"><i class="fas fa-heart fa-lg"></i><span style="position: relative; top: 5px"> <%= noOfWishlistItems > 0 ? noOfWishlistItems : "" %></span></a>
+      <a class="mx-2" style="color: #24a19c;" href="/my-cart"><i class="fas fa-shopping-cart fa-lg"></i><span style="position: relative; top: 5px"> <%= sess.noOfCartItems > 0 ? sess.noOfCartItems : "" %></span></a>
+      <a class="mx-2" style="color: #ea5455;" href="/my-wishlist"><i class="fas fa-heart fa-lg"></i><span style="position: relative; top: 5px"> <%= sess.noOfWishlistItems > 0 ? sess.noOfWishlistItems : "" %></span></a>
     </div>
   </div>
 </nav>
