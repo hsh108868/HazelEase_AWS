@@ -164,6 +164,7 @@ app.get("/setup_db", function(req, res) {
           status varchar(10) not null,
           latest_update date not null,
           primary key(order_id, product_id, type, shop_id),
+          primary key(order_id),
           foreign key(trans_id) references transaction(trans_id) on delete cascade,
           foreign key(seller_id) references seller(seller_id),
           foreign key(product_id) references product(product_id),

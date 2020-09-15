@@ -130,7 +130,6 @@ app.get("/my-notification/:notificationMode/:statusId", paymeth.select);
 // 수령여부 페이지의 요청 처리
 app.get("/my-receipt", paymeth.list);
 
-
 app.listen(3000, function() {
   console.log("Server has started at port 3000.");
 });

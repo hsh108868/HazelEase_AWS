@@ -2,13 +2,13 @@ const fn = require("../lib/other"); // 정의된 함수들 가져오기
 
 /* ------------------------------ cart에 있는 제품 출력 ------------------------------ */
 exports.show = function (req, res) {
-    var user_id = req.session.user_id;
+  var user_id = req.session.user_id;
 
-    if (!req.session.loggedin) {
-        res.redirect("/login");
-        res.end();
-    } else {
-        sql = `SELECT p.product_id, p.product, p.price, p.discount, p.rating, p.seller_id as seller,
+  if (!req.session.loggedin) {
+    res.redirect("/login");
+    res.end();
+  } else {
+    sql = `SELECT p.product_id, p.product, p.price, p.discount, p.rating, p.seller_id as seller,
                   c.cart_id, c.quantity, c.type, c.shop_id, c.checked,
                   s.shop
            FROM product AS p
@@ -36,24 +36,24 @@ exports.show = function (req, res) {
            WHERE m.user_id = ?;
 
            SELECT * FROM image;`
-        params = [user_id, user_id, user_id, user_id];
-        db.query(sql, params, function (err, results, fields) {
-            if (err) throw err;
-            req.session.noOfCheckedItems = results[2].length > 0 ? results[2][0].count : 0;
 
+    params = [user_id, user_id, user_id, user_id];
+    db.query(sql, params, function (err, results, fields) {
+      if (err) throw err;
+      req.session.noOfCheckedItems = results[2].length > 0 ? results[2][0].count : 0;
 
-            res.render('cart.ejs', {
-                user_id: user_id,
-                data: results[0],
-                rep: results[1],
-                address: results[3],
-                images: results[4],
-                formatNum: fn.formatNum,
-                couponResult: [req.session.couponCode, req.session.couponValue, req.session.couponMsg, req.session.couponStatus],
-                sess: req.session
-            });
-        });
-    }
+      res.render('cart.ejs', {
+        user_id: user_id,
+        data: results[0],
+        rep: results[1],
+        address: results[3],
+        images: results[4],
+        formatNum: fn.formatNum,
+        couponResult: [req.session.couponCode, req.session.couponValue, req.session.couponMsg, req.session.couponStatus],
+        sess: req.session
+      });
+    });
+  }
 };
 
 /* ------------------------------ cart에 항목 추가 처리 ------------------------------ */
@@ -180,7 +180,7 @@ exports.update = function (req, res) {
         refVarCb = "req.body.cb" + i.toString();
 
         if (eval(refVarQty) == "" || "0") {
-            refVarQty = '1';
+          refVarQty = '1';
         }
 
         cartIds.push(eval(refVarCart));
