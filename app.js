@@ -112,6 +112,7 @@ app.post("/cart/add/:productId", cart.add);
 app.get("/cart/delete/:cartId", cart.delete);
 app.post("/cart/update/:totalItems", cart.update);
 app.post("/apply-coupon", cart.applyCoupon);
+app.post("/cart-continue", cart.payment);
 
 app.get("/my-wishlist", wishlist.show);
 app.get("/wishlist/add/:productId", wishlist.add);
@@ -123,20 +124,11 @@ app.get("/wishlist/move/:wishlistId/:productId", wishlist.move);
 app.get("/product/:productId", product.showDetails);
 
 // 알림 페이지의 요청 처리
-app.get("/my-notification", function(req, res) {
-  res.render("notification", {
-    user_id: req.session.user_id,
-    sess: req.session
-  });
-});
+app.get("/my-notification", paymeth.showNotification);
+app.get("/my-notification/:notificationMode/:statusId", paymeth.select);
 
 // 수령여부 페이지의 요청 처리
-app.get("/my-receipt", function(req, res) {
-  res.render("receipt", {
-    user_id: req.session.user_id,
-    sess: req.session
-  });
-});
+app.get("/my-receipt", paymeth.list);
 
 app.listen(3000, function() {
   console.log("Server has started at port 3000.");

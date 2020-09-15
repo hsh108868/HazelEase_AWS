@@ -15,22 +15,34 @@
       <div id="Delivery" class="tabcontent col-sm-12">
         <div class="card mb-4">
           <div class="card-header clear-fix">
-            판매자명
+            <% for (var i = 0; i < result.length; i++) {%>
+            <%= result[i].sellername%>
             <div class="float-right">
-              No. 24030255240
+              No. <%= result[i].order_id%>
             </div>
           </div>
           <!-- 상품 1 -->
           <div class="card-body">
             <div class="row">
               <div class="col-sm-3">
-                <img src="images/product-default.jpg" alt="product-img" width="110%" />
+                <% var isExist = false; %>
+                <% for(let j = 0; j < images.length; j++) { %>
+                  <% if (images[j].product_id == result[i].product_id) { %>
+                    <img class="border rounded" src="uploads/<%= images[j].file %>"
+                         alt="product-image" width="110%"/>
+                    <% isExist = true; break; %>
+                  <% } %>
+                <% } %>
+                <% if(!isExist) { %>
+                  <img class="border rounded" src="images/product-default.jpg"
+                       alt="product-image" width="110%"/>
+                <% } %>
               </div>
               <div class="col-sm-9">
                 <div class="row">
                   <div class="col-sm-10 ml-1">
                     <h5 class="card-title">
-                      상품명
+                      <%= result[i].product %>
                       <br><small>배송여부/도착 예정 날짜</small>
                     </h5>
                   </div>
@@ -38,7 +50,7 @@
               </div>
             </div>
           </div>
-          <!-- 상품 2 -->
+          <!-- 상품 2
           <div class="card-body">
             <div class="row">
               <div class="col-sm-3">
@@ -55,29 +67,42 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div> -->
+          <% }%>
         </div>
       </div>
 
       <div id="Pickup" class="tabcontent col-sm-12">
         <div class="card mb-4">
           <div class="card-header clear-fix">
-            판매자명
+            <% for (var j = 0; j < data.length; j++) {%>
+              <%= data[j].sellername%>
             <div class="float-right">
-              No. 24030255240
+              No. <%= data[j].order_id%>
             </div>
           </div>
           <!-- 상품 1 -->
           <div class="card-body">
             <div class="row">
               <div class="col-sm-3">
-                <img src="images/product-default.jpg" alt="product-img" width="110%" />
+                <% var isExist = false; %>
+                <% for(let k = 0; k < images.length; k++) { %>
+                  <% if (images[k].product_id == data[j].product_id) { %>
+                    <img class="border rounded" src="uploads/<%= images[k].file %>"
+                         alt="product-image" width="110%"/>
+                    <% isExist = true; break; %>
+                  <% } %>
+                <% } %>
+                <% if(!isExist) { %>
+                  <img class="border rounded" src="images/product-default.jpg"
+                       alt="product-image" width="110%"/>
+                <% } %>
               </div>
               <div class="col-sm-9">
                 <div class="row">
                   <div class="col-sm-10 ml-2">
                     <h5 class="card-title">
-                      상품명
+                      <%= data[j].product %>
                       <br><small>픽업마감 날짜</small>
                     </h5>
                   </div>
@@ -87,7 +112,7 @@
               </div>
             </div>
           </div>
-          <!-- 상품 2 -->
+          <!-- 상품 2
           <div class="card-body">
             <div class="row">
               <div class="col-sm-3">
@@ -106,11 +131,13 @@
                 <button type="button" class="btn btn-outline-dark mb-1 mx-1 ">매장 위치</button>
               </div>
             </div>
-          </div>
+          </div> -->
+          <% }%>
         </div>
       </div>
     </div>
   </div>
+</body>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="js/receipt.js"></script>
