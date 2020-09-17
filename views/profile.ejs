@@ -128,7 +128,7 @@
             </tr>
             <tr>
               <td>하젤페이 머니</td>
-              <td><%= formatNum(data[0].s_money) %> 원</td>
+              <td><%= data[0].s_money ? formatNum(data[0].s_money) : '0' %> 원</td>
             </tr>
           </table>
 

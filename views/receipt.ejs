@@ -9,131 +9,195 @@
   <div class="container py-4">
     <div class="row">
       <div class="col-sm-12">
-        <button class="tablink btn btn-lg mr-2" onclick="openPage('Delivery', this)">최근 배송상품</button>
-        <button class="tablink btn btn-lg mr-2" onclick="openPage('Pickup', this)" id="defaultOpen">픽업 상품</button>
+        <button class="tablink btn btn-lg mr-2" onclick="openPage('Pickup', this)" id="defaultOpen">픽업 상품 <span class="rounded-circle bg-danger <%= pickupItems.length < 10 ? 'px-2' : 'px-1' %> ml-1 text-light <%= pickupItems.length == 0 ? 'd-none' : '' %>"><%= pickupItems.length %></span></button>
+        <button class="tablink btn btn-lg mr-2" onclick="openPage('Delivery', this)">최근 배송상품 <span class="rounded-circle bg-primary <%= deliveryItems.length < 10 ? 'px-2' : 'px-1' %> ml-1 text-light <%= deliveryItems.length == 0 ? 'd-none' : '' %>"><%= deliveryItems.length %></span></button>
       </div>
+
       <div id="Delivery" class="tabcontent col-sm-12">
-        <div class="card mb-4">
-          <div class="card-header clear-fix">
-            <% for (var i = 0; i < result.length; i++) {%>
-            <%= result[i].sellername%>
-            <div class="float-right">
-              No. <%= result[i].order_id%>
+        <% if (onDelivery.length == 0) { %>
+          <div class="card mb-4">
+            <div class="card-body">
+              최근 배송상품 없습니다.
             </div>
           </div>
-          <!-- 상품 1 -->
-          <div class="card-body">
-            <div class="row">
-              <div class="col-sm-3">
-                <% var isExist = false; %>
-                <% for(let j = 0; j < images.length; j++) { %>
-                  <% if (images[j].product_id == result[i].product_id) { %>
-                    <img class="border rounded" src="uploads/<%= images[j].file %>"
-                         alt="product-image" width="110%"/>
-                    <% isExist = true; break; %>
-                  <% } %>
-                <% } %>
-                <% if(!isExist) { %>
-                  <img class="border rounded" src="images/product-default.jpg"
-                       alt="product-image" width="110%"/>
-                <% } %>
+        <% } %>
+        <% var i = 0; %>
+        <% for (let p = 0; p < onDelivery.length; p++) { %>
+          <!-- 판매자명 -->
+          <div class="card mb-4">
+            <div class="card-header clear-fix">
+              <i class="fas fa-truck"></i> 배송상품 by <strong><%= onDelivery[p].sellername %></strong>
+              <div class="float-right">
+                <a href="/purchase-invoice/<%= onDelivery[p].trans_id %>">Order No. <%= onDelivery[p].order_id %></a>
               </div>
-              <div class="col-sm-9">
+            </div>
+            <% var estArriveDate, day, now, start, diff, deliveryStatus; %>
+            <% for (let q = 0; q < onDelivery[p].count; q++, i++) { %>
+              <!-- 상품 -->
+              <div class="card-body">
                 <div class="row">
-                  <div class="col-sm-10 ml-1">
-                    <h5 class="card-title">
-                      <%= result[i].product %>
-                      <br><small>배송여부/도착 예정 날짜</small>
-                    </h5>
+                  <div class="col-sm-3">
+                    <% var isExist = false; %>
+                    <% for(let j = 0; j < images.length; j++) { %>
+                      <% if (images[j].product_id == deliveryItems[i].product_id) { %>
+                        <a href="/product/<%= deliveryItems[i].product_id %>">
+                          <img class="border rounded" src="uploads/<%= images[j].file %>" alt="product-image" width="110%"/>
+                        </a>
+                        <% isExist = true; break; %>
+                      <% } %>
+                    <% } %>
+                    <% if(!isExist) { %>
+                      <img class="border rounded" src="images/product-default.jpg"
+                           alt="product-image" width="110%"/>
+                    <% } %>
+                  </div>
+                  <div class="col-sm-9">
+                    <div class="row">
+                      <div class="col-sm-10 ml-1">
+                        <h5 class="card-title mb-1"><a href="/product/<%= deliveryItems[i].product_id %>"><%= deliveryItems[i].product %></a></h5>
+                        <h6><%= deliveryItems[i].type != 'None' ? deliveryItems[i].type : '' %> (Qty: <%= deliveryItems[i].quantity %>)</h6>
+
+                        <%
+                          estArriveDate = new Date(deliveryItems[i].latest_update.getTime() + 2*24*60*60*1000);
+                          day = estArriveDate.getDay();
+                          now = new Date().getTime();
+                          start = deliveryItems[i].latest_update.getTime();
+                          diff = now - start;
+                          deliveryStatus;
+
+                          if (diff <= 6*60*60*1000)
+                            deliveryStatus = '결제완료';
+                          else if (diff <= 12*60*60*1000)
+                            deliveryStatus = '상품중비중';
+                          else if (diff <= 16*60*60*1000)
+                            deliveryStatus = '집하';
+                          else if (diff <= 20*60*60*1000)
+                            deliveryStatus = '센터상차';
+                          else if (diff <= 24*60*60*1000)
+                            deliveryStatus = '센터도착';
+                          else if (diff <= 32*60*60*1000)
+                            deliveryStatus = '캠프상차';
+                          else if (diff <= 38*60*60*1000)
+                            deliveryStatus = '캠프도착';
+                          else if (diff <= 44*60*60*1000)
+                            deliveryStatus = '배송중';
+                          else if (diff <= 48*60*60*1000)
+                            deliveryStatus = '배송완료';
+                          else
+                            deliveryStatus = '주문완료';
+
+                          switch (day) {
+                            case 0:
+                              day = '일'; break;
+                            case 1:
+                              day = '월'; break;
+                            case 2:
+                              day = '화'; break;
+                            case 3:
+                              day = '수'; break;
+                            case 4:
+                              day = '목'; break;
+                            case 5:
+                              day = '금'; break;
+                            case 6:
+                              day = '토'; break;
+                          }
+                          estArriveDate = (estArriveDate.getMonth() + 1) + '/' + estArriveDate.getDate() + ' (' + day + ') 도착 예정';
+
+                        %>
+                        <p><%= deliveryStatus %><%= deliveryStatus != '주문완료' ? ' ⋅ ' + estArriveDate : '' %></p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            <% } %>
           </div>
-          <!-- 상품 2
-          <div class="card-body">
-            <div class="row">
-              <div class="col-sm-3">
-                <img src="images/product-default.jpg" alt="product-img" width="110%" />
-              </div>
-              <div class="col-sm-9">
-                <div class="row">
-                  <div class="col-sm-10 ml-1">
-                    <h5 class="card-title">
-                      상품명
-                      <br><small>배송여부/도착 예정 날짜</small>
-                    </h5>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div> -->
-          <% }%>
-        </div>
+        <% } %>
       </div>
 
       <div id="Pickup" class="tabcontent col-sm-12">
-        <div class="card mb-4">
-          <div class="card-header clear-fix">
-            <% for (var j = 0; j < data.length; j++) {%>
-              <%= data[j].sellername%>
-            <div class="float-right">
-              No. <%= data[j].order_id%>
+        <% if (onPickup.length == 0) { %>
+          <div class="card mb-4">
+            <div class="card-body">
+              픽업할 상품 없습니다.
             </div>
           </div>
-          <!-- 상품 1 -->
-          <div class="card-body">
-            <div class="row">
-              <div class="col-sm-3">
-                <% var isExist = false; %>
-                <% for(let k = 0; k < images.length; k++) { %>
-                  <% if (images[k].product_id == data[j].product_id) { %>
-                    <img class="border rounded" src="uploads/<%= images[k].file %>"
-                         alt="product-image" width="110%"/>
-                    <% isExist = true; break; %>
-                  <% } %>
-                <% } %>
-                <% if(!isExist) { %>
-                  <img class="border rounded" src="images/product-default.jpg"
-                       alt="product-image" width="110%"/>
-                <% } %>
-              </div>
-              <div class="col-sm-9">
-                <div class="row">
-                  <div class="col-sm-10 ml-2">
-                    <h5 class="card-title">
-                      <%= data[j].product %>
-                      <br><small>픽업마감 날짜</small>
-                    </h5>
-                  </div>
-                </div>
-                <button type="button" class="btn btn-outline-dark mb-1 mx-1 ">수령확인</button>
-                <button type="button" class="btn btn-outline-dark mb-1 mx-1 ">매장 위치</button>
+        <% } %>
+        <% var i = 0; %>
+        <% for (let p = 0; p < onPickup.length; p++) { %>
+          <!-- 판매자명 -->
+          <div class="card mb-4">
+            <div class="card-header clear-fix">
+              <div class="align-middle d-inline-block mt-1"><i class="fas fa-map-marker-alt mr-1"></i> <strong><%= onPickup[p].shop %></strong> / <i class="fas fa-hand-sparkles mx-1"></i> <span class="text-success font-weight-bold"><%= onPickup[p].count %> 개</span> 상품픽업</div>
+              <div class="float-right">
+                <button type="button" class="btn btn-outline-secondary btn-sm mr-1">위치보기</button>
+                <button type="button" class="btn btn-secondary btn-sm" onClick="location.href='/pickup-certificate/<%= onPickup[p].trans_id %>-<%= onPickup[p].order_id %>/<%= onPickup[p].shop_id %>'">픽업증권 <i class="far fa-file-alt ml-1"></i></button>
               </div>
             </div>
+            <div class="card-body border-bottom text-dark py-2" style="background-color: #d6e0f0;">
+              <%= onPickup[p].address %>
+            </div>
+            <% var expPickupDate, day, now, start; %>
+            <% for (let q = 0; q < onPickup[p].count; q++, i++) { %>
+              <!-- 상품 -->
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-sm-3">
+                    <% var isExist = false; %>
+                    <% for(let j = 0; j < images.length; j++) { %>
+                      <% if (images[j].product_id == pickupItems[i].product_id) { %>
+                        <a href="/product/<%= pickupItems[i].product_id %>">
+                          <img class="border rounded" src="uploads/<%= images[j].file %>" alt="product-image" width="110%"/>
+                        </a>
+                        <% isExist = true; break; %>
+                      <% } %>
+                    <% } %>
+                    <% if(!isExist) { %>
+                      <img class="border rounded" src="images/product-default.jpg"
+                           alt="product-image" width="110%"/>
+                    <% } %>
+                  </div>
+                  <div class="col-sm-9">
+                    <div class="row">
+                      <div class="col-sm-10 ml-1">
+                        <h5 class="card-title mb-1"><a href="/product/<%= pickupItems[i].product_id %>"><%= pickupItems[i].product %></a></h5>
+                        <h6><%= pickupItems[i].type != 'None' ? pickupItems[i].type : '' %> (Qty: <%= pickupItems[i].quantity %>)</h6>
+                        <%
+                          expPickupDate = new Date(pickupItems[i].latest_update.getTime() + 7*24*60*60*1000);
+                          day = expPickupDate.getDay();
+                          now = new Date().getTime();
+                          start = pickupItems[i].latest_update.getTime();
+
+                          switch (day) {
+                            case 0:
+                              day = '일'; break;
+                            case 1:
+                              day = '월'; break;
+                            case 2:
+                              day = '화'; break;
+                            case 3:
+                              day = '수'; break;
+                            case 4:
+                              day = '목'; break;
+                            case 5:
+                              day = '금'; break;
+                            case 6:
+                              day = '토'; break;
+                          }
+                          expPickupDate = (expPickupDate.getMonth() + 1) + '/' + expPickupDate.getDate() + ' (' + day + ')까지';
+                        %>
+                        <p><%= expPickupDate %> ⋅ <span class='text-danger'>7일 남음</span></p>
+                        <button type="button" class="btn btn-outline-secondary mr-1 btn-sm" onClick="location.href='/purchase-invoice/<%= pickupItems[i].trans_id %>'">구매상세보기</button>
+                        <button type="button" class="btn btn-outline-secondary mr-1 btn-sm" onClick="location.href='/my-receipt/confirm-pickup/<%= pickupItems[i].order_id %>/<%= pickupItems[i].product_id %>/<%= pickupItems[i].type %>/<%= pickupItems[i].shop_id %>'">수령확인 <i class="fas fa-check ml-1"></i></button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% } %>
           </div>
-          <!-- 상품 2
-          <div class="card-body">
-            <div class="row">
-              <div class="col-sm-3">
-                <img src="images/product-default.jpg" alt="product-img" width="110%" />
-              </div>
-              <div class="col-sm-9">
-                <div class="row">
-                  <div class="col-sm-10 ml-2">
-                    <h5 class="card-title">
-                      상품명
-                      <br><small>픽업마감 날짜</small>
-                    </h5>
-                  </div>
-                </div>
-                <button type="button" class="btn btn-outline-dark mb-1 mx-1 ">수령확인</button>
-                <button type="button" class="btn btn-outline-dark mb-1 mx-1 ">매장 위치</button>
-              </div>
-            </div>
-          </div> -->
-          <% }%>
-        </div>
+        <% } %>
       </div>
     </div>
   </div>

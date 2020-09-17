@@ -14,13 +14,22 @@ exports.showOutlines = function(req, res) {
   sql = `SELECT * FROM product;
          SELECT user_id, COUNT(*) as count FROM cart WHERE user_id = ? GROUP BY user_id;
          SELECT user_id, COUNT(*) as count FROM wishlist WHERE user_id = ? GROUP BY user_id;
-         SELECT * FROM image;`
-  params = [user_id, user_id];
+         SELECT * FROM image;
+
+         SELECT trans_id, COUNT(*) as count
+         FROM orders
+         WHERE status = 'waiting' AND user_id = ?
+         GROUP BY trans_id;
+         
+         SELECT order_id FROM orders WHERE user_id = ? AND (status = 'delivery' OR status = 'pickup');`
+  params = [user_id, user_id, user_id, user_id];
 
   db.query(sql, params, function(err, results, fields) {
     if (err) throw err;
     req.session.noOfCartItems = results[1].length > 0 ? results[1][0].count : 0;
     req.session.noOfWishlistItems = results[2].length > 0 ? results[2][0].count : 0;
+    req.session.noOfNotifications = results[4].length;
+    req.session.noOfReceivingItems = results[5].length;
 
     res.render('home.ejs', {
       user_id: user_id,
