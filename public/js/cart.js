@@ -1,16 +1,3 @@
-// $('.quantity-update').each(function(i, obj1) {
-//   $('.quantity-input').each(function(j, obj2) {
-//     if (i == j) {
-//       $(obj2).on("input propertychange paste", function() {
-//           $(obj1).show();
-//       });
-//     }
-//   });
-//   $(obj1).on("click", function() {
-//     $(obj1).hide();
-//   });
-// });
-
 $('.qty-plus').each(function(i, obj1) {
   $('.qty-input').each(function(j, obj2) {
     if (i === j) {

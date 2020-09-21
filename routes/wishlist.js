@@ -8,15 +8,14 @@ exports.show = function(req, res) {
     res.redirect("/login");
     res.end();
   } else {
-    sql = `select a.product_id, a.product, a.price, a.rating, b.wishlist_id, b.user_id
-           from product as a
-              right outer join wishlist as b on a.product_id = b.product_id where b.user_id = ?;
+    sql = `SELECT a.product_id, a.product, a.price, a.rating, b.wishlist_id, b.user_id
+           FROM product as a
+              RIGHT OUTER JOIN wishlist as b on a.product_id = b.product_id WHERE b.user_id = ?;
 
-           select * from image; `
-    db.query(sql,
-      [user_id],
-      function(err, results, fields) {
+           SELECT * FROM image;`
+    db.query(sql, [user_id], function(err, results, fields) {
         if (err) throw err;
+        req.session.noOfWishlistItems = results[0].length;
         res.render('wishlist.ejs', {
           user_id: user_id,
           data: results[0],

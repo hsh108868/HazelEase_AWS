@@ -21,6 +21,8 @@ const product = require('./routes/product');
 const cart = require('./routes/cart');
 const wishlist = require('./routes/wishlist');
 const paymeth = require('./routes/paymeth');
+const notification = require('./routes/notification');
+const receipt = require('./routes/receipt');
 
 /* ----------------------------------- */
 const app = express();
@@ -112,7 +114,7 @@ app.post("/cart/add/:productId", cart.add);
 app.get("/cart/delete/:cartId", cart.delete);
 app.post("/cart/update/:totalItems", cart.update);
 app.post("/apply-coupon", cart.applyCoupon);
-app.post("/cart-continue", cart.payment);
+app.post("/cart/process-payment", cart.processPayment);
 
 app.get("/my-wishlist", wishlist.show);
 app.get("/wishlist/add/:productId", wishlist.add);
@@ -124,11 +126,17 @@ app.get("/wishlist/move/:wishlistId/:productId", wishlist.move);
 app.get("/product/:productId", product.showDetails);
 
 // 알림 페이지의 요청 처리
-app.get("/my-notification", paymeth.showNotification);
-app.get("/my-notification/:notificationMode/:statusId", paymeth.select);
+app.get("/my-notification", notification.show);
+app.get("/my-notification/:receiptMode/:orderId", notification.select);
 
 // 수령여부 페이지의 요청 처리
-app.get("/my-receipt", paymeth.list);
+app.get("/my-receipt", receipt.list);
+app.get("/my-receipt/confirm-pickup/:orderId/:productId/:type/:shopId", receipt.confirm);
+app.get("/purchase-invoice/:transId", receipt.purchaseDetails);
+app.get("/pickup-certificate/:transId-:orderId/:shopId", receipt.pickupCert);
+
+//매장이동
+app.get("/:shopId", product.goToMap);
 
 app.listen(3000, function() {
   console.log("Server has started at port 3000.");

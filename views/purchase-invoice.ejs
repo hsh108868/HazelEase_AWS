@@ -1,0 +1,210 @@
+<%-include("partials/header");-%>
+<!-- Custom styles -->
+<link href="/css/cart.css" rel="stylesheet">
+</head>
+
+<body>
+  <%- include("partials/navbar"); -%>
+  <div class="container py-4">
+    <div class="my-4 text-center">
+      <h2><i class="far fa-file-alt ml-1"></i> 구매상세</h2>
+    </div>
+
+    <% if (transInfo == null) { %>
+    <div class="row card">
+      <div class="card-body">
+        구매기록이 없습니다.
+      </div>
+    </div>
+    <% } else { %>
+    <div class="row">
+      <div class="col-md-12 mt-4">
+        <div class="clearfix">
+          <div class="float-left">
+            <%
+              let d = transInfo.date;
+
+              function formatAMPM(date) {
+                var hours = date.getHours();
+                var minutes = date.getMinutes();
+                var ampm = hours >= 12 ? '오후' : '오전';
+                hours = hours % 12;
+                hours = hours ? hours : 12;
+                minutes = minutes < 10 ? '0' + minutes : minutes;
+                hours = hours < 10 ? '0' + hours : hours;
+                var strTime = ampm + ' ' + hours + ':' + minutes;
+                return strTime;
+              }
+
+              let time = formatAMPM(d);
+              var purchaseDatetime = d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate() + ' ' + time;
+            %>
+            <h5 class="mb-3 d-inline-block"><%= purchaseDatetime %></h5>
+          </div>
+          <div class="float-right">
+            <h5 class="mb-3 d-inline-block">구매번호 <%= noInvoice %></h5>
+          </div>
+        </div>
+
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="font-weight-bold mb-3">결제정보</h5>
+            <div class="row">
+              <div class="col-lg-6 col-sm-12">
+                <div class="row">
+                  <div class="col-sm-6 text-left mb-1">
+                    상품가격
+                  </div>
+                  <div class="col-sm-6 text-right mb-1">
+                    <%= formatNum(transInfo.total_paid + transInfo.total_discount + transInfo.coupon_value) %> 원
+                  </div>
+                  <div class="col-sm-6 text-left mb-1">
+                    할인금액
+                  </div>
+                  <div class="col-sm-6 text-right mb-1">
+                    <%= formatNum(transInfo.total_discount) %> 원
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6 col-sm-12">
+                <div class="row">
+                  <div class="col-sm-6 text-left mb-1">
+                    쿠폰코드
+                  </div>
+                  <div class="col-sm-6 text-right mb-1 text-<%= transInfo.coupon_code ? 'success' : 'secondary' %>">
+                    <%= transInfo.coupon_code ? transInfo.coupon_code : '없음' %>
+                  </div>
+                  <div class="col-sm-6 text-left mb-1">
+                    쿠폰가치
+                  </div>
+                  <div class="col-sm-6 text-right mb-1">
+                    <%= formatNum(transInfo.coupon_value) %> 원
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-12 border-bottom mt-3 mb-3 w-100"></div>
+              <div class="col-lg-12">
+                <div class="row">
+                  <div class="col-sm-6 text-left mb-1">
+                    결제수단
+                  </div>
+                  <div class="col-sm-6 text-right mb-1">
+                    하젤페이
+                  </div>
+                  <div class="col-sm-6 text-left mb-1 font-weight-bold">
+                    총 결제금액
+                  </div>
+                  <div class="col-sm-6 text-right mb-1 font-weight-bold">
+                    <%= formatNum(transInfo.total_paid) %> 원
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-12 border-bottom mt-3 mb-3 w-100"></div>
+              <div class="col-lg-12">
+                <div class="row">
+                  <div class="col-sm-12 text-left mb-1 font-weight-bold">
+                    <%= transInfo.recipient %>
+                  </div>
+                  <div class="col-sm-12 text-left mb-1">
+                    <%= transInfo.address %>
+                  </div>
+                  <div class="col-sm-12 text-left mb-1">
+                    <%= transInfo.contact %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <%
+          function formatStatus(status) {
+            let t;
+            let bg;
+            let link;
+
+            if (status == 'waiting') {
+              t = '수령법선택';
+              bg = 'secondary';
+              link = '/my-notification';
+            } else if (status == 'delivery') {
+              t = '배송중';
+              bg = 'primary';
+              link = '/my-receipt';
+            }
+            else if (status == 'pickup') {
+              t = '픽업대기';
+              bg = 'danger';
+              link = '/my-receipt';
+            }
+            else if (status == 'direct') {
+              t = '바로가져가기';
+              bg = 'warning';
+              link = '/my-receipt';
+            }
+            else if (status == 'completed'){
+              t = '완료';
+              bg = 'success';
+              link = '';
+            }
+
+            return [t, bg, link];
+          }
+        %>
+        <% var i = 0, cond; %>
+        <% for (let p = 0; p < ordersCount.length; p++) { %>
+        <div class="card mb-3">
+          <div class="card-body">
+            <div class="clearfix">
+              <div class="float-left">
+                <h5 class="mb-3 d-inline-block">주문번호 <%= ordersInfo[i].order_id %> ⋅ <%= ordersInfo[i].sellername %></h5>
+              </div>
+              <div class="float-right">
+                <% cond = formatStatus(ordersInfo[i].status); %>
+                <h6 class="mb-3 d-inline-block bg-<%= cond[1] %> text-light rounded-pill py-1 px-2 text-top btn btn-sm"><a href=<%= cond[2] %>><%= cond[0] %></a></h6>
+              </div>
+            </div>
+            <div class="row">
+              <% for (let q = 0; q < ordersCount[p].count; q++, i++) { %>
+              <div class="col-lg-6 col-sm-12 <%= q == ordersCount[p].count - 1 ? '' : 'mb-3' %>">
+                <div class="row">
+                  <div class="col-sm-3 pr-0">
+                    <% var isExist = false; %>
+                    <% for(let j = 0; j < images.length; j++) { %>
+                    <% if (images[j].product_id == ordersInfo[i].product_id) { %>
+                    <a href="/product/<%= ordersInfo[i].product_id %>">
+                      <img class="border rounded" src="/uploads/<%= images[j].file %>" alt="product-image" width="100%" />
+                    </a>
+                    <% isExist = true; break; %>
+                    <% } %>
+                    <% } %>
+                    <% if(!isExist) { %>
+                    <img class="border rounded" src="images/product-default.jpg" alt="product-image" width="110%" />
+                    <% } %>
+                  </div>
+                  <div class="col-sm-9">
+                    <p class="mb-2">
+                      <a href="/product/<%= ordersInfo[i].product_id %>">
+                        <%= ordersInfo[i].product %> <%= ordersInfo[i].type != "None" ? '(' + ordersInfo[i].type + ')' : '' %>
+                      </a>
+                      <br><span class="text-success">(<%= ordersInfo[i].shop %>)</span>
+                    </p>
+                    <p class="m-0"><%= formatNum(ordersInfo[i].price) %> 원 / <%= ordersInfo[i].quantity %> 개</p>
+                  </div>
+                </div>
+              </div>
+              <% } %>
+            </div>
+          </div>
+        </div>
+        <% } %>
+      </div>
+    </div>
+    <% } %>
+  </div>
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!-- FOOTER -->
+<%- include("partials/copyright"); -%>
+<%- include("partials/footer"); -%>

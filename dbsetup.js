@@ -144,10 +144,13 @@ app.get("/setup_db", function(req, res) {
           total_discount int unsigned,
           total_paid int unsigned,
           coupon_code varchar(30),
-          date date not null,
+          coupon_value int unsigned,
+          recipient varchar(30) not null,
+          address varchar(150) not null,
+          contact varchar(20) not null,
+          date datetime not null,
           primary key(trans_id),
-          foreign key(user_id) references member(user_id) on delete cascade,
-          foreign key(coupon_code) references coupon(coupon_code) on delete cascade
+          foreign key(user_id) references member(user_id) on delete cascade
     );
 
     create table orders (
@@ -162,9 +165,8 @@ app.get("/setup_db", function(req, res) {
           shop_id int unsigned not null,
           user_id varchar(30) not null,
           status varchar(10) not null,
-          latest_update date not null,
+          latest_update datetime not null,
           primary key(order_id, product_id, type, shop_id),
-          primary key(order_id),
           foreign key(trans_id) references transaction(trans_id) on delete cascade,
           foreign key(seller_id) references seller(seller_id),
           foreign key(product_id) references product(product_id),
