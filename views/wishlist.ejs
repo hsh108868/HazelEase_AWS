@@ -19,6 +19,7 @@
           </div>
         </div>
       <% } %>
+
         <!-- 1st Column -->
         <div class="col-md-6">
           <% for(var i = 0; i < data.length; i++) { %>
@@ -116,7 +117,11 @@
                     </span>(0)
                   </p>
                   <button type="button" onClick="location.href = '/wishlist/delete/<%= data[i].wishlist_id %>'" class="btn btn-sm btn-outline-secondary mr-2"><i class="fas fa-trash"></i></button>
+                  <% if (data[i].shop != null && data[i].type != null) { %>
+                  <button type="button" onClick="location.href = '/wishlist/move/<%= data[i].wishlist_id %>/<%= data[i].product_id %>/<%= data[i].type %>/<%= data[i].shop_id %>'" class="btn btn-sm btn-outline-secondary mr-2">쇼핑카트 담기</button>
+                  <% } else { %>
                   <button type="button" onClick="location.href = '/wishlist/move/<%= data[i].wishlist_id %>/<%= data[i].product_id %>'" class="btn btn-sm btn-outline-secondary mr-2">쇼핑카트 담기</button>
+                  <% } %>
                 </div>
               </div>
             </div>
