@@ -25,13 +25,13 @@
         </div>
         <li class="ml-2" style="border-left: 1px solid #6c757d; height: 30px; position: relative; top: 5px"></li>
         <li class="nav-item ml-4">
-          <a class="navbar-brand" style="color: #ffd571;" href="/my-notification"><i class="fas fa-bell"></i><span style="position: relative; top: 5px; font-size: 16px;"> <%= "" %></span></a>
+          <a class="navbar-brand" style="color: #ffd571;" href="/my-notification"><i class="fas fa-bell"></i><span style="position: relative; top: 5px; font-size: 16px;"> <%= sess.noOfNotifications > 0 ? sess.noOfNotifications : "" %></span></a>
         </li>
         <li class="nav-item ml-2">
-          <a class="navbar-brand" style="color: #c7b198;" href="/my-receipt"><i class="fas fa-box"></i><span style="position: relative; top: 5px; font-size: 16px;"> <%= "" %></span></a>
+          <a class="navbar-brand" style="color: #c7b198;" href="/my-receipt"><i class="fas fa-box"></i><span style="position: relative; top: 5px; font-size: 16px;"> <%= sess.noOfReceivingItems > 0 ? sess.noOfReceivingItems : "" %></span></a>
         </li>
         <li class="nav-item ml-2">
-          <a class="navbar-brand" style="background-color: #0f4c75; padding: 5px 10px; border-radius: 20px; font-size: 16px; position: relative; top: 3px" href="/account/seller-management">판매자 신청</a>
+          <a class="navbar-brand" style="background-color: #0f4c75; padding: 5px 10px; border-radius: 20px; font-size: 16px; position: relative; top: 3px" href="/account/seller-management">판매자 관리</a>
         </li>
 
     </ul>

@@ -3,12 +3,12 @@
 <link href="css/main.css" rel="stylesheet">
 </head>
 
-<body class="text-center">
+<body class="text-center bg-light">
 <%- include("partials/navbar"); -%>
 
 <main role="main">
 
-  <div id="myCarousel" class="carousel slide" data-ride="carousel">
+  <div id="myCarousel" class="carousel slide border-dark" data-ride="carousel" data-interval="5000">
     <ol class="carousel-indicators">
       <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
       <li data-target="#myCarousel" data-slide-to="1"></li>
@@ -17,33 +17,39 @@
     <div class="carousel-inner">
       <div class="carousel-item active">
         <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img">
-          <rect width="100%" height="100%" fill="#777" /></svg>
+          <!-- <rect width="100%" height="60%" fill="#777" /> -->
+          <image href="images/ads-image3.jpg" width="100%"/>
+        </svg>
         <div class="container">
           <div class="carousel-caption text-left">
-            <h1>광고 제목 1</h1>
-            <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+            <h1 class="text-dark">광고 제목 1</h1>
+            <p class="text-dark">Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
             <p><a class="btn btn-lg btn-primary" href="#" role="button">지금 보러가기</a></p>
           </div>
         </div>
       </div>
       <div class="carousel-item">
         <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img">
-          <rect width="100%" height="100%" fill="#777" /></svg>
+          <!-- <rect width="100%" height="60%" fill="#777" /> -->
+          <image href="images/ads-image1.jpg" width="100%"/>
+        </svg>
         <div class="container">
           <div class="carousel-caption">
-            <h1>광고 제목 2</h1>
-            <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+            <h1 class="text-dark">광고 제목 2</h1>
+            <p class="text-dark">Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
             <p><a class="btn btn-lg btn-primary" href="#" role="button">지금 보러가기</a></p>
           </div>
         </div>
       </div>
       <div class="carousel-item">
         <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img">
-          <rect width="100%" height="100%" fill="#777" /></svg>
+          <!-- <rect width="100%" height="60%" fill="#777" /> -->
+          <image href="images/ads-image2.jpg" width="100%"/>
+        </svg>
         <div class="container">
           <div class="carousel-caption text-right">
-            <h1>광고 제목 3</h1>
-            <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+            <h1 class="text-dark">광고 제목 3</h1>
+            <p class="text-dark">Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
             <p><a class="btn btn-lg btn-primary" href="#" role="button">지금 보러가기</a></p>
           </div>
         </div>
@@ -63,12 +69,37 @@
     <div class="container-fluid p-5">
       <div class="row">
         <% for(var i = 0; i < product.length; i++) { %>
-        <div class="col-md-4">
+        <div class="col-lg-3 col-md-4 col-sm-6">
           <div class="card mb-4 shadow-sm">
-            <a href="/product/<%= product[i].product_id %>"><svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">이미지</text></svg></a>
+            <a href="/product/<%= product[i].product_id %>">
+              <svg class="bd-placeholder-img card-img-top" width="100%" height="250"
+                xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"
+                focusable="false" role="img" aria-label="Placeholder: Thumbnail"
+                viewBox="0 0 100 100">
+                <!-- <title>Placeholder</title>
+                <rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">이미지</text> -->
+                <% var isExist = false; %>
+                <% for(let j = 0; j < images.length; j++) { %>
+                  <% if (images[j].product_id == product[i].product_id) { %>
+                    <image href="uploads/<%= images[j].file %>" width="100px"/>
+                    <% isExist = true; break; %>
+                  <% } %>
+                <% } %>
+                <% if(!isExist) { %>
+                <image href="images/product-default.jpg" width="100px"/>
+                <% } %>
+              </svg>
+            </a>
             <div class="card-body">
               <h6 onClick="location.href='/product/<%= product[i].product_id %>'"><strong><%= product[i].product %></strong></h6>
-              <p class="card-text">₩ <%= formatNum(product[i].price) %></p>
+              <p class="card-text">
+                <% if (product[i].discount > 0) { %>
+                  <small><span class="disc-tag mx-1"><%= product[i].discount %>% off</span></small><br>
+                  <small><s>₩ <%= formatNum(product[i].price) %></s></small> → <strong>₩ <%= formatNum(Math.round(product[i].price*((100-product[i].discount)/100))) %></strong>
+                <% } else { %>
+                  <strong>₩ <%= formatNum(product[i].price) %></strong>
+                <% } %>
+              </p>
               <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
                   <button type="button" class="btn btn-sm btn-outline-secondary" onClick="location.href='/product/<%= product[i].product_id %>'"><i class="fas fa-shopping-bag fa-lg"></i></button>

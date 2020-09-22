@@ -93,3 +93,8 @@ a:hover {
   text-align: center;
   vertical-align: middle;
 }
+
+.no-padding {
+  padding: 0 !important;
+}
+

@@ -1,0 +1,78 @@
+<%- include("partials/header"); -%>
+<!-- Custom styles -->
+<link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="/css/account.css">
+</head>
+
+<body id="bootstrap-overrides">
+  <%- include("partials/navbar"); -%>
+
+  <main role="main" class="container-fluid">
+    <%- include("partials/sidenav"); -%>
+    <div class="tab-content">
+      <div>
+        <h3>구매목록</h3>
+      </div>
+      <% if (data.length === 0) { %>
+        <div class="card mb-4">
+          <div class="card-body">
+            구매한 상품이 없습니다.
+          </div>
+        </div>
+      <% }%>
+      <% let s = 0;%>
+    <% for(let i = 0; i < data.length; i++) { %>
+      <div class="tab-subcontent">
+        <div id="Pickup" class="tabcontent col-sm-12" style="display: block;">
+          <div class="card mb-4">
+          <div class="card-header clear-fix">
+            주문일 : <%= data[i].date.getMonth() + 1%>월 <%= data[i].date.getDate()%>일
+            <div class="float-right">
+              No. <%= data[i].order_id %>
+            </div>
+          </div>
+          <% for (let j = 0; j < data[i].count; j++, s++) { %>
+            <div class="card-body">
+            <div class="row">
+              <div class="col-sm-3">
+                <% var isExist = false; %>
+                <% for(let p = 0; p < images.length; p++) { %>
+                  <% if (images[p].product_id == orderItems[s].product_id) { %>
+                    <a href="/product/<%= orderItems[s].product_id %>">
+                      <img class="border rounded no-padding" src="/uploads/<%= images[p].file %>" alt="product-image" width="100%"/>
+                    </a>
+                    <% isExist = true; break; %>
+                  <% } %>
+                <% } %>
+                <% if(!isExist) { %>
+                  <img class="border rounded" src="images/product-default.jpg"
+                       alt="product-image" width="110%"/>
+                <% } %>
+              </div>
+              <div class="col-sm-9">
+                <div class="row">
+                  <div class="col-sm-10 ml-2">
+                    <h5 class="card-title">
+                      <%= orderItems[s].product %>
+                      <br><small><%= formatNum(orderItems[s].price) %> 원 / <%= orderItems[s].quantity %> 개</small>
+                    </h5>
+                  </div>
+                </div>
+              </div>
+            </div>
+            </div>
+            <% } %>
+            <div class="col-sm-13">
+              <button type="button" class="btn btn-outline-dark mb-1 mx-1  float-right">교환/반품신청</button>
+              <button type="button" class="btn btn-outline-dark mb-1 mx-1  float-right">배송 조회</button>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="btn btn-secondary btn-lg btn-block">구매후기 작성</button>
+      </div>
+      <% } %>
+      </div>
+  </main>
+</body>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <%- include("partials/footer"); -%>

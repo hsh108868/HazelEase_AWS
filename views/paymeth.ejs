@@ -14,10 +14,48 @@
         <h3>결제수단</h3>
       </div>
       <div class="tab-subcontent">
-        Empty
+        <div class="card">
+          <div class="card-body text-center">
+            <h6 class="font-weight-bold">하젤페이 머니 잔액:</h6>
+            <h2><%= hazelMoney != null ? formatNum(hazelMoney) : '0' %> <small>원</small></h2>
+            <div id="buttonWrap">
+              <button type="button" id="withdrawBtn" class="btn btn-danger mx-1 mt-2"><i class="fas fa-minus-circle"></i> 인출하기</button>
+              <button type="button" id="rechargeBtn" class="btn btn-success mx-1 mt-2"><i class="fas fa-plus-circle"></i> 충전하기</button>
+              <small class="d-block text-success mt-2"><%= sess.message %></small>
+              <small class="d-block text-danger mt-2"><%= sess.messageErr %></small>
+              <% sess.message = ""; sess.messageErr = ""; %>
+            </div>
+          </div>
+        </div>
+        <div id="amountForm" class="card mt-2 d-none">
+          <form class="card-body" method="POST" action="/account/payment-method">
+            <h4 class="p-0">얼마를 <span class="mode">충전</span>하시겠습니까?</h4>
+              <div class="form-group text-center">
+                <label for="formControlRange" class="font-weight-bold"><input id="amountInput" name="amountInput" type="number" min="10" max="1000" step="1" class="font-weight-bold form-control w-50 d-inline mr-1" style="font-size: 1.5rem;" value="10"/> 만원 <span class="mode">충전</span></label>
+                <input type="range" class="form-control-range" id="amountRange" value="10" min="10" step="1" max="1000">
+              </div>
+              <div class="clearfix">
+                <div class="float-left py-2 pr-2">
+                  출금 계좌:
+                </div>
+                <div class="float-left">
+                  <select class="form-control d-inline" name="">
+                      <option value="">XX은행 / ********XXXXXX</option>
+                  </select>
+                </div>
+                <div class="float-right">
+                  <input type="hidden" id="processMode" name="processMode" value="">
+                  <input type="hidden" name="balance" value="<%= hazelMoney != null ? hazelMoney : '0' %>">
+                  <a id="buttonCancel" class="btn btn-danger text-light">취소</a>
+                  <button id="buttonSubmit" type="submit" class="btn btn-primary">충전하기</button>
+                </div>
+              </div>
+          </form>
+        </div>
       </div>
     </div>
   </main>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="/js/paymeth.js"></script>
   <%- include("partials/footer"); -%>

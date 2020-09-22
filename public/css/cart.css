@@ -15,6 +15,11 @@ input.item, input.all-items {
 
 a:hover {
   text-decoration: none;
+  color: inherit;
+}
+
+a {
+  color: inherit;
 }
 
 /* Footer */

@@ -1,4 +1,4 @@
-<%-include("partials/header");-%>
+<%- include("partials/header"); -%>
 <!-- Custom styles -->
 <link href="css/cart.css" rel="stylesheet">
 </head>
@@ -16,35 +16,41 @@
         <h4 class="d-flex justify-content-between align-items-center mb-3">
           <span class="text-muted">결제 체크아웃</span>
           <!-- 전체 상품 -->
-          <span class="badge badge-secondary badge-pill"><%= noOfCheckedItems %> 개</span>
+          <span class="badge badge-secondary badge-pill"><%= sess.noOfCheckedItems %> 개</span>
         </h4>
 
         <div class="card mb-3">
-          <div class="card-header">배송지 <span class="btn btn-sm btn-link">(주소 선택)</span></div>
+          <div class="card-header">배송지 <span class="btn btn-sm btn-link" onclick="location.href='/account/manage-address'">(주소 선택)</span>
+          </div>
           <div class="card-body">
-            <div class="mb-2"><i class="fas fa-address-card mr-1"></i> 홍길동</div>
-            <div class="mb-2">서울특별시 구로구 고척동 95-130 (203호)</div>
-            <div>연락처: +821042090323</div>
+            <% if (address[0].address_id != null) { %>
+            <div class="mb-2"><i class="fas fa-address-card mr-1"></i> <%= address[0].recipient %></div>
+            <div class="mb-2">(<%= address[0].zip %>) <%= address[0].state %> <%= address[0].city %> <%= address[0].address %></div>
+            <div>연락처: <%= address[0].phone %></div>
+            <% } else { %>
+            <small class="alert alert-danger" role="alert" style="padding: 5px 10px">
+              <strong>기본 주소 없습니다.</strong>
+            </small>
+            <% } %>
           </div>
         </div>
-
         <ul class="list-group mb-3">
           <li class="list-group-item d-flex justify-content-between lh-condensed">
-            <h6 class="my-0">주문 금액</h6>
+            <h6 class="my-0">상품 가격</h6>
             <%
-            var totalProductPrice = 0;
-            var totalDiscount = 0;
-            var couponValue = couponResult[1];
-            for(let i = 0; i < data.length; i++) {
-              if(data[i].checked === 1) {
-                totalProductPrice += Math.round(data[i].price*data[i].quantity);
-                if(data[i].discount > 0) {
-                  totalDiscount += Math.round(data[i].price*(data[i].discount/100)*data[i].quantity);
-                }
+              var totalProductPrice = 0;
+              var totalDiscount = 0;
+              var couponValue = couponResult[1];
+              for (let i = 0; i < data.length; i++) {
+                  if (data[i].checked === 1) {
+                      totalProductPrice += Math.round(data[i].price * data[i].quantity);
+                      if (data[i].discount > 0) {
+                          totalDiscount += Math.round(data[i].price * (data[i].discount / 100) * data[i].quantity);
+                      }
+                  }
               }
-            }
-            subTotal = totalProductPrice - totalDiscount;
-            total = totalProductPrice - totalDiscount - couponValue;
+              subTotal = totalProductPrice - totalDiscount;
+              total = totalProductPrice - totalDiscount - couponValue;
             %>
             <span class="text-muted"><%= formatNum(totalProductPrice) %> 원</span>
           </li>
@@ -52,20 +58,24 @@
             <h6 class="my-0">할인 금액</h6>
             <span class="text-muted">-<%= formatNum(totalDiscount) %> 원</span>
           </li>
-          <li class="list-group-item d-flex justify-content-between bg-light">
+          <li class="list-group-item d-flex justify-content-between bg-light lh-condensed">
             <div class="<%= couponResult[3] == 1 ? "text-success" : "" %>">
               <h6 class="my-0">쿠폰</h6>
               <small><%= couponResult[0] %></small>
             </div>
             <span class="<%= couponResult[3] == 1 ? "text-success" : "" %>">-<%= couponResult[1] ? formatNum(couponResult[1]) : "0,000" %> 원</span>
           </li>
-          <li class="list-group-item d-flex justify-content-between">
+          <li class="list-group-item d-flex justify-content-between lh-condensed">
             <span>전체 금액 (KRW)</span>
             <strong><%= formatNum(total) %> 원</strong>
           </li>
+          <li class="list-group-item d-flex justify-content-between lh-condensed bg-warning text-dark">
+            <h6 class="my-0">하젤머니 잔액</h6>
+            <strong><%= formatNum(hazelMoney) %> 원</strong>
+          </li>
         </ul>
 
-        <form class="card p-2 coupon-form" method="POST" action="/apply-coupon">
+        <form id="apply-coupon" class="card p-2 coupon-form" method="POST" action="/apply-coupon">
           <% if (couponResult[2]) { %>
           <small class="alert alert-<%= couponResult[3] == 1 ? 'success' : 'danger' %>" role="alert" style="padding: 5px 10px">
             <strong><%= couponResult[2] %></strong>
@@ -75,7 +85,7 @@
             <input type="hidden" name="subTotal" value="<%= subTotal %>">
             <input type="text" class="form-control" name="code" placeholder="쿠폰 코드" required>
             <div class="input-group-append">
-              <button type="submit" class="btn btn-secondary">적용</button>
+              <button id="apply-coupon" type="submit" class="btn btn-secondary">적용</button>
             </div>
           </div>
         </form>
@@ -87,7 +97,19 @@
               <span class="slider round"></span>
             </label>
           </div>
-          <button class="btn btn-md btn-block btn-primary" type="submit" id="signup" name="signup">계속</button>
+          <form id="cart-continue" method="post" action="/cart/process-payment">
+            <input type="hidden" name="hazelMoney" value="<%= hazelMoney %>">
+            <input type="hidden" name="total" value="<%= total %>">
+            <input type="hidden" name="totalDiscount" value="<%= totalDiscount %>">
+            <input type="hidden" name="couponCode" value="<%= couponResult[0] %>">
+            <input type="hidden" name="couponValue" value="<%= couponResult[1] %>">
+            <input type="hidden" name="recipient" value="<%= address[0].recipient %>">
+            <input type="hidden" name="address" value="<%= '(' + address[0].zip + ') ' + address[0].state + ' ' + address[0].city + ' ' + address[0].address %>">
+            <input type="hidden" name="phone" value="<%= address[0].phone %>">
+            <button class="btn btn-md btn-block btn-primary" type="submit" <%= rep.length == 0 || address[0].address_id == null ? 'disabled' : '' %>>결제하기</button>
+            <div class="text-danger m-1"><%= sess.messageErr %></div>
+            <% sess.messageErr = "" %>
+          </form>
         </div>
       </div>
 
@@ -99,33 +121,48 @@
           </span>
         </h4>
 
-        <% if( rep.length === 0) { %>
-          <div class="card mb-4" >
-            <div class="card-body text-center">
-              카트에 담은 제품이 없습니다.
-            </div>
+        <% if(rep.length === 0) { %>
+        <div class="card mb-4">
+          <div class="card-body text-center">
+            카트에 담은 제품이 없습니다.
           </div>
+        </div>
         <% } %>
         <!-- 판매자 -->
         <% var i = 0; %>
         <% for (let p = 0; p < rep.length; p++) { %>
-          <div class="card mb-4" >
+        <div class="card mb-4">
           <div class="card-header">
-            판매자: <strong><%= rep[p].seller %></strong>
+            <i class="fas fa-store-alt mr-1"></i> 판매자: <strong><%= rep[p].sellername %></strong>
           </div>
           <!-- 상품 -->
           <% for (let q = 0; q < rep[p].count; q++, i++) { %>
           <div class="card-body cart-item">
             <div class="row">
               <div class="col-sm-3">
-                <img src="images/product-default.jpg" alt="product-img" width="110%" />
+                <a href="/product/<%= data[i].product_id %>">
+                  <% var isExist = false; %>
+                  <% for(let j = 0; j < images.length; j++) { %>
+                  <% if (images[j].product_id == data[i].product_id) { %>
+                  <img class="border rounded" src="uploads/<%= images[j].file %>" alt="product-image" width="110%" />
+                  <% isExist = true; break; %>
+                  <% } %>
+                  <% } %>
+                  <% if(!isExist) { %>
+                  <img class="border rounded" src="images/product-default.jpg" alt="product-image" width="110%" />
+                  <% } %>
+                </a>
               </div>
               <div class="col-sm-9">
                 <div class="row">
                   <div class="col-sm-10">
                     <h5 class="card-title">
-                      <%= data[i].product %>
-                      <br><small><%= data[i].type_avail %></small>
+                      <a href="/product/<%= data[i].product_id %>"><%= data[i].product %></a>
+                      <br><small><a href="#" class="text-success">(<%= data[i].shop %>
+                          )</a></small>
+                      <% if (data[i].type != "None") { %>
+                      <br><small>종류: <%= data[i].type %></small>
+                      <% } %>
                     </h5>
                   </div>
                   <div class="col-sm-2">
@@ -134,13 +171,13 @@
                   </div>
                 </div>
                 <%
-                var price = data[i].price;
-                if (data[i].discount > 0) {
-                    price = Math.round(data[i].price*((100-data[i].discount)/100))
-                %>
+                  var price = data[i].price;
+                  if (data[i].discount > 0) {
+                      price = Math.round(data[i].price * ((100 - data[i].discount) / 100)) %>
                 <small><s><%= formatNum(data[i].price) %> 원</s> <span class="disc-tag mx-1"><%= data[i].discount %>% off</span></small>
                 <% } %>
-                <p class="card-text mb-2"><strong><%= formatNum(price) %> 원</strong> x <%= data[i].quantity %> = <%= formatNum(price*data[i].quantity) %> 원</p>
+                <p class="card-text mb-2"><strong><%= formatNum(price) %> 원</strong>
+                  x <%= data[i].quantity %> = <%= formatNum(price * data[i].quantity) %> 원</p>
                 <div class="row">
                   <div class="col-sm-7">
                     <p>
@@ -151,7 +188,7 @@
                         <% if (data[i].rating - Math.floor(data[i].rating) >= 0.5) { %>
                         <i class="fas fa-star-half-alt"></i>
                         <% } %>
-                        <% for (let j = 1; j <= 5 - (data[i].rating - Math.floor(data[i].rating) < 0.5  ? Math.floor(data[i].rating) : data[i].rating); j++) { %>
+                        <% for (let j = 1; j <= 5 - (data[i].rating - Math.floor(data[i].rating) < 0.5 ? Math.floor(data[i].rating) : data[i].rating); j++) { %>
                         <i class="far fa-star"></i>
                         <% } %>
                       </span>(0)
@@ -167,8 +204,8 @@
                           <i class="fas fa-minus"></i>
                         </button>
                       </span>
-                        <input type="hidden" name="cart<%= i %>" value="<%= data[i].cart_id %>">
-                        <input type="text" name="qty<%= i %>" class="qty-input form-control input-number" value="<%= data[i].quantity %>">
+                      <input type="hidden" name="cart<%= i %>" value="<%= data[i].cart_id %>">
+                      <input type="text" name="qty<%= i %>" class="qty-input form-control input-number" value="<%= data[i].quantity %>">
                       <span class="input-group-append">
                         <button type="button" class="qty-plus btn btn-sm btn-outline-secondary">
                           <i class="fas fa-plus"></i>
@@ -181,7 +218,7 @@
             </div>
           </div>
           <% } %>
-          </div>
+        </div>
         <% } %>
       </form>
     </div>

@@ -15,6 +15,7 @@ exports.showOutlines = function(req, res) {
          SELECT user_id, COUNT(*) as count FROM cart WHERE user_id = ? GROUP BY user_id;
          SELECT user_id, COUNT(*) as count FROM wishlist WHERE user_id = ? GROUP BY user_id;
          SELECT * FROM image;
+
          SELECT trans_id, COUNT(*) as count
          FROM orders
          WHERE status = 'waiting' AND user_id = ?
@@ -53,7 +54,7 @@ exports.showDetails = function(req, res) {
          SELECT * FROM wishlist WHERE product_id = ? AND user_id = ?;
          SELECT user_id, COUNT(*) as count FROM cart WHERE user_id = ? GROUP BY user_id;
          SELECT user_id, COUNT(*) as count FROM wishlist WHERE user_id = ? GROUP BY user_id;
-         
+
          SELECT *
          FROM stock as st RIGHT OUTER JOIN shop as sh ON st.shop_id = sh.shop_id
          WHERE product_id = ?;`
@@ -81,3 +82,23 @@ exports.showDetails = function(req, res) {
     }
   });
 };
+
+/* ------------------------------ product의 매장 지도 출력 ------------------------------ */
+
+exports.goToMap = function (req, res) {
+  var reqShopId = req.params.shopId;
+
+  if (reqShopId == 1) {
+    res.redirect("https://map.naver.com/v5/entry/place/973851585?c=14125018.2132740,4512778.8505428,15,0,0,0,dh");
+  } else if (reqShopId == 2) {
+    res.redirect("https://map.naver.com/v5/search/%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EA%B5%AC%EB%A1%9C%EA%B5%AC%20%EA%B5%AC%EB%A1%9C2%EB%8F%99%20487-113/");
+  } else if (reqShopId == 3) {
+    res.redirect("https://map.naver.com/v5/entry/place/1244774817?c=14128376.6652043,4516454.9938718,15,0,0,0,dh");
+  } else if (reqShopId == 4) {
+    res.redirect("https://map.naver.com/v5/entry/place/1325896059?c=14127987.3140915,4516767.9079564,15,0,0,0,dh");
+  } else if (reqShopId == 5) {
+    res.redirect("https://map.naver.com/v5/entry/place/18770218?c=14140685.4154153,4507172.6722495,15,0,0,0,dh");
+  } else if (reqShopId == 6) {
+    res.redirect("https://map.naver.com/v5/entry/place/1964216450?c=14130196.8219403,4517295.8011830,15,0,0,0,dh");
+  }
+}

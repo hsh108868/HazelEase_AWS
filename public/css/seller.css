@@ -5,3 +5,23 @@
 .table td, .table th {
   border-top: none;
 }
+
+.table {
+  background-color: #f1f3f8;
+}
+
+.subform {
+  display: none;
+}
+
+.hidden {
+  display: none;
+}
+
+.fixed-width-200 {
+  width: 200px;
+}
+
+.fixed-width-300 {
+  width: 300px;
+}

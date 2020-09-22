@@ -16,6 +16,8 @@ const QRCode = require('qrcode');
 /* ---------- 정의된 모듈 ------------- */
 const connection = require("./lib/dbconn"); // DB 연결
 const user = require('./routes/user');
+const seller = require('./routes/seller');
+const address = require('./routes/address');
 const product = require('./routes/product');
 const qrscan = require('./routes/qrscan');
 const cart = require('./routes/cart');
@@ -25,13 +27,15 @@ const notification = require('./routes/notification');
 const receipt = require('./routes/receipt');
 
 /* ----------------------------------- */
-
 const app = express();
 
 app.set('view engine', 'ejs');
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+app.use(fileUpload({createParentPath: true}));
+app.use(cors());
+// app.use(morgan('dev'));
 
 // DB연결와 체크
 db = connection.db;
@@ -65,8 +69,16 @@ app.post("/login", user.login);
 
 app.get("/logout", user.logout);
 
+//주소록 관리
+app.post('/account/manage-address', address.add);
+app.post('/account/manage-address/:addressId', address.update);
+app.get('/account/delete-address/:addressId', address.delete);
+app.get('/account/default-address/:addressId', address.default);
+app.get('/account/edit-address/:mode/:addressId', address.edit);
+
 // 회원정보 수정 페이지의 요청 처리
 app.get("/account/:subPage", user.openSubPage);
+app.get("/account/:subPage/:shopId", user.openSubPage);
 app.post("/profile", user.saveChanges);
 
 // 결제 수단 페이지의 요청 처리
@@ -125,19 +137,17 @@ app.get("/wishlist/move/:wishlistId/:productId/:type/:shopId", wishlist.move);
 app.get("/product/:productId", product.showDetails);
 
 // 알림 페이지의 요청 처리
-app.get("/my-notification", function(req, res) {
-  res.render("notification", {
-    user_id: req.session.user_id,
-    noOfCartItems: req.session.noOfCartItems,
-    noOfWishlistItems: req.session.noOfWishlistItems
-  });
-});
+app.get("/my-notification", notification.show);
+app.get("/my-notification/:receiptMode/:orderId", notification.select);
 
 // 수령여부 페이지의 요청 처리
 app.get("/my-receipt", receipt.list);
 app.get("/my-receipt/confirm-pickup/:orderId/:productId/:type/:shopId", receipt.confirm);
 app.get("/purchase-invoice/:transId", receipt.purchaseDetails);
-app.get("/pickup-certificate/:transId-:orderId-:shopId", receipt.pickupCert);
+app.get("/pickup-certificate/:transId-:orderId/:shopId", receipt.pickupCert);
+
+//매장이동
+app.get("/:shopId", product.goToMap);
 
 app.listen(3000, function() {
   console.log("Server has started at port 3000.");
