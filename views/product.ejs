@@ -37,7 +37,7 @@
           </a>
         </div>
       </div>
-      <form class="col-lg-6 p-4" method="POST" action="/cart/add/<%= data.product_id %>">
+      <form id="add-item-form" class="col-lg-6 p-4" method="POST" action="/cart/add/<%= data.product_id %>">
         <div class="p-4" style="position: absolute; top: 0; right: 0px;">
           <h3>
             <a style="color: #ea5455;" type="button" href="/wishlist/<%= wishlisted == 1 ? 'delete-toggle' : 'add' %>/<%= data.product_id %>">
@@ -79,8 +79,9 @@
               <option value=""> 종류 선택 </option>
               <% } %>
               <% for (let i = 0; i < typeAvailable.length; i++) { %>
-                <option value="<%= typeAvailable[i] != '' ? typeAvailable[i] : 'None' %>"><%= typeAvailable[i] != '' ? typeAvailable[i] : '종류 없음' %></option>
+                <option value="<%= typeAvailable[i] != '' ? typeAvailable[i] : 'None' %>" <%= typeAvailable[i] == sess.selectType ? 'selected' : '' %>><%= typeAvailable[i] != '' ? typeAvailable[i] : '종류 없음' %></option>
               <% } %>
+              <% sess.selectType = null; %>
             </select>
           </div>
           <div class="col-md-5 mb-3">
@@ -96,8 +97,9 @@
             <select name="shopId" class="form-control" required>
               <option value="">매장 선택</option>
               <% for (let i = 0; i < stock.length; i++) { %>
-                <option value="<%= stock[i].shop_id %>"><%= stock[i].shop %></option>
+                <option value="<%= stock[i].shop_id %>" <%= stock[i].shop_id == sess.selectShopId ? 'selected' : '' %>><%= stock[i].shop %></option>
               <% } %>
+              <% sess.selectShopId = null; %>
             </select>
             <small class="text-danger"><%= sess.message %></small>
             <small class="text-warning"><%= sess.notice %></small>
@@ -113,6 +115,7 @@
           </div>
         </div>
         <div class="clearfix">
+          <input type="hidden" id="auto-submit" value="<%= sess.autoSubmit %>">
           <button type="submit" class="btn btn-primary btn-block text-uppercase float-left">쇼핑가트 담기 <i class="fas fa-shopping-bag pl-2"></i></button>
         </div>
       </form>
@@ -240,6 +243,7 @@
   </div>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script type="text/javascript" src="/js/product.js"></script>
   <!-- FOOTER -->
   <%- include("partials/copyright"); -%>
   <%- include("partials/footer"); -%>

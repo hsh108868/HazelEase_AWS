@@ -1,4 +1,5 @@
 const fn = require("../lib/other"); // 정의된 함수들 가져오기
+const QRCode = require("qrcode");
 
 /* ------------------------------ 수령목록 페이지 ------------------------------ */
 exports.list = function (req, res) {
@@ -63,13 +64,14 @@ exports.confirm = function (req, res) {
   var reqProductId = req.params.productId;
   var reqType = req.params.type;
   var reqShopId = req.params.shopId;
+  var now = new Date();
 
   if (!req.session.loggedin) {
       res.redirect("/login");
       res.end();
   } else {
-      let sql = `UPDATE orders SET status = 'completed' WHERE user_id = ? AND order_id = ? AND product_id = ? AND type = ? AND shop_id = ?; `
-      let params = [user_id, reqOrderId, reqProductId, reqType, reqShopId];
+      let sql = `UPDATE orders SET status = 'completed', latest_update = ? WHERE user_id = ? AND order_id = ? AND product_id = ? AND type = ? AND shop_id = ?; `
+      let params = [now, user_id, reqOrderId, reqProductId, reqType, reqShopId];
 
       db.query(sql, params, function (err, results) {
           if (err) throw err;
@@ -142,19 +144,24 @@ exports.pickupCert = function (req, res) {
   let params = [user_id, reqShopId, reqTransId];
 
   if (!req.session.loggedin) {
+      req.session.redirectUrl = req.headers.referrer || req.originalUrl || req.url;
       res.redirect("/login");
       res.end();
   } else {
     db.query(sql, params, function (err, results) {
       if (err) throw err;
-      res.render('pickup-cert.ejs', {
-        user_id: user_id,
-        sess: req.session,
-        formatNum: fn.formatNum,
-        data: results[0],
-        date: results[1][0].date,
-        transInfo: results[1][0],
-        images: results[2]
+      let textLink = "localhost:3000/qrcode/pickup-complete/tid/" + reqTransId + "/oid/" + reqOrderId + "/sid/" + reqShopId;
+      QRCode.toDataURL(textLink, { errorCorrectionLevel: 'M' }, function (err, url) {
+        res.render('pickup-cert.ejs', {
+          user_id: user_id,
+          sess: req.session,
+          formatNum: fn.formatNum,
+          data: results[0],
+          date: results[1][0].date,
+          transInfo: results[1][0],
+          images: results[2],
+          qrcode: url
+        });
       });
     });
   }

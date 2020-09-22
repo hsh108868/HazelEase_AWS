@@ -20,7 +20,7 @@ exports.showOutlines = function(req, res) {
          FROM orders
          WHERE status = 'waiting' AND user_id = ?
          GROUP BY trans_id;
-         
+
          SELECT order_id FROM orders WHERE user_id = ? AND (status = 'delivery' OR status = 'pickup');`
   params = [user_id, user_id, user_id, user_id];
 
@@ -52,7 +52,7 @@ exports.showDetails = function(req, res) {
          WHERE product_id = ?;
 
          SELECT * FROM image WHERE product_id = ?;
-         SELECT * FROM wishlist WHERE product_id = ? AND user_id = ?;
+         SELECT * FROM wishlist WHERE product_id = ? AND shop_id IS NULL AND type IS NULL AND user_id = ?;
          SELECT user_id, COUNT(*) as count FROM cart WHERE user_id = ? GROUP BY user_id;
          SELECT user_id, COUNT(*) as count FROM wishlist WHERE user_id = ? GROUP BY user_id;
 
@@ -103,4 +103,3 @@ exports.goToMap = function (req, res) {
     res.redirect("https://map.naver.com/v5/entry/place/1964216450?c=14130196.8219403,4517295.8011830,15,0,0,0,dh");
   }
 }
-
