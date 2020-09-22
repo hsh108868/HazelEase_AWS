@@ -131,7 +131,7 @@
             <div class="card-header clear-fix">
               <div class="align-middle d-inline-block mt-1"><i class="fas fa-map-marker-alt mr-1"></i> <strong><%= onPickup[p].shop %></strong> / <i class="fas fa-hand-sparkles mx-1"></i> <span class="text-success font-weight-bold"><%= onPickup[p].count %> 개</span> 상품픽업</div>
               <div class="float-right">
-                <button type="button" class="btn btn-outline-secondary btn-sm mr-1">위치보기</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm mr-1" onclick="location.href='/<%=onPickup[p].shop_id%>'">위치보기</button>
                 <button type="button" class="btn btn-secondary btn-sm" onClick="location.href='/pickup-certificate/<%= onPickup[p].trans_id %>-<%= onPickup[p].order_id %>/<%= onPickup[p].shop_id %>'">픽업증권 <i class="far fa-file-alt ml-1"></i></button>
               </div>
             </div>

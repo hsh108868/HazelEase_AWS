@@ -225,11 +225,27 @@ exports.openSubPage = function(req, res) {
         });
       });
     } else if (reqSubPage === "purchase-history") {
-      db.query('SELECT * FROM ?? WHERE user_id = ?', ['member', user_id], function(err, results, fields) {
+      db.query(`select o.order_id, tr.date, count(*) as count from orders as o 
+                    right outer join transaction as tr on o.trans_id = tr.trans_id
+                    where o.user_id = ?
+                    group by o.order_id;
+                   
+                   SELECT p.product, o.product_id, o.quantity, o.price, o.order_id
+                   FROM orders as o
+                   RIGHT OUTER JOIN product as p ON p.product_id = o.product_id
+                   WHERE o.user_id = ?
+                   order by o.order_id asc;
+
+           
+                   SELECT * FROM image;`,
+          [user_id, user_id, user_id], function(err, results, fields) {
         res.render('purchase.ejs', {
           user_id: user_id,
-          data: results,
-          sess: req.session
+          sess: req.session,
+          formatNum : fn.formatNum,
+          data : results[0],
+          orderItems : results[1],
+          images : results[2]
         });
       });
     } else if (reqSubPage === "payment-method") {

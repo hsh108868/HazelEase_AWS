@@ -135,6 +135,9 @@ app.get("/my-receipt/confirm-pickup/:orderId/:productId/:type/:shopId", receipt.
 app.get("/purchase-invoice/:transId", receipt.purchaseDetails);
 app.get("/pickup-certificate/:transId-:orderId/:shopId", receipt.pickupCert);
 
+//매장이동
+app.get("/:shopId", product.goToMap);
+
 app.listen(3000, function() {
   console.log("Server has started at port 3000.");
 });
