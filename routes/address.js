@@ -48,6 +48,7 @@ exports.delete = function (req, res) {
     var reqAddressId = req.params.addressId;
 
     if (!req.session.loggedin) {
+        req.session.redirectUrl = req.headers.referrer || req.originalUrl || req.url;
         res.redirect("/login");
         res.end();
     } else {
@@ -62,7 +63,7 @@ exports.delete = function (req, res) {
           sql = `UPDATE member SET default_address = NULL WHERE user_id = ?; `
           params.push(user_id);
         }
-        
+
         sql +=  `DELETE FROM address WHERE address_id = ?; `
         params.push(reqAddressId);
 
@@ -81,6 +82,7 @@ exports.default = function (req, res) {
   var reqAddressId = req.params.addressId;
 
   if (!req.session.loggedin) {
+      req.session.redirectUrl = req.headers.referrer || req.originalUrl || req.url;
       res.redirect("/login");
       res.end();
   } else {
@@ -100,6 +102,7 @@ exports.edit = function (req, res) {
   var reqAddressId = req.params.addressId;
 
   if (!req.session.loggedin) {
+      req.session.redirectUrl = req.headers.referrer || req.originalUrl || req.url;
       res.redirect("/login");
       res.end();
   } else {

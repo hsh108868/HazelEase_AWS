@@ -163,6 +163,7 @@
                           expPickupDate = new Date(pickupItems[i].latest_update.getTime() + 7*24*60*60*1000);
                           day = expPickupDate.getDay();
                           remainingDays = Math.ceil((expPickupDate.getTime() - new Date().getTime()) / (24*60*60*1000));
+
                           switch (day) {
                             case 0:
                               day = '일'; break;

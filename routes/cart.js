@@ -5,6 +5,7 @@ exports.show = function(req, res) {
   var user_id = req.session.user_id;
 
   if (!req.session.loggedin) {
+    req.session.redirectUrl = req.headers.referrer || req.originalUrl || req.url;
     res.redirect("/login");
     res.end();
   } else {
@@ -76,6 +77,7 @@ exports.add = function(req, res) {
   var params = [reqProductId, reqShopId];
 
   if (!req.session.loggedin) {
+    req.session.redirectUrl = req.headers.referrer || req.originalUrl || req.url;
     res.redirect("/login");
     res.end();
   } else {
@@ -147,6 +149,7 @@ exports.delete = function(req, res) {
   var sql = 'delete from cart where cart_id=?;';
   var params = [reqCartId];
   if (!req.session.loggedin) {
+    req.session.redirectUrl = req.headers.referrer || req.originalUrl || req.url;
     res.redirect("/login");
     res.end();
   } else {
@@ -200,6 +203,7 @@ exports.update = function(req, res) {
   }
 
   if (!req.session.loggedin) {
+    req.session.redirectUrl = req.headers.referrer || req.originalUrl || req.url;
     res.redirect("/login");
     res.end();
   } else {
@@ -284,6 +288,7 @@ exports.processPayment = function(req, res) {
   }
 
   if (!req.session.loggedin) {
+    req.session.redirectUrl = req.headers.referrer || req.originalUrl || req.url;
     res.redirect("/login");
     res.end();
   } else {

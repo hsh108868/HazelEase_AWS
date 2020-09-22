@@ -41,7 +41,6 @@ exports.showOutlines = function(req, res) {
   });
 };
 
-
 /* ------------------------------ product의 상세정보 출력 ------------------------------ */
 exports.showDetails = function(req, res) {
   const user_id = req.session.user_id;
