@@ -159,5 +159,3 @@ exports.pickupCert = function (req, res) {
     });
   }
 }
-
-
