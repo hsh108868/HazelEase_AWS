@@ -5,6 +5,7 @@ exports.show = function (req, res) {
     var user_id = req.session.user_id;
 
     if (!req.session.loggedin) {
+        req.session.redirectUrl = req.headers.referrer || req.originalUrl || req.url;
         res.redirect("/login");
         res.end();
     } else {
@@ -64,6 +65,7 @@ exports.select = function (req, res) {
     var now = new Date();
 
     if (!req.session.loggedin) {
+        req.session.redirectUrl = req.headers.referrer || req.originalUrl || req.url;
         res.redirect("/login");
         res.end();
     } else {

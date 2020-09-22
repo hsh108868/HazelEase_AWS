@@ -5,21 +5,34 @@ exports.show = function(req, res) {
   const user_id = req.session.user_id;
 
   if (!req.session.loggedin) {
+    req.session.redirectUrl = req.headers.referrer || req.originalUrl || req.url;
     res.redirect("/login");
     res.end();
   } else {
-    sql = `SELECT a.product_id, a.product, a.price, a.rating, b.wishlist_id, b.user_id
-           FROM product as a
-              RIGHT OUTER JOIN wishlist as b on a.product_id = b.product_id WHERE b.user_id = ?;
+    sql = `SELECT w.wishlist_id, w.product_id, p.product, w.type, p.price, p.rating, w.shop_id, s.shop
+           FROM wishlist as w
+              RIGHT OUTER JOIN product as p on w.product_id = p.product_id
+              RIGHT OUTER JOIN shop as s on w.shop_id = s.shop_id
+           WHERE w.user_id = ?;
+
+           SELECT w.wishlist_id, w.product_id, p.product, p.price, p.rating
+           FROM wishlist as w
+              RIGHT OUTER JOIN product as p on w.product_id = p.product_id
+           WHERE w.user_id = ? AND (shop_id IS NULL OR type IS NULL);
 
            SELECT * FROM image;`
-    db.query(sql, [user_id], function(err, results, fields) {
+    db.query(sql, [user_id, user_id], function(err, results, fields) {
         if (err) throw err;
-        req.session.noOfWishlistItems = results[0].length;
+        req.session.noOfWishlistItems = results[0].length + results[1].length;
+
+        for (let i = 0; i < results[1].length; i++) {
+          results[0].push(results[1][i]);
+        }
+
         res.render('wishlist.ejs', {
           user_id: user_id,
           data: results[0],
-          images: results[1],
+          images: results[2],
           formatNum: fn.formatNum,
           sess: req.session
         });
@@ -31,19 +44,30 @@ exports.show = function(req, res) {
 exports.add = function(req, res) {
   const user_id = req.session.user_id;
   let reqProductId = req.params.productId;
+  let reqType = req.params.type;
+  let reqShopId = req.params.shopId;
   var now = new Date();
 
-  console.log(req.header);
-
   if (!req.session.loggedin) {
+    req.session.redirectUrl = req.headers.referrer || req.originalUrl || req.url;
     res.redirect("/login");
     res.end();
   } else {
-    db.query('SELECT product_id FROM wishlist WHERE product_id = ? AND user_id = ?', [reqProductId, user_id], function(err, results) {
+    let sql, params;
+
+    if (reqType == null || reqShopId == null) {
+      sql = 'SELECT product_id FROM wishlist WHERE product_id = ? AND type IS NULL AND shop_id IS NULL AND user_id = ?';
+      params = [reqProductId, user_id];
+    } else {
+      sql = 'SELECT product_id FROM wishlist WHERE product_id = ? AND type = ? AND shop_id = ? AND user_id = ?';
+      params = [reqProductId, reqType, reqShopId, user_id];
+    }
+
+    db.query(sql, params, function(err, results) {
       if (err) throw err;
       if (results.length == 0) {
-        var sql = 'insert into wishlist(user_id, product_id, date) values (?,?,?);';
-        var params = [user_id, reqProductId, now];
+        var sql = 'INSERT INTO wishlist(user_id, product_id, type, shop_id, date) values (?,?,?,?,?);';
+        var params = [user_id, reqProductId, reqType, reqShopId, now];
         db.query(sql, params, function(err, results) {
           if (err) {
             res.send('실패');
@@ -71,11 +95,12 @@ exports.delete = function(req, res) {
     sql += 'wishlist_id = ?; '
     params = [reqWishlistId];
   } else {
-    sql += 'product_id = ? AND user_id = ?; '
+    sql += 'product_id = ? AND type IS NULL AND shop_id IS NULL AND user_id = ?; '
     params = [reqProductId, user_id];
   }
 
   if (!req.session.loggedin) {
+    req.session.redirectUrl = req.headers.referrer || req.originalUrl || req.url;
     res.redirect("/login");
     res.end();
   } else {
@@ -101,11 +126,14 @@ exports.move = function(req, res) {
   const user_id = req.session.user_id;
   let reqWishlistId = req.params.wishlistId;
   let reqProductId = req.params.productId;
+  let reqType = req.params.type;
+  let reqShopId = req.params.shopId;
   var now = new Date();
 
   var productId = 0;
 
   if (!req.session.loggedin) {
+    req.session.redirectUrl = req.headers.referrer || req.originalUrl || req.url;
     res.redirect("/login");
     res.end();
   } else {
@@ -116,8 +144,17 @@ exports.move = function(req, res) {
         console.log('쇼핑카트 담기에 실패');
         throw err;
       }
-      req.session.notice = "종류와 매장을 선택하세요."
-      res.redirect('/product/' + reqProductId);
+
+      if(reqType == null || reqShopId == null) {
+        req.session.notice = "종류와 매장을 선택하세요.";
+        req.session.autoSubmit = 'no';
+        res.redirect('/product/' + reqProductId);
+      } else {
+        req.session.selectType = reqType;
+        req.session.selectShopId = reqShopId;
+        req.session.autoSubmit = 'yes';
+        res.redirect('/product/' + reqProductId);
+      }
     });
   }
 }

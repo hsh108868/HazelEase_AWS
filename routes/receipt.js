@@ -1,10 +1,12 @@
 const fn = require("../lib/other"); // 정의된 함수들 가져오기
+const QRCode = require('qrcode');
 
 /* ------------------------------ 수령목록 페이지 ------------------------------ */
 exports.list = function (req, res) {
     var user_id = req.session.user_id;
 
     if (!req.session.loggedin) {
+        req.session.redirectUrl = req.headers.referrer || req.originalUrl || req.url;
         res.redirect("/login");
         res.end();
     } else {
@@ -65,6 +67,7 @@ exports.confirm = function (req, res) {
   var reqShopId = req.params.shopId;
 
   if (!req.session.loggedin) {
+      req.session.redirectUrl = req.headers.referrer || req.originalUrl || req.url;
       res.redirect("/login");
       res.end();
   } else {
@@ -103,6 +106,7 @@ exports.purchaseDetails = function (req, res) {
   let params = [user_id, reqTransId, user_id, reqTransId, user_id, reqTransId];
 
   if (!req.session.loggedin) {
+      req.session.redirectUrl = req.headers.referrer || req.originalUrl || req.url;
       res.redirect("/login");
       res.end();
   } else {
@@ -142,19 +146,24 @@ exports.pickupCert = function (req, res) {
   let params = [user_id, reqShopId, reqTransId];
 
   if (!req.session.loggedin) {
+      req.session.redirectUrl = req.headers.referrer || req.originalUrl || req.url;
       res.redirect("/login");
       res.end();
   } else {
     db.query(sql, params, function (err, results) {
       if (err) throw err;
-      res.render('pickup-cert.ejs', {
-        user_id: user_id,
-        sess: req.session,
-        formatNum: fn.formatNum,
-        data: results[0],
-        date: results[1][0].date,
-        transInfo: results[1][0],
-        images: results[2]
+      let textLink = "localhost:3000/qrcode/pickup-complete/tid/" + reqTransId + "/oid/" + reqOrderId + "/sid/" + reqShopId;
+      QRCode.toDataURL(textLink, { errorCorrectionLevel: 'M' }, function (err, url) {
+        res.render('pickup-cert.ejs', {
+          user_id: user_id,
+          sess: req.session,
+          formatNum: fn.formatNum,
+          data: results[0],
+          date: results[1][0].date,
+          transInfo: results[1][0],
+          images: results[2],
+          qrcode: url
+        });
       });
     });
   }

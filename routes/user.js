@@ -87,7 +87,8 @@ exports.login = function(req, res) {
           if (result === true) {
             req.session.loggedin = true;
             req.session.user_id = results[0].user_id;
-            res.redirect('/home');
+            let redirectUrl = req.session.redirectUrl || '/home';
+            res.redirect(redirectUrl);
           } else {
             message = "잘못된 아이디 또는 비밀번호!";
             res.render('login.ejs', { message: message, statusCode: 400 });
@@ -190,6 +191,7 @@ exports.openSubPage = function(req, res) {
 
   // 로그인된 상태 아니면 로그인 페이지로 이동
   if (!req.session.loggedin) {
+    req.session.redirectUrl = req.headers.referrer || req.originalUrl || req.url;
     res.redirect("/login");
     res.end();
   } else {

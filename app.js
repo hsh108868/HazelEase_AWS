@@ -11,6 +11,7 @@ const fileUpload = require('express-fileupload');
 const cors = require('cors');
 // const morgan = require('morgan');
 const _ = require('lodash');
+const QRCode = require('qrcode');
 
 /* ---------- 정의된 모듈 ------------- */
 const connection = require("./lib/dbconn"); // DB 연결
@@ -18,6 +19,7 @@ const user = require('./routes/user');
 const seller = require('./routes/seller');
 const address = require('./routes/address');
 const product = require('./routes/product');
+const qrscan = require('./routes/qrscan');
 const cart = require('./routes/cart');
 const wishlist = require('./routes/wishlist');
 const paymeth = require('./routes/paymeth');
@@ -108,6 +110,13 @@ app.get("/seller/delete-coupon/:couponCode", seller.deleteCoupon);
 
 app.get("/seller/withdraw", seller.withdraw);
 
+// QR코드 스캔
+app.get("/qrcode", qrscan.openPage);
+app.get("/qrcode-error-:errStatus", qrscan.openErrorPage);
+app.get("/qrcode/set/:outputLocation", qrscan.outputLocation);
+app.get("/qrcode/pid/:productId/type/:type/sid/:shopId", qrscan.addProduct);
+app.get("/qrcode/pickup-complete/tid/:transId/oid/:orderId/sid/:shopId", qrscan.completePickup);
+
 // 쇼핑카트, 위시리스트 페이지의 요청 처리
 app.get("/my-cart", cart.show);
 app.post("/cart/add/:productId", cart.add);
@@ -118,9 +127,11 @@ app.post("/cart/process-payment", cart.processPayment);
 
 app.get("/my-wishlist", wishlist.show);
 app.get("/wishlist/add/:productId", wishlist.add);
+app.get("/wishlist/add/:productId/:type/:shopId", wishlist.add);
 app.get("/wishlist/delete/:wishlistId", wishlist.delete);
 app.get("/wishlist/delete-toggle/:productId/", wishlist.delete);
 app.get("/wishlist/move/:wishlistId/:productId", wishlist.move);
+app.get("/wishlist/move/:wishlistId/:productId/:type/:shopId", wishlist.move);
 
 // 제품 상세내역 페이지의 요청 처리
 app.get("/product/:productId", product.showDetails);

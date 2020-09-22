@@ -20,7 +20,7 @@ exports.showOutlines = function(req, res) {
          FROM orders
          WHERE status = 'waiting' AND user_id = ?
          GROUP BY trans_id;
-         
+
          SELECT order_id FROM orders WHERE user_id = ? AND (status = 'delivery' OR status = 'pickup');`
   params = [user_id, user_id, user_id, user_id];
 
@@ -40,7 +40,6 @@ exports.showOutlines = function(req, res) {
     });
   });
 };
-
 
 /* ------------------------------ product의 상세정보 출력 ------------------------------ */
 exports.showDetails = function(req, res) {
@@ -103,4 +102,3 @@ exports.goToMap = function (req, res) {
     res.redirect("https://map.naver.com/v5/entry/place/1964216450?c=14130196.8219403,4517295.8011830,15,0,0,0,dh");
   }
 }
-

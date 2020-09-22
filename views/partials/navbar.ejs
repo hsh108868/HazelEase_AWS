@@ -40,6 +40,7 @@
       <button class="btn btn-secondary my-2 my-sm-0" type="submit"><i class="fas fa-search"></i></button>
     </form>
     <div>
+      <a class="mx-2" style="color: #3282b8;" href="/qrcode"><i class="fas fa-qrcode fa-lg"></i></a>
       <a class="mx-2" style="color: #24a19c;" href="/my-cart"><i class="fas fa-shopping-cart fa-lg"></i><span style="position: relative; top: 5px"> <%= sess.noOfCartItems > 0 ? sess.noOfCartItems : "" %></span></a>
       <a class="mx-2" style="color: #ea5455;" href="/my-wishlist"><i class="fas fa-heart fa-lg"></i><span style="position: relative; top: 5px"> <%= sess.noOfWishlistItems > 0 ? sess.noOfWishlistItems : "" %></span></a>
     </div>

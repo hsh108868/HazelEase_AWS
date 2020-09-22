@@ -108,7 +108,8 @@ app.get("/setup_db", function(req, res) {
           wishlist_id int unsigned not null auto_increment,
           user_id varchar(30) not null,
           product_id int unsigned not null,
-          shop_id int unsigned not null,
+          type varchar(50),
+          shop_id int unsigned,
           date date not null,
           primary key(wishlist_id),
           foreign key(user_id) references member(user_id) on delete cascade,
@@ -178,6 +179,12 @@ app.get("/setup_db", function(req, res) {
     ALTER TABLE member ADD FOREIGN KEY (default_address) REFERENCES address(address_id) ON DELETE CASCADE;
     ALTER TABLE address ADD COLUMN user_id varchar(30) not null AFTER phone;
     ALTER TABLE address ADD FOREIGN KEY (user_id) REFERENCES member(user_id) ON DELETE CASCADE;
+
+    SET GLOBAL event_scheduler='ON';
+    CREATE EVENT complete_delivery
+      ON SCHEDULE EVERY 1 HOUR
+      DO update orders set status = 'completed', latest_update = now()
+         where status = 'delivery' AND latest_update < date_sub(now(), interval 2 day);
   `
   db.query(sql, function(err, result) {
     if (err) {

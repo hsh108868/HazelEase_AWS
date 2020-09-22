@@ -185,7 +185,7 @@
                   <div class="col-sm-9">
                     <p class="mb-2">
                       <a href="/product/<%= ordersInfo[i].product_id %>">
-                        <%= ordersInfo[i].product %> <%= ordersInfo[i].type != "None" ? '(' + ordersInfo[i].type + ')' : '' %>
+                        <%= ordersInfo[i].product %> <%= ordersInfo[i].type != "None" ? '[' + ordersInfo[i].type + ']' : '' %>
                       </a>
                       <br><span class="text-success">(<%= ordersInfo[i].shop %>)</span>
                     </p>
@@ -202,7 +202,6 @@
     </div>
     <% } %>
   </div>
-</body>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <!-- FOOTER -->
