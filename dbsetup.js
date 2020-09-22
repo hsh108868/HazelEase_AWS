@@ -152,6 +152,161 @@ app.get("/cr_tb_:tableName", function(req, res) {
       break;
   }
 
+    create table member (
+          user_id varchar(30) not null,
+          password varchar(200) not null,
+          fullname varchar(50) not null,
+          gender char(1),
+          birth date,
+          email varchar(50),
+          phone varchar(20),
+          s_money int,
+          creation_time timestamp default current_timestamp,
+          primary key(user_id)
+    );
+
+    create table seller (
+          seller_id varchar(30) not null,
+          name varchar(50) not null,
+          address varchar(100) not null,
+          phone varchar(20) not null,
+          email varchar(50) not null,
+          primary key(seller_id)
+    );
+
+    create table product (
+          product_id int unsigned not null auto_increment,
+          product varchar(100) not null,
+          type_avail varchar(100),
+          info text,
+          price int unsigned not null,
+          discount int(3) unsigned,
+          seller_id varchar(30) not null,
+          rating double unsigned,
+          category varchar(50),
+          qrcode varchar(200),
+          primary key(product_id),
+          foreign key(seller_id) references seller(seller_id) on delete cascade
+    );
+
+    create table shop (
+          shop_id int unsigned not null auto_increment,
+          shop varchar(50) not null,
+          address varchar(100) not null,
+          phone varchar(20) not null,
+          seller_id varchar(30) not null,
+          primary key(shop_id),
+          foreign key(seller_id) references seller(seller_id) on delete cascade
+    );
+
+    create table stock (
+          product_id int unsigned not null,
+          shop_id int unsigned not null,
+          quantity varchar(250) not null,
+          seller_id varchar(30) not null,
+          primary key(product_id, shop_id),
+          foreign key(product_id) references product(product_id) on delete cascade,
+          foreign key(shop_id) references shop(shop_id) on delete cascade,
+          foreign key(seller_id) references seller(seller_id) on delete cascade
+    );
+
+    create table cart (
+          cart_id int unsigned not null auto_increment,
+          user_id varchar(30) not null,
+          product_id int unsigned not null,
+          type varchar(50) not null,
+          shop_id int unsigned not null,
+          quantity int(10) unsigned,
+          date date not null,
+          checked int(1),
+          primary key(cart_id),
+          foreign key(user_id) references member(user_id) on delete cascade,
+          foreign key(product_id) references product(product_id) on delete cascade,
+          foreign key(shop_id) references shop(shop_id) on delete cascade
+    );
+
+    create table wishlist (
+          wishlist_id int unsigned not null auto_increment,
+          user_id varchar(30) not null,
+          product_id int unsigned not null,
+          type varchar(50),
+          shop_id int unsigned,
+          date date not null,
+          primary key(wishlist_id),
+          foreign key(user_id) references member(user_id) on delete cascade,
+          foreign key(product_id) references product(product_id) on delete cascade
+    );
+
+    create table coupon (
+          coupon_code varchar(30) not null,
+          value int unsigned not null,
+          min_spend int unsigned not null,
+          effective_date date not null,
+          expiry_date date not null,
+          seller_id varchar(30) not null,
+          primary key(coupon_code),
+          foreign key(seller_id) references seller(seller_id) on delete cascade
+    );
+
+    create table image (
+          image_id int unsigned not null auto_increment,
+          file varchar(100) not null,
+          user_id varchar(30),
+          seller_id varchar(30),
+          product_id int unsigned,
+          primary key(image_id),
+          foreign key(product_id) references product(product_id) on delete cascade,
+          foreign key(user_id) references member(user_id) on delete cascade,
+          foreign key(seller_id) references seller(seller_id) on delete cascade
+    );
+
+    create table transaction (
+          trans_id varchar(10) not null,
+          user_id varchar(30) not null,
+          total_discount int unsigned,
+          total_paid int unsigned,
+          coupon_code varchar(30),
+          coupon_value int unsigned,
+          recipient varchar(30) not null,
+          address varchar(150) not null,
+          contact varchar(20) not null,
+          date datetime not null,
+          primary key(trans_id),
+          foreign key(user_id) references member(user_id) on delete cascade
+    );
+
+    create table orders (
+          trans_id varchar(10) not null,
+          order_id varchar(10) not null,
+          seller_id varchar(30) not null,
+          product_id int unsigned not null,
+          type varchar(30) not null,
+          price int unsigned not null,
+          quantity int unsigned not null,
+          subtotal int unsigned not null,
+          shop_id int unsigned not null,
+          user_id varchar(30) not null,
+          status varchar(10) not null,
+          latest_update datetime not null,
+          primary key(order_id, product_id, type, shop_id),
+          foreign key(trans_id) references transaction(trans_id) on delete cascade,
+          foreign key(seller_id) references seller(seller_id),
+          foreign key(product_id) references product(product_id),
+          foreign key(shop_id) references shop(shop_id),
+          foreign key(user_id) references member(user_id) on delete cascade
+    );
+
+    ALTER TABLE member ADD COLUMN default_address int unsigned AFTER s_money;
+    ALTER TABLE member ADD FOREIGN KEY (default_address) REFERENCES address(address_id) ON DELETE CASCADE;
+    ALTER TABLE address ADD COLUMN user_id varchar(30) not null AFTER phone;
+    ALTER TABLE address ADD FOREIGN KEY (user_id) REFERENCES member(user_id) ON DELETE CASCADE;
+
+    SET GLOBAL event_scheduler='ON';
+    CREATE EVENT complete_delivery
+      ON SCHEDULE EVERY 1 HOUR
+      DO update orders set status = 'completed', latest_update = now()
+         where status = 'delivery' AND latest_update < date_sub(now(), interval 2 day);
+  `
   db.query(sql, function(err, result) {
     if (err) {
       res.send("Table already exists or wrong query format! Restart the server to try again.");

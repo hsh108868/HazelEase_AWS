@@ -59,9 +59,8 @@
     </a>
   </div>
 
-
-  <div class="album py-5 bg-light">
-    <div class="container">
+  <div class="album bg-light">
+    <div class="container-fluid p-5">
       <div class="row">
         <% for(var i = 0; i < product.length; i++) { %>
         <div class="col-md-4">
@@ -72,8 +71,8 @@
               <p class="card-text">₩ <%= formatNum(product[i].price) %></p>
               <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
-                  <button type="button" class="btn btn-sm btn-outline-secondary" onClick = "location.href = '/cart/add/<%= product[i].product_id %>'">쇼핑카트 담기</button>
-                  <button type="button" class="btn btn-sm btn-outline-secondary" onClick = "location.href = '/wishlist/add/<%= product[i].product_id %>'"><i class="fas fa-heart fa-lg"></i></button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary" onClick="location.href='/product/<%= product[i].product_id %>'"><i class="fas fa-shopping-bag fa-lg"></i></button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary" onClick="location.href='/wishlist/add/<%= product[i].product_id %>'"><i class="fas fa-heart fa-lg"></i></button>
                 </div>
                 <small class="text-muted">
                   <% for (let j = 0; j < Math.floor(product[i].rating); j++) { %>

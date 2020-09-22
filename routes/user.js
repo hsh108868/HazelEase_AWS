@@ -85,7 +85,8 @@ exports.login = function(req, res) {
           if (result === true) {
             req.session.loggedin = true;
             req.session.user_id = results[0].user_id;
-            res.redirect('/home');
+            let redirectUrl = req.session.redirectUrl || '/home';
+            res.redirect(redirectUrl);
           } else {
             message = "잘못된 아이디 또는 비밀번호!";
             res.render('login.ejs', { message: message, statusCode: 400 });
@@ -267,3 +268,133 @@ exports.saveChanges = function(req, res) {
     });
   }
 };
+
+/* ------------------------------ account 루트 처리 호출 ------------------------------ */
+exports.openSubPage = function(req, res) {
+  var reqSubPage = req.params.subPage;
+  var reqShopId = req.params.shopId;
+  var user_id = req.session.user_id;
+
+  // 로그인된 상태 아니면 로그인 페이지로 이동
+  if (!req.session.loggedin) {
+    req.session.redirectUrl = req.headers.referrer || req.originalUrl || req.url;
+    res.redirect("/login");
+    res.end();
+  } else {
+    if(reqSubPage === "profile") {
+      // 로그인된 아이디의 해당 정보들을 가져오고 profile 페이지로 넘겨줌
+      db.query('SELECT * FROM ?? WHERE user_id = ?', ['member', user_id], function(err, results, fields) {
+        res.render('profile.ejs', {
+          user_id: user_id,
+          data: results,
+          sess: req.session,
+          formatNum: fn.formatNum
+        });
+      });
+    } else if (reqSubPage === "manage-address") {
+      var sql = `SELECT a.address_id, a.recipient, a.address, a.state, a.city, a.zip, a.phone, m.default_address
+                 FROM address as a
+                    RIGHT OUTER JOIN member as m ON a.address_id = m.default_address
+                 WHERE m.user_id = ?;
+
+                 SELECT * FROM address WHERE user_id = ?; `
+      var params = [user_id, user_id];
+
+      if (req.session.openAddressInfo == null) {
+        req.session.openAddressInfo = { recipient: "", address: "", city: "", state: "", zip: "", phone: "" };
+      }
+
+      db.query(sql, params, function(err, results, fields) {
+        res.render('address.ejs', {
+          user_id: user_id,
+          defAddr: results[0][0],
+          othAddr: results[1],
+          sess: req.session
+        });
+      });
+    } else if (reqSubPage === "purchase-history") {
+      db.query('SELECT * FROM ?? WHERE user_id = ?', ['member', user_id], function(err, results, fields) {
+        res.render('purchase.ejs', {
+          user_id: user_id,
+          data: results,
+          sess: req.session
+        });
+      });
+    } else if (reqSubPage === "payment-method") {
+      db.query('SELECT s_money FROM ?? WHERE user_id = ?', ['member', user_id], function(err, results, fields) {
+        res.render('paymeth.ejs', {
+          user_id: user_id,
+          hazelMoney: results[0].s_money,
+          formatNum: fn.formatNum,
+          sess: req.session
+        });
+      });
+    } else if (reqSubPage === "seller-management") {
+      var sql = `SELECT * FROM seller WHERE seller_id = ?;
+                 SELECT * FROM product WHERE seller_id = ?;
+                 SELECT * FROM shop WHERE seller_id = ?;
+                 SELECT * FROM coupon WHERE seller_id = ?;
+                 SELECT st.product_id, pr.product, pr.type_avail, st.shop_id, st.quantity, sh.shop
+                 FROM stock as st
+                    RIGHT OUTER JOIN shop as sh ON st.shop_id = sh.shop_id
+                    RIGHT OUTER JOIN product as pr ON st.product_id = pr.product_id
+                 WHERE st.seller_id = ? AND st.shop_id = ?; `
+      var params = [user_id, user_id, user_id, user_id, user_id];
+
+      if (req.session.selectedShop) {
+        params.push(req.session.selectedShop);
+      } else {
+        params.push(0);
+      }
+
+      if (req.session.openProductInfo == null) {
+        req.session.openProductInfo = { product_id: "", product: "", type_avail: "", info: "", price: "",
+                                        discount: "", seller_id: "", rating: "", category: "", qrcode: "", noOfImg: "",
+                                        images: [] };
+      }
+
+      if (req.session.openShopInfo == null) {
+        req.session.openShopInfo = { shop_id: "", shop: "", address: "", phone: "", email: "", seller_id: "" };
+      }
+
+      if (req.session.openCouponInfo == null) {
+        req.session.openCouponInfo = { coupon_code: "", value: "", min_spend: "", seller_id: "" };
+        req.session.couponValidPeriod = { effectiveDate: "", expiryDate: "" };
+      }
+
+      db.query(sql, params, function(err, results, fields) {
+        if (err) throw err;
+        if (results[0].length > 0) {
+          res.render('seller.ejs', {
+            user_id: user_id,
+            noOfCartItems: req.session.noOfCartItems,
+            noOfWishlistItems: req.session.noOfWishlistItems,
+            isSeller: "yes",
+            seller: results[0][0],
+            products: results[1],
+            shops: results[2],
+            coupons: results[3],
+            stocks: results[4],
+            formatNum: fn.formatNum,
+            sess: req.session
+          });
+        } else {
+          var emptySeller = { name: "", address: "", phone: "", email: "" };
+
+          res.render('seller.ejs', {
+            user_id: user_id,
+            noOfCartItems: req.session.noOfCartItems,
+            noOfWishlistItems: req.session.noOfWishlistItems,
+            products: [],
+            shops: [],
+            stocks: [],
+            coupons: [],
+            isSeller: "no",
+            seller: emptySeller,
+            sess: req.session
+          });
+        }
+      });
+    }
+  }
+}

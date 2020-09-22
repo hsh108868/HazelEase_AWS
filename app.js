@@ -5,13 +5,24 @@ const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mysql = require("mysql");
 const session = require("express-session");
-const passport = require("passport")
-  , LocalStrategy = require('passport-local').Strategy;
+const passport = require("passport"),
+  LocalStrategy = require('passport-local').Strategy;
+const fileUpload = require('express-fileupload');
+const cors = require('cors');
+// const morgan = require('morgan');
+const _ = require('lodash');
+const QRCode = require('qrcode');
 
 /* ---------- 정의된 모듈 ------------- */
 const connection = require("./lib/dbconn"); // DB 연결
 const user = require('./routes/user');
 const product = require('./routes/product');
+const qrscan = require('./routes/qrscan');
+const cart = require('./routes/cart');
+const wishlist = require('./routes/wishlist');
+const paymeth = require('./routes/paymeth');
+const notification = require('./routes/notification');
+const receipt = require('./routes/receipt');
 
 /* ----------------------------------- */
 
@@ -58,17 +69,57 @@ app.get("/logout", user.logout);
 app.get("/account/:subPage", user.openSubPage);
 app.post("/profile", user.saveChanges);
 
-// 쇼핑카트, 위시리스트 페이지의 요청 처리
-app.get("/my-cart", product.showMyCart);
-app.get("/cart/add/:productId", product.cartAdd);
-app.get("/cart/delete/:cartId", product.cartDelete);
-app.post("/cart/update/:totalItems", product.cartUpdate);
-app.post("/apply-coupon", product.applyCoupon);
+// 결제 수단 페이지의 요청 처리
+app.post("/account/payment-method", paymeth.hazelPay);
 
-app.get("/my-wishlist", product.showMyWishlist);
-app.get("/wishlist/add/:productId", product.wishlistAdd);
-app.get("/wishlist/delete/:wishlistId", product.wishlistDelete);
-app.get("/wishlist/move/:wishlistId/:productId", product.wishlistMove);
+// 판매자의 과리 시스템 페이지의 요청 처리
+app.post("/seller/manage-info", seller.manageInfo);
+
+app.post("/seller/manage-product", seller.manageProduct);
+app.get("/seller/open-product-info/:productId", seller.openProductInfo);
+app.get("/seller/close-product-info", seller.closeProductInfo);
+app.get("/seller/delete-product/:productId", seller.deleteProduct);
+app.get("/seller/manage-product/delete-image/:imageId", seller.deleteImage);
+
+app.post("/seller/manage-shop", seller.manageShop);
+app.get("/seller/open-shop-info/:shopId", seller.openShopInfo);
+app.get("/seller/close-shop-info", seller.closeShopInfo);
+app.get("/seller/delete-shop/:shopId", seller.deleteShop);
+
+app.post("/seller/add-stock", seller.addStock);
+app.get("/seller/update-stock/:productId-:shopId/:productQty", seller.updateStock);
+app.get("/seller/delete-stock/:productId-:shopId", seller.deleteStock);
+app.get("/seller/show-stocks/:shopId", seller.showStocks);
+
+app.post("/seller/manage-coupon", seller.manageCoupon);
+app.get("/seller/open-coupon-info/:couponCode", seller.openCouponInfo);
+app.get("/seller/close-coupon-info", seller.closeCouponInfo);
+app.get("/seller/delete-coupon/:couponCode", seller.deleteCoupon);
+
+app.get("/seller/withdraw", seller.withdraw);
+
+// QR코드 스캔
+app.get("/qrcode", qrscan.openPage);
+app.get("/qrcode-error-:errStatus", qrscan.openErrorPage);
+app.get("/qrcode/set/:outputLocation", qrscan.outputLocation);
+app.get("/qrcode/pid/:productId/type/:type/sid/:shopId", qrscan.addProduct);
+app.get("/qrcode/pickup-complete/tid/:transId/oid/:orderId/sid/:shopId", qrscan.completePickup);
+
+// 쇼핑카트, 위시리스트 페이지의 요청 처리
+app.get("/my-cart", cart.show);
+app.post("/cart/add/:productId", cart.add);
+app.get("/cart/delete/:cartId", cart.delete);
+app.post("/cart/update/:totalItems", cart.update);
+app.post("/apply-coupon", cart.applyCoupon);
+app.post("/cart/process-payment", cart.processPayment);
+
+app.get("/my-wishlist", wishlist.show);
+app.get("/wishlist/add/:productId", wishlist.add);
+app.get("/wishlist/add/:productId/:type/:shopId", wishlist.add);
+app.get("/wishlist/delete/:wishlistId", wishlist.delete);
+app.get("/wishlist/delete-toggle/:productId/", wishlist.delete);
+app.get("/wishlist/move/:wishlistId/:productId", wishlist.move);
+app.get("/wishlist/move/:wishlistId/:productId/:type/:shopId", wishlist.move);
 
 // 제품 상세내역 페이지의 요청 처리
 app.get("/product/:productId", product.showDetails);
@@ -83,13 +134,10 @@ app.get("/my-notification", function(req, res) {
 });
 
 // 수령여부 페이지의 요청 처리
-app.get("/my-receipt", function(req, res) {
-  res.render("receipt", {
-    user_id: req.session.user_id,
-    noOfCartItems: req.session.noOfCartItems,
-    noOfWishlistItems: req.session.noOfWishlistItems
-  });
-});
+app.get("/my-receipt", receipt.list);
+app.get("/my-receipt/confirm-pickup/:orderId/:productId/:type/:shopId", receipt.confirm);
+app.get("/purchase-invoice/:transId", receipt.purchaseDetails);
+app.get("/pickup-certificate/:transId-:orderId-:shopId", receipt.pickupCert);
 
 app.listen(3000, function() {
   console.log("Server has started at port 3000.");
