@@ -34,14 +34,15 @@ exports.show = function (req, res) {
                FROM transaction
                WHERE user_id = ?;
 
-               SELECT * FROM orders WHERE user_id = ? AND (status = 'delivery' OR status = 'pickup'); `
+               SELECT * FROM orders WHERE user_id = ? AND (status = 'delivery' OR status = 'pickup');
+               SELECT * FROM orders WHERE user_id = ? AND status = 'direct'; `
 
-        params = [user_id, user_id, user_id, user_id, user_id];
+        params = [user_id, user_id, user_id, user_id, user_id, user_id];
 
         db.query(sql, params, function (err, results, fields) {
             if (err) throw err;
             req.session.noOfNotifications = results[1].length;
-            req.session.noOfReceivingItems = results[5].length;
+            req.session.noOfReceivingItems = results[5].length + (results[6].length > 0 ? 1 : 0);
 
             res.render('notification.ejs', {
                 user_id: user_id,
@@ -76,12 +77,19 @@ exports.select = function (req, res) {
         } else if (reqReceiptMode == 'pickup') {
             var params = [reqReceiptMode, now, reqOrderId];
         } else if (reqReceiptMode == 'direct') {
+            sql += `UPDATE orders SET status = 'waiting', latest_update = ? WHERE status = 'direct' AND user_id = ? AND NOT order_id = ?; `
+            var params = [reqReceiptMode, now, reqOrderId, now, user_id, reqOrderId];
+        } else if (reqReceiptMode == 'waiting') {
             var params = [reqReceiptMode, now, reqOrderId];
         }
 
         db.query(sql, params, function (err, results) {
             if (err) throw err;
-            res.redirect('/my-notification');
+            if (reqReceiptMode != 'direct') {
+              res.redirect('/my-notification');
+            } else {
+              res.redirect('/checkout-certificate/' + reqOrderId);
+            }
         })
 
     }

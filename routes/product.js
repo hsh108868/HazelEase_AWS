@@ -21,15 +21,16 @@ exports.showOutlines = function(req, res) {
          WHERE status = 'waiting' AND user_id = ?
          GROUP BY trans_id;
 
-         SELECT order_id FROM orders WHERE user_id = ? AND (status = 'delivery' OR status = 'pickup');`
-  params = [user_id, user_id, user_id, user_id];
+         SELECT order_id FROM orders WHERE user_id = ? AND (status = 'delivery' OR status = 'pickup');
+         SELECT order_id FROM orders WHERE user_id = ? AND status = 'direct'; `
+  params = [user_id, user_id, user_id, user_id, user_id];
 
   db.query(sql, params, function(err, results, fields) {
     if (err) throw err;
     req.session.noOfCartItems = results[1].length > 0 ? results[1][0].count : 0;
     req.session.noOfWishlistItems = results[2].length > 0 ? results[2][0].count : 0;
     req.session.noOfNotifications = results[4].length;
-    req.session.noOfReceivingItems = results[5].length;
+    req.session.noOfReceivingItems = results[5].length + (results[6].length > 0 ? 1 : 0);
 
     res.render('home.ejs', {
       user_id: user_id,

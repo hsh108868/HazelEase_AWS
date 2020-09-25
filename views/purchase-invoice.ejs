@@ -185,9 +185,9 @@
                   <div class="col-sm-9">
                     <p class="mb-2">
                       <a href="/product/<%= ordersInfo[i].product_id %>">
-                        <%= ordersInfo[i].product %> <%= ordersInfo[i].type != "None" ? '[' + ordersInfo[i].type + ']' : '' %>
+                        <%= ordersInfo[i].product %> <%= ordersInfo[i].type != "None" ? '(' + ordersInfo[i].type + ')' : '' %>
                       </a>
-                      <br><span class="text-success">(<%= ordersInfo[i].shop %>)</span>
+                      <br><span class="text-success"><%= ordersInfo[i].shop %></span>
                     </p>
                     <p class="m-0"><%= formatNum(ordersInfo[i].price) %> 원 / <%= ordersInfo[i].quantity %> 개</p>
                   </div>

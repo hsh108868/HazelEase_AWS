@@ -11,6 +11,7 @@
       <div class="col-sm-12">
         <button class="tablink btn btn-lg mr-2" onclick="openPage('Pickup', this)" id="defaultOpen">픽업 상품 <span class="rounded-circle bg-danger <%= pickupItems.length < 10 ? 'px-2' : 'px-1' %> ml-1 text-light <%= pickupItems.length == 0 ? 'd-none' : '' %>"><%= pickupItems.length %></span></button>
         <button class="tablink btn btn-lg mr-2" onclick="openPage('Delivery', this)">최근 배송상품 <span class="rounded-circle bg-primary <%= deliveryItems.length < 10 ? 'px-2' : 'px-1' %> ml-1 text-light <%= deliveryItems.length == 0 ? 'd-none' : '' %>"><%= deliveryItems.length %></span></button>
+        <button class="tablink btn btn-lg mr-2 <%= currDirect == null ? 'd-none' : '' %>" onclick="location.href='/checkout-certificate/<%= currDirect != null ? currDirect.order_id : '' %>'">바로 가져가기 <i class="fas fa-door-open ml-1"></i></button>
       </div>
 
       <div id="Delivery" class="tabcontent col-sm-12">
@@ -127,7 +128,7 @@
               <div class="card-header clear-fix">
                 <div class="align-middle d-inline-block mt-1"><i class="fas fa-map-marker-alt mr-1"></i> <strong><%= onPickup[p].shop %></strong> / <i class="fas fa-hand-sparkles mx-1"></i> <span class="text-success font-weight-bold"><%= onPickup[p].count %> 개</span> 상품픽업</div>
                 <div class="float-right">
-                  <button type="button" class="btn btn-outline-secondary btn-sm mr-1" onclick="location.href='/<%=onPickup[p].shop_id%>'">위치보기</button>
+                  <button type="button" class="btn btn-outline-secondary btn-sm mr-1" onclick="location.href='/open-map/<%=onPickup[p].shop_id%>'">위치보기</button>
                   <button type="button" class="btn btn-secondary btn-sm" onClick="location.href='/pickup-certificate/<%= onPickup[p].trans_id %>-<%= onPickup[p].order_id %>-<%= onPickup[p].shop_id %>'">픽업증권 <i class="far fa-file-alt ml-1"></i></button>
               </div>
             </div>

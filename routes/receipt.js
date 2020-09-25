@@ -39,12 +39,14 @@ exports.list = function (req, res) {
                    WHERE status = 'pickup' AND user_id = ?
                    GROUP BY o.shop_id;
 
-                   SELECT * FROM image;`
-        let params = [user_id, user_id, user_id, user_id, user_id];
+                   SELECT * FROM image;
+
+                   SELECT order_id FROM orders WHERE user_id = ? AND status = 'direct'; `
+        let params = [user_id, user_id, user_id, user_id, user_id, user_id];
 
         db.query(sql, params, function (err, results) {
                 if (err) throw err;
-                req.session.noOfReceivingItems = results[0].length + results[2].length;
+                req.session.noOfReceivingItems = results[0].length + results[2].length + (results[5].length > 0 ? 1 : 0) ;
 
                 res.render('receipt.ejs', {
                     user_id: user_id,
@@ -53,6 +55,7 @@ exports.list = function (req, res) {
                     pickupItems: results[2],
                     onPickup: results[3],
                     images: results[4],
+                    currDirect: results[5][0],
                     sess: req.session,
                 })
         })
@@ -127,7 +130,7 @@ exports.purchaseDetails = function (req, res) {
   }
 }
 
-/* ------------------------------ 픽업송장 생성 처리 ------------------------------ */
+/* ------------------------------ 픽업증권 생성 처리 ------------------------------ */
 exports.pickupCert = function (req, res) {
   var user_id = req.session.user_id;
   var reqTransId = req.params.transId;
@@ -153,9 +156,80 @@ exports.pickupCert = function (req, res) {
   } else {
     db.query(sql, params, function (err, results) {
       if (err) throw err;
-      let textLink = "localhost:3000/qrcode/pickup-complete/tid/" + reqTransId + "/oid/" + reqOrderId + "/sid/" + reqShopId;
+
+      /* --  관련 구매번호 몇 개 계산 -- */
+      var data = results[0];
+      var transIds = [data[0].trans_id];
+      var prevTransId = data[0].trans_id;
+
+      for (let i = 1; i < data.length; i++) {
+        if (data[i].trans_id != prevTransId) {
+          transIds.push(data[i].trans_id);
+          prevTransId = data[i].trans_id;
+        }
+      }
+      /* --------------------------- */
+
+
+      let textLink = "localhost:3000/qrcode/pickup-complete/tid/" + transIds + "/sid/" + reqShopId;
       QRCode.toDataURL(textLink, { errorCorrectionLevel: 'M' }, function (err, url) {
         res.render('pickup-cert.ejs', {
+          user_id: user_id,
+          sess: req.session,
+          formatNum: fn.formatNum,
+          data: results[0],
+          date: results[1][0].date,
+          transInfo: results[1][0],
+          images: results[2],
+          qrcode: url
+        });
+      });
+    });
+  }
+}
+
+/* ------------------------------ 바로가겨가기의 체크아웃 증권 생성 처리 ------------------------------ */
+exports.checkoutCert = function (req, res) {
+  var user_id = req.session.user_id;
+  var reqOrderId = req.params.orderId;
+
+  let sql = `SELECT *, se.name as sellername
+             FROM orders as o
+                RIGHT OUTER JOIN product as p ON p.product_id = o.product_id
+                RIGHT OUTER JOIN shop as s ON s.shop_id = o.shop_id
+                RIGHT OUTER JOIN seller as se on se.seller_id = o.seller_id
+             WHERE user_id = ? AND o.order_id = ? AND status = 'direct';
+
+             SELECT t.*
+             FROM transaction as t
+                RIGHT OUTER JOIN orders as o ON o.trans_id = t.trans_id
+             WHERE o.order_id = ?
+             GROUP BY trans_id;
+
+             SELECT * FROM image;
+
+             SELECT trans_id, COUNT(*) as count
+             FROM orders
+             WHERE status = 'waiting' AND user_id = ?
+             GROUP BY trans_id;
+
+             SELECT order_id FROM orders WHERE user_id = ? AND (status = 'delivery' OR status = 'pickup');
+             SELECT order_id FROM orders WHERE user_id = ? AND status = 'direct'; `
+  let params = [user_id, reqOrderId, reqOrderId, user_id, user_id, user_id];
+
+  if (!req.session.loggedin) {
+      req.session.redirectUrl = req.headers.referrer || req.originalUrl || req.url;
+      res.redirect("/login");
+      res.end();
+  } else {
+    db.query(sql, params, function (err, results) {
+      if (err) throw err;
+      req.session.noOfNotifications = results[3].length;
+      req.session.noOfReceivingItems = results[4].length + (results[5].length > 0 ? 1 : 0);
+
+      let textLink = "localhost:3000/qrcode/direct-checkout-complete/oid/" + reqOrderId + "/sid/" + results[0][0].shop_id;
+      QRCode.toDataURL(textLink, { errorCorrectionLevel: 'M' }, function (err, url) {
+        res.render('checkout-cert.ejs', {
           user_id: user_id,
           sess: req.session,
           formatNum: fn.formatNum,

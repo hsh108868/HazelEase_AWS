@@ -115,7 +115,8 @@ app.get("/qrcode", qrscan.openPage);
 app.get("/qrcode-error-:errStatus", qrscan.openErrorPage);
 app.get("/qrcode/set/:outputLocation", qrscan.outputLocation);
 app.get("/qrcode/pid/:productId/type/:type/sid/:shopId", qrscan.addProduct);
-app.get("/qrcode/pickup-complete/tid/:transId/oid/:orderId/sid/:shopId", qrscan.completePickup);
+app.get("/qrcode/pickup-complete/tid/:transId/sid/:shopId", qrscan.completePickup);
+app.get("/qrcode/direct-checkout-complete/oid/:orderId/sid/:shopId", qrscan.completeDirect);
 
 // 쇼핑카트, 위시리스트 페이지의 요청 처리
 app.get("/my-cart", cart.show);
@@ -145,9 +146,10 @@ app.get("/my-receipt", receipt.list);
 app.get("/my-receipt/confirm-pickup/:orderId/:productId/:type/:shopId", receipt.confirm);
 app.get("/purchase-invoice/:transId", receipt.purchaseDetails);
 app.get("/pickup-certificate/:transId-:orderId-:shopId", receipt.pickupCert);
+app.get("/checkout-certificate/:orderId", receipt.checkoutCert);
 
 //매장이동
-app.get("/:shopId", product.goToMap);
+app.get("/open-map/:shopId", product.goToMap);
 
 app.listen(3000, function() {
   console.log("Server has started at port 3000.");

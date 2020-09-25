@@ -17,6 +17,8 @@ exports.openErrorPage = function (req, res) {
     req.session.errMessage = "제품이 존재하지 않습니다."
   } else if (reqErrStatus == 403) {
     req.session.errMessage = "관련 데이터를 변경할 수 있는 권한이 없습니다."
+  } else if (reqErrStatus == 406) {
+    req.session.errMessage = "QR코드가 만료되어 요청을 처리할 수 없습니다."
   }
 
   req.session.errStatus = reqErrStatus;
@@ -159,7 +161,68 @@ exports.addProduct = function(req, res) {
 /* ------------------------------ QR코드로 픽업완료 처리 ------------------------------ */
 exports.completePickup = function(req, res) {
   var user_id = req.session.user_id;
-  var reqTransId = req.params.transId;
+  var reqTransId = req.params.transId.split(',');
+  var reqShopId = req.params.shopId;
+  var now = new Date();
+  let sql, params, subSql = '', subParams = [];
+
+  if (!req.session.loggedin) {
+      req.session.redirectUrl = req.headers.referrer || req.originalUrl || req.url;
+      res.redirect("/login");
+      res.end();
+  } else {
+      sql = `SELECT * FROM orders WHERE seller_id = ? AND shop_id = ? AND status = 'pickup' AND `
+      params = [user_id, reqShopId];
+
+      if (reqTransId.length == 1) {
+        sql += `trans_id = ?; `
+        params.push(reqTransId[0]);
+      } else {
+        for (let i = 0; i < reqTransId.length; i++) {
+          if (i == 0)
+            subSql += '(trans_id = ? ';
+          else if (i > 0 && i < reqTransId.length - 1)
+            subSql += 'OR trans_id = ? ';
+          else
+            subSql += 'OR trans_id = ?);';
+
+          subParams.push(reqTransId[i]);
+        }
+        sql += subSql;
+        params = params.concat(subParams);
+      }
+
+      db.query(sql, params, function (errA, resultsA) {
+        if (errA) throw errA;
+
+        if (resultsA.length > 0) {
+          sql = `UPDATE orders SET status = 'completed', latest_update = ? WHERE seller_id = ? AND shop_id = ? AND status = 'pickup' AND `;
+          params = [now, user_id, reqShopId];
+
+          if (reqTransId.length == 1) {
+            sql += `trans_id = ?; `
+            params.push(reqTransId[0]);
+          } else {
+            sql += subSql;
+            params = params.concat(subParams);
+          }
+
+          db.query(sql, params, function (err, results) {
+              if (err) throw err;
+              req.session.message = "픽업승인 완료되었습니다.";
+              res.redirect('/account/seller-management');
+          });
+        } else {
+          res.redirect('/qrcode-error-403');
+          return;
+        }
+      });
+  }
+}
+
+/* ------------------------------ QR코드로 픽업완료 처리 ------------------------------ */
+exports.completeDirect = function(req, res) {
+  var user_id = req.session.user_id;
   var reqOrderId = req.params.orderId;
   var reqShopId = req.params.shopId;
   var now = new Date();
@@ -170,22 +233,28 @@ exports.completePickup = function(req, res) {
       res.redirect("/login");
       res.end();
   } else {
-      sql = `SELECT * FROM orders WHERE seller_id = ? AND trans_id = ? AND order_id = ? AND shop_id = ? AND status = 'pickup'; `
-      params = [user_id, reqTransId, reqOrderId, reqShopId];
-
+      sql = `SELECT * FROM orders WHERE seller_id = ? AND order_id = ? AND shop_id = ? AND status = 'direct'; `
+      params = [user_id, reqOrderId, reqShopId];
       db.query(sql, params, function (errA, resultsA) {
         if (errA) throw errA;
 
         if (resultsA.length > 0) {
-          sql = `UPDATE orders SET status = 'completed', latest_update = ? WHERE trans_id = ? AND order_id = ? AND shop_id = ? AND status = 'pickup'; `
-          params = [now, reqTransId, reqOrderId, reqShopId];
-          db.query(sql, params, function (err, results) {
-              if (err) throw err;
-              req.session.message = "픽업승인 완료되었습니다. (주문번호 " + reqOrderId + ")";
-              res.redirect('/account/seller-management');
-          });
+          let startTime = resultsA[0].latest_update.getTime();
+          let expTime = startTime + 60*60*1000;
+
+          if (now.getTime() < expTime) {
+            sql = `UPDATE orders SET status = 'completed', latest_update = ?
+                   WHERE seller_id = ? AND order_id = ? AND shop_id = ? AND status = 'direct'; `;
+            params = [now, user_id, reqOrderId, reqShopId];
+
+            db.query(sql, params, function (err, results) {
+                if (err) throw err;
+                req.session.message = "바로가져가기승인 완료되었습니다.";
+                res.redirect('/account/seller-management');
+            });
+          }
         } else {
-          res.redirect('/qrcode-error-403');
+          res.redirect('/qrcode-error-406');
           return;
         }
       });

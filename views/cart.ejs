@@ -120,6 +120,12 @@
             <button id="save-button" class="btn btn-warning" style="display: none"><strong>업데이트</strong></button>
           </span>
         </h4>
+        <% if (sess.cartUpdateMsg != null) { %>
+        <div class="alert alert-danger text-center">
+          <%= sess.cartUpdateMsg %>
+          <% sess.cartUpdateMsg = null; %>
+        </div>
+        <% } %>
 
         <% if(rep.length === 0) { %>
         <div class="card mb-4">

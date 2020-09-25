@@ -168,6 +168,8 @@ exports.delete = function(req, res) {
 
 /* ------------------------------ cart에서 수량, 체크상태 업데이트 처리 ------------------------------ */
 exports.update = function(req, res) {
+  const user_id = req.session.user_id;
+
   req.session.couponCode = "";
   req.session.couponValue = "";
   req.session.couponMsg = "";
@@ -193,7 +195,7 @@ exports.update = function(req, res) {
     cartIds.push(eval(refVarCart));
     qtyValues.push(eval(refVarQty));
     cbCond.push(eval(refVarCb));
-    sql = sql + 'UPDATE cart SET quantity = ?, checked = ? WHERE cart_id = ?; ';
+    sql += 'UPDATE cart SET quantity = ?, checked = ? WHERE cart_id = ?; ';
   }
 
   for (let i = 0; i < reqTotalItems; i++) {
@@ -202,20 +204,59 @@ exports.update = function(req, res) {
     params.push(cartIds[i]);
   }
 
+  // 수량이 가능한지 체크
+  let selectSql = `SELECT c.cart_id, c.product_id, c.type, c.quantity, c.shop_id, p.type_avail, s.quantity as quantity_avail
+                   FROM cart as c
+                      RIGHT OUTER JOIN product as p ON p.product_id = c.product_id
+                      RIGHT OUTER JOIN stock as s ON s.product_id = c.product_id
+                   WHERE user_id = 'usertest' AND s.shop_id = c.shop_id `;
+  let selectParams = [user_id];
+
   if (!req.session.loggedin) {
     req.session.redirectUrl = req.headers.referrer || req.originalUrl || req.url;
     res.redirect("/login");
     res.end();
   } else {
-    db.query(sql, params, function(err, results) {
-      if (err) {
-        res.send('쇼핑카트에 수량 업데이트에 실패');
-        throw err;
-      } else {
-        console.log("성공적으로 업데이트되었습니다.");
+    db.query(selectSql, selectParams, function(err, results) {
+      if (err) throw err;
+      var isSufficient = true;
+
+      for (let i = 0; i < results.length; i++) {
+        let types = results[i].type_avail.split('/');
+        let quantities = results[i].quantity_avail.split(',');
+
+        if (quantities.length != types.length) {
+          for (let j = quantities.length; j < types.length; j++) {
+            quantities.push('0');
+          }
+        }
+
+        let index = types.indexOf(results[i].type);
+        let wantedQty = qtyValues[cartIds.indexOf(results[i].cart_id.toString())];
+
+        if (eval(wantedQty) > eval(quantities[index])) {
+          isSufficient = false;
+          break;
+        }
       }
-      res.redirect('/my-cart');
-    })
+
+      if (isSufficient) {
+        // 수량 충분하면 업데이트
+        db.query(sql, params, function(err, results) {
+          if (err) {
+            res.send('쇼핑카트에 수량 업데이트에 실패');
+            throw err;
+          } else {
+            console.log("성공적으로 업데이트되었습니다.");
+          }
+          res.redirect('/my-cart');
+        });
+      } else {
+        // 부족하는 경우
+        req.session.cartUpdateMsg = `요청한 수량이 재고의 가용 수량을 초과했습니다. 업데이트하기 전에 제품의 재고를 확인하시기 바랍니다.`;
+        res.redirect('/my-cart');
+      }
+    });
   }
 }
 
@@ -298,10 +339,11 @@ exports.processPayment = function(req, res) {
       } else {
         db.query(`INSERT INTO transaction SET ?;`, transPost, function(errA, resultsA, fieldsA) {
           if (errA) throw errA;
-          let sql = `SELECT *
+          let sql = `SELECT c.*, p.*, s.quantity as quantity_avail
                      FROM cart as c
                         INNER JOIN product as p ON c.product_id = p.product_id
-                     WHERE checked = ? AND user_id = ?
+                        RIGHT OUTER JOIN stock as s ON s.product_id = c.product_id
+                     WHERE checked = 1 AND user_id = ? AND s.shop_id = c.shop_id
                      ORDER BY p.seller_id ASC;
 
                      SELECT s.seller_id, COUNT(*) as count
@@ -310,46 +352,96 @@ exports.processPayment = function(req, res) {
                      WHERE user_id = ?
                      GROUP BY s.seller_id
                      ORDER BY s.seller_id ASC; `
-          let params = [1, user_id, user_id];
+          let params = [user_id, user_id];
           db.query(sql, params, function(errB, resultsB, fieldsB) {
             if (errB) throw errB;
-            sql = `INSERT INTO orders (trans_id, order_id, seller_id, product_id, type, price, quantity, subtotal, shop_id, user_id, status, latest_update)
-                   VALUES `;
-            params = [];
 
-            let p = 0;
-            let q = resultsB[1][p].count;
-            let limit = resultsB[1].length;
+            /* -- 수량 충분한지 체크 -- */
+            var isSufficient = true, updatedQty = [];
+            let items = resultsB[0];
 
-            for(i = 0; i < resultsB[0].length; i++) {
-              if(i == q) {
-                order_id = (Math.round(new Date().valueOf() + Math.random() * 100)).toString().slice(3);
-                if (++p < limit) {
-                  q += resultsB[1][p].count;
+            for (let i = 0; i < items.length; i++) {
+              let types = items[i].type_avail.split('/');
+              let quantities = items[i].quantity_avail.split(',');
+
+              if (quantities.length != types.length) {
+                for (let j = quantities.length; j < types.length; j++) {
+                  quantities.push('0');
                 }
               }
 
-              let r = resultsB[0][i];
-              sql += `(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-              params.push(trans_id, order_id, r.seller_id, r.product_id, r.type, r.price, r.quantity, r.price * r.quantity, r.shop_id, user_id, 'waiting', now);
+              let index = types.indexOf(items[i].type);
 
-              if (i != resultsB[0].length - 1) {
-                sql += `, `
+              if (eval(items[i].quantity) > eval(quantities[index])) {
+                isSufficient = false;
+                break;
               } else {
-                sql += `; `
+                let newQty = (eval(quantities[index]) - eval(items[i].quantity)).toString();
+                let qtyString = '';
+
+                quantities[index] = newQty;
+
+                for (let i = 0; i < quantities.length; i++) {
+                  qtyString += quantities[i].replace(/\s/g,''); ;
+                  if (i != quantities.length - 1) {
+                    qtyString += ', ';
+                  }
+                }
+                updatedQty.push(qtyString, items[i].product_id, items[i].shop_id);
               }
             }
+            /* ---------------------- */
 
-            sql += `DELETE FROM cart WHERE checked = ? AND user_id = ?;
-                    UPDATE member SET s_money = ? WHERE user_id = ?; `
-            params.push(1, user_id, (hazelMoney - total), user_id);
+            if (isSufficient == true) {
+              sql = `INSERT INTO orders (trans_id, order_id, seller_id, product_id, type, price, quantity, subtotal, shop_id, user_id, status, latest_update)
+                     VALUES `;
+              params = [];
+
+              let p = 0;
+              let q = resultsB[1][p].count;
+              let limit = resultsB[1].length;
+
+              for(i = 0; i < resultsB[0].length; i++) {
+                if(i == q) {
+                  order_id = (Math.round(new Date().valueOf() + Math.random() * 100)).toString().slice(3);
+                  if (++p < limit) {
+                    q += resultsB[1][p].count;
+                  }
+                }
+
+                let r = resultsB[0][i];
+                sql += `(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+                params.push(trans_id, order_id, r.seller_id, r.product_id, r.type, r.price, r.quantity, r.price * r.quantity, r.shop_id, user_id, 'waiting', now);
+
+                if (i != resultsB[0].length - 1) {
+                  sql += `, `
+                } else {
+                  sql += `; `
+                }
+              }
+
+              sql += `DELETE FROM cart WHERE checked = ? AND user_id = ?;
+                      UPDATE member SET s_money = ? WHERE user_id = ?; `
+              params.push(1, user_id, (hazelMoney - total), user_id);
+
+              // 수량 업데이트
+              for (let i = 0; i < resultsB[0].length; i++) {
+                sql += `UPDATE stock SET quantity = ? WHERE product_id = ? AND shop_id = ?; `
+              }
+              params = params.concat(updatedQty);
+
+            } else {
+                req.session.cartUpdateMsg = `당신보다 빨리 구매하신 분들이 있었으므로 요청한 수량을 처리할 수 없습니다. 제품의 재고 다시 확인하고 업데이트를 하셔야 합니다.`;
+                res.redirect("/my-cart");
+                return;
+            }
 
             db.query(sql, params, function(errC, resultsC, fieldsC) {
               if (errC) throw errC;
               res.redirect("/my-notification");
             });
           });
-        })
+        });
       }
   }
 }
