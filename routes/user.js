@@ -227,27 +227,31 @@ exports.openSubPage = function(req, res) {
         });
       });
     } else if (reqSubPage === "purchase-history") {
-      db.query(`select o.order_id, tr.date, count(*) as count from orders as o 
-                    right outer join transaction as tr on o.trans_id = tr.trans_id
-                    where o.user_id = ?
-                    group by o.order_id;
-                   
-                   SELECT p.product, o.product_id, o.quantity, o.price, o.order_id
-                   FROM orders as o
-                   RIGHT OUTER JOIN product as p ON p.product_id = o.product_id
-                   WHERE o.user_id = ?
-                   order by o.order_id asc;
+      var sql = `SELECT t.trans_id, o.order_id, p.product, o.product_id, o.type, o.quantity, o.price, t.date
+                 FROM orders as o
+                    RIGHT OUTER JOIN product as p ON p.product_id = o.product_id
+                    RIGHT OUTER JOIN transaction as t ON t.trans_id = o.trans_id
+                 WHERE o.user_id = ?
+                 ORDER BY t.date DESC;
 
-           
-                   SELECT * FROM image;`,
-          [user_id, user_id, user_id], function(err, results, fields) {
+                 SELECT t.trans_id, t.date, COUNT(*) as count
+                 FROM orders as o
+                    RIGHT OUTER JOIN transaction as t ON t.trans_id = o.trans_id
+                 WHERE o.user_id = ?
+                 GROUP BY t.trans_id
+                 ORDER BY t.date DESC;
+
+                 SELECT * FROM image; `
+      var params = [user_id, user_id];
+
+      db.query(sql, params, function(err, results, fields) {
         res.render('purchase.ejs', {
           user_id: user_id,
           sess: req.session,
-          formatNum : fn.formatNum,
-          data : results[0],
-          orderItems : results[1],
-          images : results[2]
+          formatNum: fn.formatNum,
+          data: results[0],
+          trans: results[1],
+          images: results[2]
         });
       });
     } else if (reqSubPage === "payment-method") {
@@ -327,4 +331,14 @@ exports.openSubPage = function(req, res) {
       });
     }
   }
+}
+
+/* ------------------------------ 구매후기 작성 페이지 연리는 처리 ------------------------------ */
+exports.writeReview = function(req, res) {
+  // TODO CODE
+}
+
+/* ------------------------------ 구매후기 작성 온료 처리 ------------------------------ */
+exports.submitReview = function(req, res) {
+  // TODO CODE
 }
