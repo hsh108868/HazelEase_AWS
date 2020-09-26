@@ -227,7 +227,7 @@ exports.openSubPage = function(req, res) {
         });
       });
     } else if (reqSubPage === "purchase-history") {
-      var sql = `SELECT t.trans_id, o.order_id, p.product, o.product_id, o.type, o.quantity, o.price, t.date
+      var sql = `SELECT t.trans_id, o.order_id, p.product, o.product_id, o.type, o.quantity, o.price, o.shop_id, t.date
                  FROM orders as o
                     RIGHT OUTER JOIN product as p ON p.product_id = o.product_id
                     RIGHT OUTER JOIN transaction as t ON t.trans_id = o.trans_id

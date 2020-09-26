@@ -63,7 +63,6 @@ app.get("/setup_db", function(req, res) {
           seller_id varchar(30) not null,
           rating double unsigned,
           category varchar(50),
-          qrcode varchar(200),
           primary key(product_id),
           foreign key(seller_id) references seller(seller_id) on delete cascade
     );
@@ -174,6 +173,24 @@ app.get("/setup_db", function(req, res) {
           foreign key(shop_id) references shop(shop_id),
           foreign key(user_id) references member(user_id) on delete cascade
     );
+
+    create table review (
+          trans_id varchar(10) not null,
+          order_id varchar(10) not null,
+          product_id int unsigned not null,
+          type varchar(30) not null,
+          shop_id int unsigned not null,
+          user_id varchar(30) not null,
+          rating int unsigned not null,
+          title varchar(50),
+          body tinytext not null,
+          primary key(trans_id, order_id, product_id, type, shop_id),
+          foreign key(trans_id) references transaction(trans_id),
+          foreign key(order_id) references orders(order_id),
+          foreign key(product_id) references product(product_id),
+          foreign key(shop_id) references shop(shop_id),
+          foreign key(user_id) references member(user_id) on delete cascade
+    )
 
     ALTER TABLE member ADD COLUMN default_address int unsigned AFTER s_money;
     ALTER TABLE member ADD FOREIGN KEY (default_address) REFERENCES address(address_id) ON DELETE CASCADE;
