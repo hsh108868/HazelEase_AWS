@@ -14,7 +14,7 @@ exports.openErrorPage = function (req, res) {
   let reqErrStatus = req.params.errStatus;
 
   if(reqErrStatus == 404) {
-    req.session.errMessage = "제품이 존재하지 않습니다."
+    req.session.errMessage = "요청한 내용이 존재하지 않습니다."
   } else if (reqErrStatus == 403) {
     req.session.errMessage = "관련 데이터를 변경할 수 있는 권한이 없습니다."
   } else if (reqErrStatus == 406) {
@@ -252,9 +252,12 @@ exports.completeDirect = function(req, res) {
                 req.session.message = "바로가져가기승인 완료되었습니다.";
                 res.redirect('/account/seller-management');
             });
+          } else {
+            res.redirect('/qrcode-error-406');
+            return;
           }
         } else {
-          res.redirect('/qrcode-error-406');
+          res.redirect('/qrcode-error-404');
           return;
         }
       });

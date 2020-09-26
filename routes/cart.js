@@ -38,7 +38,7 @@ exports.show = function(req, res) {
 
            SELECT * FROM image;
 
-           SELECT s_money FROM member WHERE user_id = ?;`
+           SELECT s_money FROM member WHERE user_id = ?; `
 
     params = [user_id, user_id, user_id, user_id, user_id];
 
@@ -382,7 +382,7 @@ exports.processPayment = function(req, res) {
                 quantities[index] = newQty;
 
                 for (let i = 0; i < quantities.length; i++) {
-                  qtyString += quantities[i].replace(/\s/g,''); ;
+                  qtyString += quantities[i].replace(/\s/g,'');
                   if (i != quantities.length - 1) {
                     qtyString += ', ';
                   }
@@ -411,7 +411,8 @@ exports.processPayment = function(req, res) {
 
                 let r = resultsB[0][i];
                 sql += `(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-                params.push(trans_id, order_id, r.seller_id, r.product_id, r.type, r.price, r.quantity, r.price * r.quantity, r.shop_id, user_id, 'waiting', now);
+                afterDisc = r.price * (1-(r.discount/100))
+                params.push(trans_id, order_id, r.seller_id, r.product_id, r.type, afterDisc, r.quantity, afterDisc * r.quantity, r.shop_id, user_id, 'waiting', now);
 
                 if (i != resultsB[0].length - 1) {
                   sql += `, `

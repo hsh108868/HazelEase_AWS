@@ -181,11 +181,14 @@ app.get("/setup_db", function(req, res) {
     ALTER TABLE address ADD FOREIGN KEY (user_id) REFERENCES member(user_id) ON DELETE CASCADE;
 
     SET GLOBAL event_scheduler='ON';
+
     CREATE EVENT complete_delivery
       ON SCHEDULE EVERY 1 HOUR
+      STARTS '2020-09-27 00:00:00' ON COMPLETION PRESERVE ENABLE
       DO update orders set status = 'completed', latest_update = now()
          where status = 'delivery' AND latest_update < date_sub(now(), interval 2 day);
   `
+
   db.query(sql, function(err, result) {
     if (err) {
       res.send("Database setup failed!");

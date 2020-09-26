@@ -92,7 +92,7 @@ exports.purchaseDetails = function (req, res) {
 
   let sql = `SELECT * FROM transaction WHERE user_id = ? AND trans_id = ?;
 
-             SELECT *, se.name as sellername
+             SELECT *, o.price as waspriced, se.name as sellername
              FROM orders as o
                 RIGHT OUTER JOIN product as p ON p.product_id = o.product_id
                 RIGHT OUTER JOIN shop as s ON s.shop_id = o.shop_id
