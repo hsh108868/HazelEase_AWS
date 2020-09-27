@@ -1,5 +1,5 @@
 /* ---------- NPM 패키지 ------------- */
-//require('dotenv').config(); // .env 파일 내에 있는 변수를 이 파일로 가져올 때 process.env.<키변수>로 접근
+// require('dotenv').config(); // .env 파일 내에 있는 변수를 이 파일로 가져올 때 process.env.<키변수>로 접근
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
@@ -153,11 +153,11 @@ app.get("/checkout-certificate/:orderId", receipt.checkoutCert);
 //매장이동
 app.get("/open-map/:shopId", product.goToMap);
 
-let port = process.env.PORT;
-if (port == null || port == "") {
-  port == 3000;
-}
+// let port = process.env.PORT;
+// if (port == null || port == "") {
+//   port == 3000;
+// }
 
-app.listen(port, function() {
+app.listen(3000, function() {
   console.log("Server has started at port 3000.");
 });

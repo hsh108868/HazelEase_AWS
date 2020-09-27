@@ -1,6 +1,7 @@
 html,
 body {
   height: 100%;
+  min-width: 576px;
 }
 
 body {
@@ -8,6 +9,7 @@ body {
   align-items: center;
   padding-top: 60px;
   padding-bottom: 60%;
+  min-width: 576px;
 }
 
 .sign {

@@ -3,6 +3,7 @@ body {
     padding: 0px 30px;
     color: #5a5a5a;
     background-color: #ebecf1;
+    min-width: 576px;
 }
 
 a:hover {

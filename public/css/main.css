@@ -7,6 +7,7 @@ body {
   padding-top: 60px;
   padding-bottom: 3rem;
   color: #5a5a5a;
+  min-width: 576px;
 }
 
 a:hover {
