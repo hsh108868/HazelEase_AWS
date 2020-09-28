@@ -1,9 +1,7 @@
 body {
     margin-top: 56px;
-    padding: 0px 30px;
     color: #5a5a5a;
     background-color: #ebecf1;
-    min-width: 576px;
 }
 
 input.item, input.all-items {
@@ -23,19 +21,60 @@ a {
   color: inherit;
 }
 
-/* Footer */
-.mastfoot {
-  color: rgba(255, 255, 255, .5);
-  position: relative;
-  bottom: 0px;
-  text-align: center;
-  index-z: -1;
+@media (max-width: 576px) {
+  .col-1 {
+    padding: 0;
+  }
+
+  .col-sm-6.col-9 {
+    max-width: 200px;
+  }
+}
+
+@media (max-width: 518px) {
+  .card-body.cart-item {
+    padding: 10px;
+  }
+  .img-box {
+    flex: 0 0 30%;
+    max-width: 30%;
+  }
+
+  .product-box {
+    flex: 0 0 70%;
+    max-width: 70%;
+  }
+
+  .card-body.cart-item, a, small {
+    font-size: 3.5vw;
+  }
+
+  .card-header.purchasing-product {
+    padding: 12px 10px;
+  }
+}
+
+@media (max-width: 400px) {
+  .card-body, a, small, li.list-group-item {
+    font-size: 4.3vw;
+  }
+
+  .page-header {
+    padding: 2.5rem 0 1.8rem !important;
+  }
+
+  h2 {
+    font-size: 7.5vw;
+  }
+
+  h4 {
+    font-size: 6vw;
+  }
 }
 
 /* ---------------------- */
 .disc-tag {
   background-color: #ea5455;
-  border-radius: 10px;
   color: #e5e5e5;
   padding: 2px 5px;
 }

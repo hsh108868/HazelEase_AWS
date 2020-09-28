@@ -1,0 +1,61 @@
+body {
+    margin-top: 56px;
+    color: #5a5a5a;
+    background-color: #ebecf1;
+}
+
+.container.card {
+  max-width: 700px;
+}
+
+a:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
+.set-sc, .set-wl {
+  width: 150px;
+}
+
+a.btn {
+  min-width: 150px;
+}
+
+.col-sm-6 {
+  padding: 0 7px;
+}
+
+
+@media (max-width: 576px) {
+  .info {
+    text-align: center;
+  }
+
+  .btn {
+    width: 55%;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .set-sc, .set-wl {
+    width: 135px;
+  }
+
+  a.btn {
+    max-width: 150px;
+  }
+}
+
+
+@media (max-width: 400px) {
+  .card-body, a, small, li.list-group-item {
+    font-size: 4.3vw;
+  }
+
+  .page-header {
+    padding: 2.5rem 0 1.8rem !important;
+  }
+
+  h2 {
+    font-size: 7.5vw;
+  }
+}
