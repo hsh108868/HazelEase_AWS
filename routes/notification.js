@@ -26,7 +26,7 @@ exports.show = function (req, res) {
                FROM orders as o
                   RIGHT OUTER JOIN seller as s ON s.seller_id = o.seller_id
                WHERE status = 'waiting' AND user_id = ?
-               GROUP BY o.order_id;
+               GROUP BY o.trans_id, o.order_id, o.seller_id;
 
                SELECT * FROM image;
 

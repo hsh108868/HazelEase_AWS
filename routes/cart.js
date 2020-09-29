@@ -209,7 +209,7 @@ exports.update = function(req, res) {
                    FROM cart as c
                       RIGHT OUTER JOIN product as p ON p.product_id = c.product_id
                       RIGHT OUTER JOIN stock as s ON s.product_id = c.product_id
-                   WHERE user_id = 'usertest' AND s.shop_id = c.shop_id `;
+                   WHERE user_id = ? AND s.shop_id = c.shop_id `;
   let selectParams = [user_id];
 
   if (!req.session.loggedin) {
@@ -310,7 +310,7 @@ exports.processPayment = function(req, res) {
   let hazelMoney = parseInt(req.body.hazelMoney, 10);
   let totalDisc = parseInt(req.body.totalDiscount, 10);
   let total = parseInt(req.body.total, 10);
-  let coupon = [req.body.couponCode, req.body.couponValue];
+  let coupon = [req.body.couponCode, req.body.couponValue != '' ? parseInt(req.body.couponValue) : 0];
   let recipient = req.body.recipient;
   let address = req.body.address;
   let phone = req.body.phone;
@@ -334,7 +334,7 @@ exports.processPayment = function(req, res) {
     res.end();
   } else {
       if (hazelMoney < total) {
-        sess.messageErr = "하젤페이 머니가 부족합니다.";
+        req.session.messageErr = "하젤페이 머니가 부족합니다.";
         res.redirect("/my-cart");
       } else {
         db.query(`INSERT INTO transaction SET ?;`, transPost, function(errA, resultsA, fieldsA) {

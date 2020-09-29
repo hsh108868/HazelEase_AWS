@@ -22,7 +22,7 @@ exports.list = function (req, res) {
                    FROM orders as o
                       RIGHT OUTER JOIN seller as s ON s.seller_id = o.seller_id
                    WHERE status = 'delivery' AND user_id = ?
-                   GROUP BY o.order_id;
+                   GROUP BY o.trans_id, o.order_id, o.seller_id;
 
                    SELECT o.trans_id, o.order_id, p.product_id, p.product, o.type, o.quantity, sh.shop_id, sh.shop, se.name as sellername, o.latest_update
                    FROM product as p
@@ -37,7 +37,7 @@ exports.list = function (req, res) {
                       RIGHT OUTER JOIN seller as se ON se.seller_id = o.seller_id
                       RIGHT OUTER JOIN shop as sh ON sh.shop_id = o.shop_id
                    WHERE status = 'pickup' AND user_id = ?
-                   GROUP BY o.shop_id;
+                   GROUP BY o.trans_id, o.order_id, o.shop_id, o.seller_id;
 
                    SELECT * FROM image;
 
@@ -171,7 +171,7 @@ exports.pickupCert = function (req, res) {
       /* --------------------------- */
 
 
-      let textLink = "localhost:3000/qrcode/pickup-complete/tid/" + transIds + "/sid/" + reqShopId;
+      let textLink = "hazelease.herokuapp.com/qrcode/pickup-complete/tid/" + transIds + "/sid/" + reqShopId;
       QRCode.toDataURL(textLink, { errorCorrectionLevel: 'M' }, function (err, url) {
         res.render('pickup-cert.ejs', {
           user_id: user_id,
@@ -227,7 +227,7 @@ exports.checkoutCert = function (req, res) {
       req.session.noOfNotifications = results[3].length;
       req.session.noOfReceivingItems = results[4].length + (results[5].length > 0 ? 1 : 0);
 
-      let textLink = "localhost:3000/qrcode/direct-checkout-complete/oid/" + reqOrderId + "/sid/" + results[0][0].shop_id;
+      let textLink = "hazelease.herokuapp.com/qrcode/direct-checkout-complete/oid/" + reqOrderId + "/sid/" + results[0][0].shop_id;
       QRCode.toDataURL(textLink, { errorCorrectionLevel: 'M' }, function (err, url) {
         res.render('checkout-cert.ejs', {
           user_id: user_id,

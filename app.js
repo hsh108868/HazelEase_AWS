@@ -153,10 +153,10 @@ app.get("/checkout-certificate/:orderId", receipt.checkoutCert);
 //매장이동
 app.get("/open-map/:shopId", product.goToMap);
 
-// let port = process.env.PORT;
-// if (port == null || port == "") {
-//   port == 3000;
-// }
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port == 3000;
+}
 
 app.listen(3000, function() {
   console.log("Server has started at port 3000.");
