@@ -1,5 +1,6 @@
 body {
   padding-top: 60px;
+  min-width: 576px;
 }
 
 .disc-tag {

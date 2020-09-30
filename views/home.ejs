@@ -16,9 +16,9 @@
     </ol>
     <div class="carousel-inner">
       <div class="carousel-item active">
-        <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img">
+        <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" focusable="false" role="img">
           <!-- <rect width="100%" height="60%" fill="#777" /> -->
-          <image href="images/ads-image3.jpg" width="100%"/>
+          <image href="images/ads-image3.jpg" class="ads-img" width="100%"/>
         </svg>
         <div class="container">
           <div class="carousel-caption text-left">
@@ -31,7 +31,7 @@
       <div class="carousel-item">
         <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img">
           <!-- <rect width="100%" height="60%" fill="#777" /> -->
-          <image href="images/ads-image1.jpg" width="100%"/>
+          <image href="images/ads-image1.jpg" class="ads-img" width="100%"/>
         </svg>
         <div class="container">
           <div class="carousel-caption">
@@ -44,7 +44,7 @@
       <div class="carousel-item">
         <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img">
           <!-- <rect width="100%" height="60%" fill="#777" /> -->
-          <image href="images/ads-image2.jpg" width="100%"/>
+          <image href="images/ads-image2.jpg" class="ads-img" width="100%"/>
         </svg>
         <div class="container">
           <div class="carousel-caption text-right">
@@ -65,14 +65,14 @@
     </a>
   </div>
 
-  <div class="album px-5 bg-light">
+  <div class="album bg-light">
     <div class="container-fluid p-5">
       <div class="row">
         <% for(var i = 0; i < product.length; i++) { %>
-        <div class="col-lg-3 col-md-4 col-sm-6">
-          <div class="card mb-4 shadow-sm">
+        <div class="col-lg-3 col-md-4 col-6">
+          <div class="card mb-4 shadow-sm align-self-strect">
             <a href="/product/<%= product[i].product_id %>">
-              <svg class="bd-placeholder-img card-img-top" width="100%" height="250"
+              <svg class="bd-placeholder-img card-img-top" width="100%" height="50%"
                 xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"
                 focusable="false" role="img" aria-label="Placeholder: Thumbnail"
                 viewBox="0 0 100 100">
@@ -91,11 +91,12 @@
               </svg>
             </a>
             <div class="card-body">
-              <h6 onClick="location.href='/product/<%= product[i].product_id %>'"><strong><%= product[i].product %></strong></h6>
+              <h6 onClick="location.href='/product/<%= product[i].product_id %>'"><%= product[i].product %></h6>
               <p class="card-text">
                 <% if (product[i].discount > 0) { %>
+                  <span class="d-inline d-sm-none price-tag"><strong>₩ <%= formatNum(Math.round(product[i].price*((100-product[i].discount)/100))) %></strong></span>
                   <small><span class="disc-tag mx-1"><%= product[i].discount %>% off</span></small><br>
-                  <small><s>₩ <%= formatNum(product[i].price) %></s></small> → <strong>₩ <%= formatNum(Math.round(product[i].price*((100-product[i].discount)/100))) %></strong>
+                  <span class="d-none d-sm-block"><small><s>₩ <%= formatNum(product[i].price) %></s></small> → <strong>₩ <%= formatNum(Math.round(product[i].price*((100-product[i].discount)/100))) %></strong></span>
                 <% } else { %>
                   <strong>₩ <%= formatNum(product[i].price) %></strong>
                 <% } %>
@@ -103,7 +104,7 @@
               <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
                   <button type="button" class="btn btn-sm btn-outline-secondary" onClick="location.href='/product/<%= product[i].product_id %>'"><i class="fas fa-shopping-bag fa-lg"></i></button>
-                  <button type="button" class="btn btn-sm btn-outline-secondary" onClick="location.href='/product/<%= product[i].product_id %>'"><i class="fas fa-heart fa-lg"></i></button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary" onClick="location.href='/wishlist/add/<%= product[i].product_id %>'"><i class="fas fa-heart fa-lg"></i></button>
                 </div>
                 <small class="text-muted">
                   <% for (let j = 0; j < Math.floor(product[i].rating); j++) { %>
@@ -125,8 +126,8 @@
       </div>
     </div>
   </div>
-
-      <!-- FOOTER -->
-      <%- include("partials/copyright"); -%>
 </main>
+
+<!-- FOOTER -->
+<%- include("partials/copyright"); -%>
 <%- include("partials/footer"); -%>

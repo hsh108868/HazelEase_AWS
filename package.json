@@ -12,6 +12,9 @@
   },
   "author": "Syaedi Syafrilnizam, Hwang Seo Hee, Yu Ji In",
   "license": "ISC",
+  "engines": {
+    "node": "12.16.0"
+  },
   "dependencies": {
     "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
@@ -29,6 +32,8 @@
     "morgan": "^1.10.0",
     "mysql": "^2.18.1",
     "passport": "^0.4.1",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "qr-scanner": "^1.2.0",
+    "qrcode": "^1.4.4"
   }
 }

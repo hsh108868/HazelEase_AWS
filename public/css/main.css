@@ -17,31 +17,6 @@ h6:hover {
   cursor: pointer;
 }
 
-.jumbotron {
-  padding-top: 3rem;
-  padding-bottom: 3rem;
-  margin-bottom: 0;
-  background-color: #fff;
-}
-@media (min-width: 768px) {
-  .jumbotron {
-    padding-top: 6rem;
-    padding-bottom: 6rem;
-  }
-}
-
-.jumbotron p:last-child {
-  margin-bottom: 0;
-}
-
-.jumbotron h1 {
-  font-weight: 300;
-}
-
-.jumbotron .container {
-  max-width: 40rem;
-}
-
 .disc-tag {
   background-color: #ea5455;
   border-radius: 10px;
@@ -49,39 +24,49 @@ h6:hover {
   padding: 2px 5px;
 }
 
-/*
 .card-body {
-  padding : 0px 30px 0px 30px !important;
-  border : none
+  height: 100%;
 }
 
-.product-pic {
-  padding-left: auto;
-  padding-right: auto;
-  width: 100%;
-  height: 180px
-}
+@media (max-width: 576px) {
+  .container-fluid.p-5 {
+    padding: 3% 5%!important;
+  }
 
-.pic-body {
-  width: 50%;
-  height: 50%;
-  margin-left: auto;
-  margin-right: auto;
-  display: block
-}
+  .card {
+    margin-bottom: 0!important;
+  }
 
-.category {
-  padding-top: 25px;
-  color: grey
-}
+  .card-body {
+    padding: 6% 4% 4%!important;
+  }
 
-.product-name {
-  padding-bottom: 15px
-}
+  .col-6 {
+    padding: 1% !important;
+  }
 
-.price {
-  font-size: 18px
-} */
+  i, small {
+    font-size: 2.5vw;
+  }
+
+  .price-tag, h6 {
+    font-size: 3.8vw;
+  }
+
+  .disc-tag {
+    margin: 0!important;
+  }
+
+  .btn {
+    display: none!important;
+  }
+
+  svg {
+    /* background-image: url("../images/ads-image1.jpg");
+    background-size: 1000px;
+    background-repeat: no-repeat; */
+  }
+}
 
 /* CUSTOMIZE THE CAROUSEL
 -------------------------------------------------- */

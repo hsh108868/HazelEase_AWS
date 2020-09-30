@@ -187,9 +187,9 @@
                       <a href="/product/<%= ordersInfo[i].product_id %>">
                         <%= ordersInfo[i].product %> <%= ordersInfo[i].type != "None" ? '(' + ordersInfo[i].type + ')' : '' %>
                       </a>
-                      <br><span class="text-success">(<%= ordersInfo[i].shop %>)</span>
+                      <br><span class="text-success"><%= ordersInfo[i].shop %></span>
                     </p>
-                    <p class="m-0"><%= formatNum(ordersInfo[i].price) %> 원 / <%= ordersInfo[i].quantity %> 개</p>
+                    <p class="m-0"><%= formatNum(ordersInfo[i].waspriced) %> 원 / <%= ordersInfo[i].quantity %> 개</p>
                   </div>
                 </div>
               </div>
@@ -202,7 +202,6 @@
     </div>
     <% } %>
   </div>
-</body>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <!-- FOOTER -->

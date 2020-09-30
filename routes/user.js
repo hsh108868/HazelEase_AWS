@@ -87,7 +87,8 @@ exports.login = function(req, res) {
           if (result === true) {
             req.session.loggedin = true;
             req.session.user_id = results[0].user_id;
-            res.redirect('/home');
+            let redirectUrl = req.session.redirectUrl || '/home';
+            res.redirect(redirectUrl);
           } else {
             message = "잘못된 아이디 또는 비밀번호!";
             res.render('login.ejs', { message: message, statusCode: 400 });
@@ -112,7 +113,7 @@ exports.login = function(req, res) {
 exports.logout = function(req, res) {
   req.session.destroy(function(err) {
     res.redirect("/login");
-  })
+  });
 };
 
 /* ------------------------------ profile 정보수정 처리 호출 ------------------------------ */
@@ -190,6 +191,7 @@ exports.openSubPage = function(req, res) {
 
   // 로그인된 상태 아니면 로그인 페이지로 이동
   if (!req.session.loggedin) {
+    req.session.redirectUrl = req.headers.referrer || req.originalUrl || req.url;
     res.redirect("/login");
     res.end();
   } else {
@@ -225,27 +227,31 @@ exports.openSubPage = function(req, res) {
         });
       });
     } else if (reqSubPage === "purchase-history") {
-      db.query(`select o.order_id, tr.date, count(*) as count from orders as o 
-                    right outer join transaction as tr on o.trans_id = tr.trans_id
-                    where o.user_id = ?
-                    group by o.order_id;
-                   
-                   SELECT p.product, o.product_id, o.quantity, o.price, o.order_id
-                   FROM orders as o
-                   RIGHT OUTER JOIN product as p ON p.product_id = o.product_id
-                   WHERE o.user_id = ?
-                   order by o.order_id asc;
+      var sql = `SELECT t.trans_id, o.order_id, p.product, o.product_id, o.type, o.quantity, o.price, o.shop_id, t.date
+                 FROM orders as o
+                    RIGHT OUTER JOIN product as p ON p.product_id = o.product_id
+                    RIGHT OUTER JOIN transaction as t ON t.trans_id = o.trans_id
+                 WHERE o.user_id = ?
+                 ORDER BY t.date DESC;
 
-           
-                   SELECT * FROM image;`,
-          [user_id, user_id, user_id], function(err, results, fields) {
+                 SELECT t.trans_id, t.date, COUNT(*) as count
+                 FROM orders as o
+                    RIGHT OUTER JOIN transaction as t ON t.trans_id = o.trans_id
+                 WHERE o.user_id = ?
+                 GROUP BY t.trans_id
+                 ORDER BY t.date DESC;
+
+                 SELECT * FROM image; `
+      var params = [user_id, user_id];
+
+      db.query(sql, params, function(err, results, fields) {
         res.render('purchase.ejs', {
           user_id: user_id,
           sess: req.session,
-          formatNum : fn.formatNum,
-          data : results[0],
-          orderItems : results[1],
-          images : results[2]
+          formatNum: fn.formatNum,
+          data: results[0],
+          trans: results[1],
+          images: results[2]
         });
       });
     } else if (reqSubPage === "payment-method") {
@@ -325,4 +331,64 @@ exports.openSubPage = function(req, res) {
       });
     }
   }
+}
+
+/* ------------------------------ 구매후기 작성 페이지 열리는 처리 ------------------------------ */
+exports.writeReview = function(req, res) {
+  // TODO CODE
+  var user_id = req.session.user_id;
+  var reqTransId = req.params.transId;
+  var reqOrderId = req.params.orderId;
+  var reqProductId = req.params.productId;
+  var reqType = req.params.type;
+  var reqShopId = req.params.shopId;
+
+  if (!req.session.loggedin) {
+    req.session.redirectUrl = req.headers.referrer || req.originalUrl || req.url;
+    res.redirect("/login");
+    res.end();
+  }
+  db.query(`select o.*, p.product, s.shop
+                from orders as o 
+                inner join product as p on p.product_id = o.product_id
+                inner join shop as s on s.shop_id = o.shop_id
+                where user_id = ? and trans_id = ? and order_id = ? and o.product_id = ? and type = ? and o.shop_id = ?`,
+      [user_id, reqTransId, reqOrderId, reqProductId, reqType, reqShopId],
+        function (err, results, fields) {
+          if (err) throw err;
+          res.render('review.ejs', {
+            user_id : user_id,
+            data : results[0],
+            sess: req.session,
+          });
+  });
+}
+
+
+/* ------------------------------ 구매후기 작성 완료 처리 ------------------------------ */
+exports.submitReview = function(req, res) {
+  // TODO CODE
+  var product_id = req.body.productId;
+  var order_id = req.body.orderId;
+
+  var post = {
+    trans_id: req.body.transId,
+    user_id: req.session.user_id,
+    order_id: req.body.orderId,
+    product_id: req.body.productId,
+    type: req.body.type,
+    shop_id: req.body.shopId,
+    rating:req.body.rating,
+    title:req.body.title,
+    body:req.body.detail,
+  }
+
+
+  db.query (`insert into review set ?`, post, function (err, results, fields) {
+    if(err) throw err;
+    db.query(`DELETE FROM orders WHERE product_id = ? and order_id = ?` [product_id, order_id], function (err, results, fields) {
+      res.redirect("/account/purchase-history");
+    })
+      }
+  );
 }

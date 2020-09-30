@@ -7,10 +7,10 @@
   <%- include("partials/navbar"); -%>
   <div class="container py-4">
     <div class="my-4 text-center">
-      <h2><i class="far fa-file-alt ml-1"></i> 픽업증권</h2>
+      <h2><i class="far fa-file-alt ml-1"></i> 매장체크아웃증권</h2>
     </div>
 
-    <% if (data.length == 0) { %>
+    <% if (data.length == 0) {%>
     <div class="row card">
       <div class="card-body">
         송장이 없습니다.
@@ -41,18 +41,7 @@
           </div>
           <div class="float-right">
             <h5 class="mb-3 d-inline-block">
-              구매번호 <%= data[0].trans_id %><%
-              var transIds = [data[0].trans_id];
-              var prevTransId = data[0].trans_id;
-
-              for (let i = 1; i < data.length; i++) {
-                    if (data[i].trans_id != prevTransId) {
-                      transIds.push(data[i].trans_id);
-                      prevTransId = data[i].trans_id;
-                      %>, <%= data[i].trans_id %><%
-                    }
-                 }
-              %>
+              주문번호 <%= data[0].order_id %>
             </h5>
           </div>
         </div>
@@ -97,23 +86,27 @@
               <div class="col-lg-12 border-bottom mt-3 mb-3 w-100"></div>
               <div class="col-lg-12">
                 <div class="row">
-                  <div class="col-sm-12">
-                    <h5 class="font-weight-bold mb-3">수령인</h5>
-                  </div>
                   <div class="col-sm-3 text-left mb-1">
-                    성명
+                    유효시간
                   </div>
                   <div class="col-sm-9 text-left mb-1">
-                    <%= transInfo.recipient %>
+                    <%= "1 시간" %>
                   </div>
                   <div class="col-sm-3 text-left mb-1">
-                    전화번호
+                    남은시간
+                  </div>
+                  <div id="countdown" class="col-sm-9 text-left mb-1 text-danger">
+                    <span id="mins"></span><span id="secs"></span><span id="end"></span>
+                    <p id="countDownDate" class="d-none"><%= data[0].latest_update.getTime() + 60*60*1000 %></p>
+                  </div>
+                  <div class="col-sm-3 text-left mb-1">
+                    다른 수령법
                   </div>
                   <div class="col-sm-9 text-left mb-1">
-                    <%= transInfo.contact %>
+                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill" onClick="location.href='/my-notification/waiting/<%= data[0].order_id %>'">바로가져가기 취소</button>
                   </div>
+
                   <div class="col-sm-12 text-right mt-3">
-                    <small class="text-danger">시분증과 같이 제시하셔야 합니다.</small><br>
                     <small class="text-secondary">하젤이스 발행</small>
                   </div>
                 </div>
@@ -126,7 +119,7 @@
         <div class="card mb-3">
           <div class="card-body">
             <div class="clearfix">
-              <h5 class="mb-3 d-inline-block"><span class="font-weight-bold text-dark"><%= data.length %> 개</span> 상품픽업</h5>
+              <h5 class="mb-3 d-inline-block"> <span class="font-weight-bold text-dark">바로가져가는 상품</span></h5>
             <div class="row">
               <% for (let i = 0; i < data.length; i++) { %>
               <div class="col-lg-6 col-sm-12 <%= i == data.length - 1 ? '' : 'mb-3' %>">
@@ -166,6 +159,7 @@
   </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script type="text/javascript" src="/js/checkout-cert.js"></script>
 <!-- FOOTER -->
 <%- include("partials/copyright"); -%>
 <%- include("partials/footer"); -%>

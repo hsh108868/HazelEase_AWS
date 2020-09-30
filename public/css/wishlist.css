@@ -1,26 +1,55 @@
 body {
     margin-top: 56px;
-    padding: 0px 30px;
     color: #5a5a5a;
     background-color: #ebecf1;
 }
 
 a:hover {
   text-decoration: none;
-  color: black;
 }
 
 a {
   color: black;
 }
 
-/* Footer */
-.mastfoot {
-  color: rgba(255, 255, 255, .5);
-  position: relative;
-  bottom: 0px;
-  text-align: center;
-  index-z: -1;
+.col-8 {
+  padding-left: 0;
+}
+
+@media (max-width: 576px) {
+
+}
+
+@media (max-width: 496px) {
+  .wishlist-title {
+    display: block;
+  }
+
+  .page-header {
+    padding: 2.5rem 0 1.8rem !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .card-body, a, small, li.list-group-item {
+    font-size: 4.5vw;
+  }
+
+  h2 {
+    font-size: 7.5vw;
+  }
+
+  h4 {
+    font-size: 6vw;
+  }
+
+  h5.card-title {
+    margin-bottom: 6px;
+  }
+
+  p {
+    margin-bottom: 10px;
+  }
 }
 
 /* ---------------------- */

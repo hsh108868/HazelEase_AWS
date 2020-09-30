@@ -7,7 +7,7 @@
   <%- include("partials/navbar"); -%>
 
   <div class="container">
-    <div class="py-5 text-center">
+    <div class="py-5 text-center page-header">
       <h2><i class="fas fa-shopping-cart fa-lg"></i> <%= user_id ? user_id : "고객"; %>님의 쇼핑카트</h2>
     </div>
 
@@ -77,7 +77,7 @@
 
         <form id="apply-coupon" class="card p-2 coupon-form" method="POST" action="/apply-coupon">
           <% if (couponResult[2]) { %>
-          <small class="alert alert-<%= couponResult[3] == 1 ? 'success' : 'danger' %>" role="alert" style="padding: 5px 10px">
+          <small class="mb-2 alert alert-<%= couponResult[3] == 1 ? 'success' : 'danger' %>" role="alert" style="padding: 5px 10px">
             <strong><%= couponResult[2] %></strong>
           </small>
           <% } %>
@@ -85,12 +85,12 @@
             <input type="hidden" name="subTotal" value="<%= subTotal %>">
             <input type="text" class="form-control" name="code" placeholder="쿠폰 코드" required>
             <div class="input-group-append">
-              <button id="apply-coupon" type="submit" class="btn btn-secondary">적용</button>
+              <button type="submit" class="btn btn-secondary">적용</button>
             </div>
           </div>
         </form>
         <div class="card p-2 mt-3">
-          <div class="clearfix px-2 my-2">
+          <div class="clearfix px-2 my-1">
             <span class="float-left"><strong>자동결제</strong> <i class="far fa-question-circle ml-1"></i></span>
             <label class="switch float-right">
               <input type="checkbox">
@@ -120,6 +120,12 @@
             <button id="save-button" class="btn btn-warning" style="display: none"><strong>업데이트</strong></button>
           </span>
         </h4>
+        <% if (sess.cartUpdateMsg != null) { %>
+        <div class="alert alert-danger text-center">
+          <%= sess.cartUpdateMsg %>
+          <% sess.cartUpdateMsg = null; %>
+        </div>
+        <% } %>
 
         <% if(rep.length === 0) { %>
         <div class="card mb-4">
@@ -132,30 +138,30 @@
         <% var i = 0; %>
         <% for (let p = 0; p < rep.length; p++) { %>
         <div class="card mb-4">
-          <div class="card-header">
+          <div class="card-header purchasing-product">
             <i class="fas fa-store-alt mr-1"></i> 판매자: <strong><%= rep[p].sellername %></strong>
           </div>
           <!-- 상품 -->
           <% for (let q = 0; q < rep[p].count; q++, i++) { %>
           <div class="card-body cart-item">
             <div class="row">
-              <div class="col-sm-3">
+              <div class="col-3 img-box">
                 <a href="/product/<%= data[i].product_id %>">
                   <% var isExist = false; %>
                   <% for(let j = 0; j < images.length; j++) { %>
                   <% if (images[j].product_id == data[i].product_id) { %>
-                  <img class="border rounded" src="uploads/<%= images[j].file %>" alt="product-image" width="110%" />
+                  <img class="border rounded" src="uploads/<%= images[j].file %>" alt="product-image" width="100%" />
                   <% isExist = true; break; %>
                   <% } %>
                   <% } %>
                   <% if(!isExist) { %>
-                  <img class="border rounded" src="images/product-default.jpg" alt="product-image" width="110%" />
+                  <img class="border rounded" src="images/product-default.jpg" alt="product-image" width="100%" />
                   <% } %>
                 </a>
               </div>
-              <div class="col-sm-9">
+              <div class="col-9 pl-0 product-box">
                 <div class="row">
-                  <div class="col-sm-10">
+                  <div class="col-11">
                     <h5 class="card-title">
                       <a href="/product/<%= data[i].product_id %>"><%= data[i].product %></a>
                       <br><small><a href="#" class="text-success">(<%= data[i].shop %>
@@ -165,7 +171,7 @@
                       <% } %>
                     </h5>
                   </div>
-                  <div class="col-sm-2">
+                  <div class="col-1">
                     <input type="hidden" name="cb<%= i %>" class="cb-state" value="<%= data[i].checked ? data[i].checked : 0 %>">
                     <input type="checkbox" name="" value="" class="item" <%= data[i].checked == 1 ? "checked" : "" %>>
                   </div>
@@ -174,12 +180,12 @@
                   var price = data[i].price;
                   if (data[i].discount > 0) {
                       price = Math.round(data[i].price * ((100 - data[i].discount) / 100)) %>
-                <small><s><%= formatNum(data[i].price) %> 원</s> <span class="disc-tag mx-1"><%= data[i].discount %>% off</span></small>
+                <small><s><%= formatNum(data[i].price) %> 원</s> <span class="disc-tag mx-1 rounded-pill"><%= data[i].discount %>% off</span></small>
                 <% } %>
                 <p class="card-text mb-2"><strong><%= formatNum(price) %> 원</strong>
                   x <%= data[i].quantity %> = <%= formatNum(price * data[i].quantity) %> 원</p>
                 <div class="row">
-                  <div class="col-sm-7">
+                  <div class="col-sm-6 col-12">
                     <p>
                       <span style="color: #fbd46d;">
                         <% for (let j = 0; j < Math.floor(data[i].rating); j++) { %>
@@ -194,13 +200,11 @@
                       </span>(0)
                     </p>
                   </div>
-                  <div class="col-sm-1">
-                    <button type="button" onClick="location.href = '/cart/delete/<%= data[i].cart_id %>'" class="btn btn-sm btn-outline-secondary"><i class="fas fa-trash py-1"></i></button>
-                  </div>
-                  <div class="col-sm-4">
+                  <div class="col-sm-6 col-9">
                     <div class="input-group input-group-sm">
+                      <button type="button" onClick="location.href = '/cart/delete/<%= data[i].cart_id %>'" class="btn btn-sm btn-outline-secondary mr-2"><i class="fas fa-trash py-1"></i></button>
                       <span class="input-group-prepend">
-                        <button type="button" class="qty-minus btn btn-sm btn-outline-secondary" data-type="minus" data-field="">
+                        <button type="button" class="qty-minus btn btn-sm btn-outline-secondary rounded-left" data-type="minus" data-field="">
                           <i class="fas fa-minus"></i>
                         </button>
                       </span>
