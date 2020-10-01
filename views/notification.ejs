@@ -42,7 +42,7 @@
           <div class="card-header clearfix">
             <i class="fas fa-store-alt mr-1"></i> 판매자: <strong><%= pendingOrder[p].sellername %></strong>
             <div class="float-right">
-              <a href="/purchase-invoice/<%= pendingOrder[p].trans_id %>">Order No. <%= pendingOrder[p].order_id %></a>
+              <a href="/purchase-invoice/<%= pendingOrder[p].trans_id %>" class="order-num">Order No. <%= pendingOrder[p].order_id %></a>
             </div>
           </div>
           <div class="row">
@@ -75,14 +75,16 @@
               </div>
             </div>
             <% } %>
+            <div class="col-12 text-right position-relative">
+              <small class="text-danger d-block d-sm-none dd-sm">수령법 선택 <%= deadlineDate %>까지 <span class="border border-success rounded-pill bg-success text-light px-2 pb-1 <%= now > directDeadlineTime || !isSameShop ? 'd-none' : '' %>"">direct <i class="fas fa-lock-open"></i></span></small>
+            </div>
           </div>
           <div class="clear-fix my-2 mx-1">
             <div class="float-left align-middle">
               <button type="button" class="btn btn-link mx-2" onclick="location.href='/my-notification/cancel/<%= pendingOrder[p].order_id %>'">취소</button>
             </div>
             <div class="float-right">
-              <small class="mr-3 text-danger d-block d-sm-none position-absolute dd-sm">수령법 선택 <%= deadlineDate %>까지</small>
-              <small class="mr-3 text-danger d-none d-sm-inline">수령법 선택 <%= deadlineDate %>까지</small>
+              <small class="mr-3 text-danger d-none d-sm-inline">수령법 선택 <%= deadlineDate %>까지 <span class="border rounded-pill bg-success text-light px-2 pb-1 <%= now > directDeadlineTime || !isSameShop ? 'd-none' : '' %>"">direct <i class="fas fa-lock-open"></i></span></small>
               <button type="button" class="btn btn-outline-secondary mb-1 mr-2 <%= now > directDeadlineTime || !isSameShop ? 'd-none' : '' %>" onclick="location.href='/my-notification/direct/<%= pendingOrder[p].order_id %>'">바로 가져가기</button>
               <button type="button" class="btn btn-outline-secondary mb-1 mr-2" onclick="location.href='/my-notification/pickup/<%= pendingOrder[p].order_id %>'">픽업</button>
               <button type="button" class="btn btn-outline-secondary mb-1 mr-3" onclick="location.href='/my-notification/delivery/<%= pendingOrder[p].order_id %>'">배송</button>

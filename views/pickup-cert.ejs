@@ -37,7 +37,9 @@
               let time = formatAMPM(date);
               var purchaseDatetime = date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate() + ' ' + time;
             %>
-            <h5 class="mb-3 d-inline-block"><%= purchaseDatetime %></h5>
+            <h5 class="mb-3 d-inline-block">
+              <%= purchaseDatetime %>
+            </h5>
           </div>
           <div class="float-right">
             <h5 class="mb-3 d-inline-block">
@@ -131,7 +133,7 @@
               <% for (let i = 0; i < data.length; i++) { %>
               <div class="col-lg-6 col-sm-12 <%= i == data.length - 1 ? '' : 'mb-3' %>">
                 <div class="row">
-                  <div class="col-sm-3 pr-0">
+                  <div class="col-3 pr-0">
                     <% var isExist = false; %>
                     <% for(let j = 0; j < images.length; j++) { %>
                     <% if (images[j].product_id == data[i].product_id) { %>
@@ -145,7 +147,7 @@
                     <img class="border rounded" src="images/product-default.jpg" alt="product-image" width="110%" />
                     <% } %>
                   </div>
-                  <div class="col-sm-9">
+                  <div class="col-9">
                     <p class="mb-2">
                       <a href="/product/<%= data[i].product_id %>">
                         <%= data[i].product %> <%= data[i].type != "None" ? '(' + data[i].type + ')' : '' %>

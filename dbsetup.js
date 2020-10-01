@@ -183,7 +183,7 @@ app.get("/setup_db", function(req, res) {
           user_id varchar(30) not null,
           rating int unsigned not null,
           title varchar(50),
-          body tinytext not null,
+          body text not null,
           primary key(trans_id, order_id, product_id, type, shop_id),
           foreign key(trans_id) references transaction(trans_id),
           foreign key(order_id) references orders(order_id),
