@@ -1,4 +1,5 @@
 const fn = require("../lib/other"); // 정의된 함수들 가져오기
+const currentYear = new Date().getFullYear();
 
 /* ------------------------------ home화면 product 출력 ------------------------------ */
 exports.showOutlines = function(req, res) {
@@ -58,8 +59,13 @@ exports.showDetails = function(req, res) {
 
          SELECT *
          FROM stock as st RIGHT OUTER JOIN shop as sh ON st.shop_id = sh.shop_id
-         WHERE product_id = ?;`
-  params = [reqProductId, reqProductId, reqProductId, user_id, user_id, user_id, reqProductId];
+         WHERE product_id = ?;
+
+         SELECT r.*, o.latest_update
+         FROM review as r RIGHT OUTER JOIN orders as o ON r.trans_id = o.trans_id
+         WHERE r.product_id = ?
+         ORDER BY o.latest_update ASC;`
+  params = [reqProductId, reqProductId, reqProductId, user_id, user_id, user_id, reqProductId, reqProductId];
   db.query(sql, params, function(err, results, fields) {
     if (err) throw err;
     req.session.noOfCartItems = results[3].length > 0 ? results[3][0].count : 0;
@@ -74,6 +80,7 @@ exports.showDetails = function(req, res) {
         images: results[1],
         wishlisted: results[2].length,
         stock: results[5],
+        review: results[6],
         typeAvailable: typeAvailable,
         sess: req.session,
         formatNum: fn.formatNum

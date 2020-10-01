@@ -79,12 +79,14 @@ app.get('/account/edit-address/:mode/:addressId', address.edit);
 // 회원정보 수정 페이지의 요청 처리
 app.get("/account/:subPage", user.openSubPage);
 app.get("/account/:subPage/:shopId", user.openSubPage);
-app.get("/account/write-review/transId-:orderId-:productId-:type", user.writeReview);
-app.post("/account/write-review", user.submitReview);
 app.post("/profile", user.saveChanges);
 
 // 결제 수단 페이지의 요청 처리
 app.post("/account/payment-method", paymeth.hazelPay);
+
+// 리뷰 작성
+app.get("/account/write-review/:transId/:orderId/:productId/:type/:shopId", user.writeReview);
+app.post("/account/write-review", user.submitReview);
 
 // 판매자의 과리 시스템 페이지의 요청 처리
 app.post("/seller/manage-info", seller.manageInfo);

@@ -333,12 +333,63 @@ exports.openSubPage = function(req, res) {
   }
 }
 
-/* ------------------------------ 구매후기 작성 페이지 연리는 처리 ------------------------------ */
+/* ------------------------------ 구매후기 작성 페이지 열리는 처리 ------------------------------ */
 exports.writeReview = function(req, res) {
   // TODO CODE
+  var user_id = req.session.user_id;
+  var reqTransId = req.params.transId;
+  var reqOrderId = req.params.orderId;
+  var reqProductId = req.params.productId;
+  var reqType = req.params.type;
+  var reqShopId = req.params.shopId;
+
+  if (!req.session.loggedin) {
+    req.session.redirectUrl = req.headers.referrer || req.originalUrl || req.url;
+    res.redirect("/login");
+    res.end();
+  }
+  db.query(`select o.*, p.product, s.shop
+                from orders as o
+                inner join product as p on p.product_id = o.product_id
+                inner join shop as s on s.shop_id = o.shop_id
+                where user_id = ? and trans_id = ? and order_id = ? and o.product_id = ? and type = ? and o.shop_id = ?`,
+      [user_id, reqTransId, reqOrderId, reqProductId, reqType, reqShopId],
+        function (err, results, fields) {
+          if (err) throw err;
+          res.render('review.ejs', {
+            user_id : user_id,
+            data : results[0],
+            sess: req.session,
+          });
+  });
 }
 
-/* ------------------------------ 구매후기 작성 온료 처리 ------------------------------ */
+
+/* ------------------------------ 구매후기 작성 완료 처리 ------------------------------ */
 exports.submitReview = function(req, res) {
   // TODO CODE
+  var product_id = req.body.productId;
+  var order_id = req.body.orderId;
+
+  var post = {
+    trans_id: req.body.transId,
+    user_id: req.session.user_id,
+    order_id: req.body.orderId,
+    product_id: req.body.productId,
+    type: req.body.type,
+    shop_id: req.body.shopId,
+    rating:req.body.rating,
+    title:req.body.title,
+    body:req.body.detail,
+  }
+
+
+  db.query (`insert into review set ?`, post, function (err, results, fields) {
+    if(err) throw err;
+    // db.query(`DELETE FROM orders WHERE product_id = ? and order_id = ?` [product_id, order_id], function (err, results, fields) {
+    //   res.redirect("/account/purchase-history");
+    // })
+    res.redirect("/account/purchase-history");
+    }
+  );
 }

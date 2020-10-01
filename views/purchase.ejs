@@ -51,7 +51,7 @@
                   <h5 class="card-title">
                     <a href="/product/<%= data[i].product_id %>" class="text-secondary"><%= data[i].product %> <%= data[i].type != "None" ? "(" + data[i].type + ")" : '' %></a>
                     <br><small class="text-secondary"><%= formatNum(data[i].price) %> 원 / <%= data[i].quantity %> 개</small>
-                    <br><a href="/account/write-review/<%= data[i].trans_id %>-<%= data[i].order_id %>-<%= data[i].product_id %>-<%= data[i].type %>-<%= data[i].shop_id %>" class="btn btn-sm btn-outline-primary rounded-pill mt-2">구매후기 쓰기</a>
+                    <br><a href="/account/write-review/<%= data[i].trans_id %>/<%= data[i].order_id %>/<%= data[i].product_id %>/<%= data[i].type %>/<%= data[i].shop_id %>" class="btn btn-sm btn-outline-primary rounded-pill mt-2">구매후기 쓰기</a>
                   </h5>
                 </div>
               </div>

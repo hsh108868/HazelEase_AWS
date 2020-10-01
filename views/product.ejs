@@ -116,7 +116,7 @@
         </div>
         <div class="clearfix">
           <input type="hidden" id="auto-submit" value="<%= sess.autoSubmit %>">
-          <button type="submit" class="btn btn-primary btn-block text-uppercase float-left">쇼핑가트 담기 <i class="fas fa-shopping-bag pl-2"></i></button>
+          <button type="submit" class="btn btn-primary btn-block text-uppercase float-left">쇼핑카트 담기 <i class="fas fa-shopping-bag pl-2"></i></button>
         </div>
       </form>
     </div>
@@ -191,30 +191,36 @@
 
           <!-- 고객 리뷰 -->
           <div class="tab-pane fade text-justify" id="nav-review" role="tabpanel" aria-labelledby="nav-review-tab">
-            <p class="text-left mb-1">작성자</p>
+            <% if(review.length === 0) { %>
+              <div>
+                리뷰가 없습니다.
+              </div>
+            <% }%>
+              <% for (var i = 0; i < review.length; i++) {%>
+            <p class="text-left mb-1"><%=review[i].user_id %></p>
             <p>
               <span style="color: #fbd46d;">
-                <% for (let j = 0; j < Math.floor(data.rating); j++) { %>
+                <% for (let j = 0; j < Math.floor(review[i].rating); j++) { %>
                 <i class="fas fa-star"></i>
                 <% } %>
-                <% if (data.rating - Math.floor(data.rating) >= 0.5) { %>
+                <% if (review[i].rating - Math.floor(review[i].rating) >= 0.5) { %>
                 <i class="fas fa-star-half-alt"></i>
                 <% } %>
-                <% for (let j = 1; j <= 5 - (data.rating - Math.floor(data.rating) < 0.5  ? Math.floor(data.rating) : data.rating); j++) { %>
+                <% for (let j = 1; j <= 5 - (review[i].rating - Math.floor(review[i].rating) < 0.5  ? Math.floor(review[i].rating) : review[i].rating); j++) { %>
                 <i class="far fa-star"></i>
                 <% } %>
               </span>
-              2020.10.10
-            </p>
+              <p>구매일 : <%= review[i].latest_update.getFullYear() + "/" + (review[i].latest_update.getMonth() + 1) + "/" + review[i].latest_update.getDate() %></p>
+              <p>타입 : <%=review[i].type%></p>
+              </p>
             <div class="row">
             <div class="col-sm-3">
               <img src="/images/product-default.jpg" alt="product-img" class="img-thumbnail">
               </div>
             <div class="col-sm-9">
-              <strong class="text-gray-dark ml-2">제품명</strong>
-              <p class="m-1 ml-2">내용</p>
+              <strong class="text-gray-dark ml-2"><%= review[i].title %></strong>
+              <pre class="m-1 ml-2"><%= review[i].body %></pre>
             </div>
-
             <div class="col-sm-12">
               <p class="text-right mb-1 mr-2">0명에게 도움 됨</p>
               <button type="button" class="btn btn-outline-primary  m-2 float-right">
@@ -235,10 +241,10 @@
         </button>
               </div>
             </div>
+          <% } %>
             </div>
           </div>
         </div>
-      </div>
     </div>
   </div>
 
