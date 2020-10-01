@@ -49,8 +49,8 @@ h6:hover {
     font-size: 2.5vw;
   }
 
-  .price-tag, h6 {
-    font-size: 3.8vw;
+  .card, .card-body, .price-tag, h6, .card-text {
+    font-size: 3.4vw;
   }
 
   .disc-tag {
@@ -61,10 +61,18 @@ h6:hover {
     display: none!important;
   }
 
+
+
   svg {
     /* background-image: url("../images/ads-image1.jpg");
     background-size: 1000px;
     background-repeat: no-repeat; */
+  }
+}
+
+@media (max-width: 438px) {
+  .card, .card-body, .price-tag, h6, .card-text {
+    font-size: 3.8vw;
   }
 }
 

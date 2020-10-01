@@ -1,6 +1,6 @@
 <%-include("partials/header");-%>
 <!-- Custom styles -->
-<link href="/css/cart.css" rel="stylesheet">
+<link href="/css/cert.css" rel="stylesheet">
 </head>
 
 <body>
@@ -61,35 +61,35 @@
           <div class="card-body">
             <div class="row">
               <div class="col-sm-12 text-center">
-                <img src="<%= qrcode %>" class="border rounded d-inline-flex" width="120px" alt="qr-code" />
+                <img src="<%= qrcode %>" class="border rounded d-inline-flex qrcode-img" width="120px" alt="qr-code" />
               </div>
               <div class="col-sm-12">
                 <h5 class="font-weight-bold mb-3">매장정보</h5>
               </div>
               <div class="col-lg-12">
                 <div class="row">
-                  <div class="col-sm-3 text-left mb-1">
+                  <div class="col-sm-3 col-4 text-left mb-1">
                     판매자
                   </div>
-                  <div class="col-sm-9 text-left mb-1">
+                  <div class="col-sm-9 col-8 text-left mb-1">
                     <%= data[0].sellername %>
                   </div>
-                  <div class="col-sm-3 text-left mb-1">
+                  <div class="col-sm-3 col-4 text-left mb-1">
                     매장명
                   </div>
-                  <div class="col-sm-9 text-left mb-1 font-weight-bold">
+                  <div class="col-sm-9 col-8 text-left mb-1 font-weight-bold">
                     <%= data[0].shop %>
                   </div>
-                  <div class="col-sm-3 text-left mb-1">
+                  <div class="col-sm-3 col-4 text-left mb-1">
                     주소
                   </div>
-                  <div class="col-sm-9 text-left mb-1 font-weight-bold">
+                  <div class="col-sm-9 col-8 text-left mb-1 font-weight-bold">
                     <%= data[0].address %>
                   </div>
-                  <div class="col-sm-3 text-left mb-1">
+                  <div class="col-sm-3 col-4 text-left mb-1">
                     전화번호
                   </div>
-                  <div class="col-sm-9 text-left mb-1 font-weight-bold">
+                  <div class="col-sm-9 col-8 text-left mb-1 font-weight-bold">
                     <%= data[0].phone %>
                   </div>
                 </div>
@@ -97,22 +97,22 @@
               <div class="col-lg-12 border-bottom mt-3 mb-3 w-100"></div>
               <div class="col-lg-12">
                 <div class="row">
-                  <div class="col-sm-12">
+                  <div class="col-12">
                     <h5 class="font-weight-bold mb-3">수령인</h5>
                   </div>
-                  <div class="col-sm-3 text-left mb-1">
+                  <div class="col-sm-3 col-4 text-left mb-1">
                     성명
                   </div>
-                  <div class="col-sm-9 text-left mb-1">
+                  <div class="col-sm-9 col-8 text-left mb-1">
                     <%= transInfo.recipient %>
                   </div>
-                  <div class="col-sm-3 text-left mb-1">
+                  <div class="col-sm-3 col-4 text-left mb-1">
                     전화번호
                   </div>
-                  <div class="col-sm-9 text-left mb-1">
+                  <div class="col-sm-9 col-8 text-left mb-1">
                     <%= transInfo.contact %>
                   </div>
-                  <div class="col-sm-12 text-right mt-3">
+                  <div class="col-12 text-right mt-3">
                     <small class="text-danger">시분증과 같이 제시하셔야 합니다.</small><br>
                     <small class="text-secondary">하젤이스 발행</small>
                   </div>

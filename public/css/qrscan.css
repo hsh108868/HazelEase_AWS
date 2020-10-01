@@ -43,13 +43,18 @@ a.btn {
   a.btn {
     max-width: 150px;
   }
+
+  .card-body, a, small, li.list-group-item, .set-sc, .set-wl, .btn {
+    font-size: 3.8vw;
+  }
+
+  h2 {
+    font-size: 5.5vw;
+  }
 }
 
 
 @media (max-width: 400px) {
-  .card-body, a, small, li.list-group-item {
-    font-size: 4.3vw;
-  }
 
   .page-header {
     padding: 2.5rem 0 1.8rem !important;

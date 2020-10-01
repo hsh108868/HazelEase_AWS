@@ -1,0 +1,11 @@
+body {
+    margin-top: 56px;
+    color: #5a5a5a;
+    background-color: #ebecf1;
+}
+
+@media (max-width: 576px) {
+  .qrcode-img {
+    width: 25%;
+  }
+}

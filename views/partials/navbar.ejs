@@ -31,13 +31,13 @@
           <a class="navbar-brand" style="color: #c7b198;" href="/my-receipt"><span class="link-name d-inline d-sm-inline d-md-none mr-2">수령목록</span> <i class="fas fa-box"></i><span class="sm-num"> <%= sess.noOfReceivingItems > 0 ? sess.noOfReceivingItems : "" %></span></a>
         </li>
         <li class="nav-item">
-          <span class="link-name d-inline d-sm-inline d-md-none mr-2">쇼핑카트</span> <a class="navbar-brand cart-link"  style="color: #24a19c;" href="/my-cart"><i class="fas fa-shopping-cart"></i><span class="sm-num"> <%= sess.noOfCartItems > 0 ? sess.noOfCartItems : "" %></span></a>
+          <a class="navbar-brand cart-link"  style="color: #24a19c;" href="/my-cart"><span class="link-name d-inline d-sm-inline d-md-none mr-2">쇼핑카트</span> <i class="fas fa-shopping-cart"></i><span class="sm-num"> <%= sess.noOfCartItems > 0 ? sess.noOfCartItems : "" %></span></a>
         </li>
         <li class="nav-item">
-          <span class="link-name d-inline d-sm-inline d-md-none mr-2">위시리스트</span> <a class="navbar-brand wishlist-link"  style="color: #ea5455;" href="/my-wishlist"><i class="fas fa-heart"></i><span class="sm-num"> <%= sess.noOfWishlistItems > 0 ? sess.noOfWishlistItems : "" %></span></a>
+          <a class="navbar-brand wishlist-link"  style="color: #ea5455;" href="/my-wishlist"><span class="link-name d-inline d-sm-inline d-md-none mr-2">위시리스트</span> <i class="fas fa-heart"></i><span class="sm-num"> <%= sess.noOfWishlistItems > 0 ? sess.noOfWishlistItems : "" %></span></a>
         </li>
         <li class="nav-item">
-          <span class="link-name d-inline d-sm-inline d-md-none mr-2">QR스캔</span> <a class="navbar-brand qrcode-link" style="color: #3282b8;" href="/qrcode"><i class="fas fa-qrcode"></i></a>
+          <a class="navbar-brand qrcode-link" style="color: #3282b8;" href="/qrcode"><span class="link-name d-inline d-sm-inline d-md-none mr-2">QR스캔</span> <i class="fas fa-qrcode"></i></a>
         </li>
         <li class="nav-item seller-system-link d-md-none d-lg-block">
           <a class="navbar-brand ssl rounded-pill px-2" href="/account/seller-management">판매자 관리</a>

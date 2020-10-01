@@ -17,7 +17,34 @@ a {
 }
 
 @media (max-width: 576px) {
+  .card {
+    padding: 3%!important;
+    font-size: 3.8vw;
+  }
 
+  .card-title {
+    margin-bottom: 3%!important;
+  }
+
+  h2 {
+    font-size: 6.0vw;
+  }
+
+  h4 {
+    font-size: 5.5vw;
+  }
+
+  h5.card-title {
+    margin-bottom: 6vw;
+  }
+
+  .btn-sm {
+    font-size: 3.3vw;
+  }
+
+  .page-header {
+    padding: 2.5rem 0 1.8rem !important;
+  }
 }
 
 @media (max-width: 496px) {
@@ -32,19 +59,13 @@ a {
 
 @media (max-width: 400px) {
   .card-body, a, small, li.list-group-item {
-    font-size: 4.5vw;
+    font-size: 3.8vw;
   }
 
-  h2 {
-    font-size: 7.5vw;
-  }
-
-  h4 {
-    font-size: 6vw;
-  }
-
-  h5.card-title {
-    margin-bottom: 6px;
+  @media (max-width: 400px) {
+    h5 {
+      line-height: 1.0!important;
+    }
   }
 
   p {

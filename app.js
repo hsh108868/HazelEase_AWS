@@ -1,5 +1,5 @@
 /* ---------- NPM 패키지 ------------- */
-// require('dotenv').config(); // .env 파일 내에 있는 변수를 이 파일로 가져올 때 process.env.<키변수>로 접근
+require('dotenv').config(); // .env 파일 내에 있는 변수를 이 파일로 가져올 때 process.env.<키변수>로 접근
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");

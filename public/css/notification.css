@@ -1,0 +1,24 @@
+@media (max-width: 577px) {
+  .btn-link {
+    /* padding: 2.5% 3%!important; */
+    margin: 0!important;
+  }
+
+  h4.trans-refno, a {
+    font-size: 3.8vw!important;
+  }
+
+  .btn-outline-secondary {
+   font-size: 3.0vw;
+ }
+
+ .dd-sm {
+   bottom: 12.5vw;
+   right: 5px;
+   font-size: 2.3vw;
+ }
+
+ div.container {
+   margin: 3% 0!important;
+ }
+}
