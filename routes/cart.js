@@ -334,7 +334,7 @@ exports.processPayment = function(req, res) {
     res.end();
   } else {
       if (hazelMoney < total) {
-        req.session.messageErr = "하젤페이 머니가 부족합니다.";
+        req.session.messageErr = "헤이즐페이 머니가 부족합니다.";
         res.redirect("/my-cart");
       } else {
         db.query(`INSERT INTO transaction SET ?;`, transPost, function(errA, resultsA, fieldsA) {
