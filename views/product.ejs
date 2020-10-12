@@ -6,7 +6,7 @@
 
 <body class="bg-light">
   <%- include("partials/navbar"); -%>
-  <div class="container mt-5">
+  <div class="container mt-5 con-1">
     <div class="row bg-white border rounded">
       <div class="col-lg-6 card-body p-0 border rounded">
         <!-- <svg class="bd-placeholder-img card-img-top" width="100%" height="500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail" viewBox="0 0 100 100">
@@ -21,7 +21,7 @@
           <div class="carousel-inner">
             <% for (let i = 0; i < images.length; i++) { %>
             <div class="carousel-item <%= i == 0 ? 'active' : '' %>">
-              <svg class="bd-placeholder-img card-img-top" width="100%" height="520" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail" viewBox="0 0 100 100">
+              <svg class="bd-placeholder-img card-img-top" width="100%" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail" viewBox="0 0 100 100">
                 <image href="/uploads/<%= images[i].file %>" alt="product-image" width="100px" />
               </svg>
             </div>
@@ -73,7 +73,7 @@
         <% } %>
 
         <div class="row mb-3">
-          <div class="col-md-7 mb-3">
+          <div class="col-7 mb-3">
             <select name="type" class="form-control" required>
               <% if (!(typeAvailable.length == 1 && typeAvailable[0] == '')) { %>
               <option value=""> 종류 선택 </option>
@@ -84,7 +84,7 @@
               <% sess.selectType = null; %>
             </select>
           </div>
-          <div class="col-md-5 mb-3">
+          <div class="col-5 mb-3">
             <select name="quantity" class="form-control">
               <option value="1"> 1 </option>
               <option value="2"> 2 </option>
@@ -93,7 +93,7 @@
               <option value="5"> 5 </option>
             </select>
           </div>
-          <div class="col-sm-12 mb-3">
+          <div class="col-12 mb-3">
             <select name="shopId" class="form-control" required>
               <option value="">매장 선택</option>
               <% for (let i = 0; i < stock.length; i++) { %>
@@ -192,7 +192,7 @@
           <!-- 고객 리뷰 -->
           <div class="tab-pane fade text-justify" id="nav-review" role="tabpanel" aria-labelledby="nav-review-tab">
             <% if(review.length === 0) { %>
-              <div>
+              <div class="empty-review">
                 리뷰가 없습니다.
               </div>
             <% }%>
