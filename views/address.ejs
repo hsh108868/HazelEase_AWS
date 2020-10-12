@@ -1,6 +1,5 @@
 <%- include("partials/header"); -%>
 <!-- Custom styles -->
-<link rel="stylesheet" href="/css/main.css">
 <link rel="stylesheet" href="/css/account.css">
 </head>
 
@@ -8,106 +7,113 @@
   <%- include("partials/navbar"); -%>
 
   <main role="main" class="container-fluid">
-    <%- include("partials/sidenav"); -%>
-    <div class="tab-content">
-      <div>
-        <h3>주소록 관리</h3>
+    <div class="row">
+      <div class="col-md-3 col-12">
+        <%- include("partials/sidenav"); -%>
       </div>
-      <div class="tab-subcontent">
-        <div id="defaultAddress" class="card mb-4 <%= sess.openAddressInfo.recipient != '' ? 'd-none' : '' %>">
-          <div class="card-header clear-fix">
-            기본 배송지
+      <div class="col-md-9 col-12">
+        <div class="tab-content">
+          <div>
+            <h3>주소록 관리</h3>
           </div>
-          <% if (defAddr.address_id == null) { %>
-            <div class="card-body text-center">
-              기본 배송지가 지정되지 않습니다.
-            </div>
-          <% } else { %>
-          <div class="card-body">
-            <div class="mb-2"><i class="fas fa-address-card mr-1"></i> <%= defAddr.recipient %></div>
-            <div class="mb-2">[<%= defAddr.zip %>] <%= defAddr.state %> <%= defAddr.city %> <%= defAddr.address %></div>
-            <div class="mb-2"><%= defAddr.phone %></div>
-            <button type="button" class="btn btn-outline-dark mb-1 mx-1  float-right" onclick="location.href='/account/edit-address/open/<%= defAddr.address_id %>'">수정</button>
-            <button type="button" class="btn btn-outline-danger mb-1 mx-1  float-right" onclick="location.href='/account/delete-address/<%= defAddr.address_id %>'">삭제</button>
-          </div>
-          <% } %>
-        </div>
-
-        <div id="otherAddress" class="card mb-4 <%= sess.openAddressInfo.recipient != '' ? 'd-none' : '' %>">
-          <div class="card-header clear-fix">
-            다른 배송지
-          </div>
-          <% if (othAddr.length == 0 || (othAddr.length == 1 && othAddr[0].address_id == defAddr.address_id)) { %>
-            <div class="card-body text-center">
-              다른 배송지가 없습니다.
-            </div>
-          <% } %>
-          <div class="mb-3">
-          <% for(let i = 0; i < othAddr.length; i++) { %>
-            <% if (othAddr[i].address_id != defAddr.address_id) { %>
-              <div class="card-body">
-                <div class="mb-2"><i class="fas fa-address-card mr-1"></i> <%= othAddr[i].recipient %></div>
-                <div class="mb-2">[<%= othAddr[i].zip %>] <%= othAddr[i].state %> <%= othAddr[i].city %> <%= othAddr[i].address %></div>
-                <div class="mb-2"><%= othAddr[i].phone %></div>
-                <button type="button" class="btn btn-secondary mb-1 mx-1  float-right" onclick="location.href='/account/default-address/<%= othAddr[i].address_id %>'">기본 배송지 지정</button>
-                <button type="button" class="btn btn-outline-dark mb-1 mx-1  float-right" onclick="location.href='/account/edit-address/open/<%= othAddr[i].address_id %>'">수정</button>
-                <button type="button" class="btn btn-outline-danger mb-1 mx-1  float-right" onclick="location.href='/account/delete-address/<%= othAddr[i].address_id %>'">삭제</button>
+          <div class="tab-subcontent">
+            <div id="defaultAddress" class="card mb-4 <%= sess.openAddressInfo.recipient != '' ? 'd-none' : '' %>">
+              <div class="card-header clear-fix">
+                기본 배송지
               </div>
-            <% } %>
-          <% } %>
+              <% if (defAddr.address_id == null) { %>
+                <div class="card-body text-center">
+                  기본 배송지가 지정되지 않습니다.
+                </div>
+              <% } else { %>
+              <div class="card-body">
+                <div class="mb-2"><i class="fas fa-address-card mr-1"></i> <%= defAddr.recipient %></div>
+                <div class="mb-2">[<%= defAddr.zip %>] <%= defAddr.state %> <%= defAddr.city %> <%= defAddr.address %></div>
+                <div class="mb-2"><%= defAddr.phone %></div>
+                <button type="button" class="btn btn-outline-dark mb-1 mx-1  float-right" onclick="location.href='/account/edit-address/open/<%= defAddr.address_id %>'">수정</button>
+                <button type="button" class="btn btn-outline-danger mb-1 mx-1  float-right" onclick="location.href='/account/delete-address/<%= defAddr.address_id %>'">삭제</button>
+              </div>
+              <% } %>
+            </div>
+
+            <div id="otherAddress" class="card mb-4 <%= sess.openAddressInfo.recipient != '' ? 'd-none' : '' %>">
+              <div class="card-header clear-fix">
+                다른 배송지
+              </div>
+              <% if (othAddr.length == 0 || (othAddr.length == 1 && othAddr[0].address_id == defAddr.address_id)) { %>
+                <div class="card-body text-center">
+                  다른 배송지가 없습니다.
+                </div>
+              <% } %>
+              <% for(let i = 0; i < othAddr.length; i++) { %>
+                <% if (othAddr[i].address_id != defAddr.address_id) { %>
+                  <div class="card-body">
+                    <div class="mb-2"><i class="fas fa-address-card mr-1"></i> <%= othAddr[i].recipient %></div>
+                    <div class="mb-2">[<%= othAddr[i].zip %>] <%= othAddr[i].state %> <%= othAddr[i].city %> <%= othAddr[i].address %></div>
+                    <div class="mb-2"><%= othAddr[i].phone %></div>
+                    <button type="button" class="btn btn-secondary mb-1 mx-1  float-right" onclick="location.href='/account/default-address/<%= othAddr[i].address_id %>'">기본 배송지 지정</button>
+                    <button type="button" class="btn btn-outline-dark mb-1 mx-1  float-right" onclick="location.href='/account/edit-address/open/<%= othAddr[i].address_id %>'">수정</button>
+                    <button type="button" class="btn btn-outline-danger mb-1 mx-1  float-right" onclick="location.href='/account/delete-address/<%= othAddr[i].address_id %>'">삭제</button>
+                  </div>
+                <% } %>
+              <% } %>
+            </div>
+
+            <button type="button" class="btn btn-primary btn-block <%= sess.openAddressInfo.recipient != '' ? 'd-none' : '' %>" id="addAddress">주소 추가</button>
+
+            <form id="addressForm" class="address-wrap card <%= sess.openAddressInfo.recipient == "" ? 'd-none' : '' %>" method="post" action="/account/manage-address<%= sess.openAddressInfo.recipient != '' ? '/' + sess.openAddressInfo.address_id  : '' %>">
+              <div class="card-body row">
+                <div class="form-group col-lg-6 col-md-6 col-sm-6 col-12">
+                  <label for="recipient">수령인 (Recipient)</label>
+                  <input name="recipient" type="" class="form-control" maxlength="100" value="<%= sess.openAddressInfo.recipient %>" required />
+                </div>
+                <div class="form-group col-lg-4 col-md-6 col-sm-6 col-12">
+                  <label for="phone">연락처 (Contact)</label>
+                  <input name="phone" type="" class="form-control" maxlength="20" value="<%= sess.openAddressInfo.phone %>" required />
+                </div>
+                <div class="form-group col-lg-2 col-md-2 col-sm-4 col-12">
+                  <label for="zip">우편번호 (Postal)</label>
+                  <input name="zip" type="number" class="form-control" maxlength="5" value="<%= sess.openAddressInfo.zip %>" required />
+                </div>
+                <div class="form-group col-lg-3 col-md-5 col-sm-4 col-12">
+                  <label for="state">시/도 (Province)</label>
+                  <input name="state" type="" class="form-control" maxlength="20" value="<%= sess.openAddressInfo.state %>" required />
+                </div>
+                <div class="form-group col-lg-3 col-md-5 col-sm-4 col-12">
+                  <label for="city">구/면/읍 (City)</label>
+                  <input name="city" type="" class="form-control" maxlength="20" value="<%= sess.openAddressInfo.city %>" required />
+                </div>
+                <div class="form-group col-lg-6 col-md-12 col-sm-12 col-12">
+                  <label for="address">주소 (Address)</label>
+                  <input name="address" type="" class="form-control" maxlength="100" value="<%= sess.openAddressInfo.address %>" required />
+                </div>
+
+                <% if (sess.openAddressInfo.recipient != '') { %>
+                <div class="col-6 mt-3">
+                  <button class="btn btn-block btn-success" type="submit">수정완료</button>
+                </div>
+                <div class="col-6 mt-3">
+                  <a href="/account/edit-address/close/0" class="btn btn-block btn-danger" type="button">취소</a>
+                </div>
+                <% } else { %>
+                <div class="col-sm-6 col-4 mt-3">
+                  <button class="btn btn-block btn-primary" type="submit">추가</button>
+                </div>
+                <div class="col-sm-3 col-4 mt-3">
+                  <button class="btn btn-block btn-dark" type="reset">재작성</button>
+                </div>
+                <div class="col-sm-3 col-4 mt-3">
+                  <a href="/account/manage-address" class="btn btn-block btn-danger" type="button">취소</a>
+                </div>
+                <% } %>
+              </div>
+            </form>
+
           </div>
         </div>
-
-        <button type="button" class="btn btn-primary btn-block mb-3 <%= sess.openAddressInfo.recipient != '' ? 'd-none' : '' %>" id="addAddress">주소 추가</button>
-
-        <form id="addressForm" class="address-wrap card <%= sess.openAddressInfo.recipient == "" ? 'd-none' : '' %>" method="post" action="/account/manage-address<%= sess.openAddressInfo.recipient != '' ? '/' + sess.openAddressInfo.address_id  : '' %>">
-          <div class="card-body row">
-            <div class="form-group col-lg-6 col-md-6">
-              <label for="recipient">수령인 (Recipient)</label>
-              <input name="recipient" type="text" class="form-control" maxlength="100" value="<%= sess.openAddressInfo.recipient %>" required />
-            </div>
-            <div class="form-group col-lg-4 col-md-6">
-              <label for="phone">연락처 (Contact)</label>
-              <input name="phone" type="text" class="form-control" maxlength="20" value="<%= sess.openAddressInfo.phone %>" required />
-            </div>
-            <div class="form-group col-lg-2 col-md-2">
-              <label for="zip">우편번호 (Postal)</label>
-              <input name="zip" type="number" class="form-control" maxlength="5" value="<%= sess.openAddressInfo.zip %>" required />
-            </div>
-            <div class="form-group col-lg-3 col-md-5">
-              <label for="state">시/도 (Province)</label>
-              <input name="state" type="text" class="form-control" maxlength="20" value="<%= sess.openAddressInfo.state %>" required />
-            </div>
-            <div class="form-group col-lg-3 col-md-5">
-              <label for="city">구/면/읍 (City)</label>
-              <input name="city" type="text" class="form-control" maxlength="20" value="<%= sess.openAddressInfo.city %>" required />
-            </div>
-            <div class="form-group col-lg-6 col-md-12">
-              <label for="address">주소 (Address)</label>
-              <input name="address" type="text" class="form-control" maxlength="100" value="<%= sess.openAddressInfo.address %>" required />
-            </div>
-
-            <% if (sess.openAddressInfo.recipient != '') { %>
-            <div class="col-sm-6 my-3">
-              <button class="btn btn-block btn-success" type="submit">수정완료</button>
-            </div>
-            <div class="col-sm-6 my-3">
-              <a href="/account/edit-address/close/0" class="btn btn-block btn-danger" type="button">취소</a>
-            </div>
-            <% } else { %>
-            <div class="col-sm-6 my-3">
-              <button class="btn btn-block btn-primary" type="submit">추가</button>
-            </div>
-            <div class="col-sm-3 my-3">
-              <button class="btn btn-block btn-dark" type="reset">재작성</button>
-            </div>
-            <div class="col-sm-3 my-3">
-              <a href="/account/manage-address" class="btn btn-block btn-danger" type="button">취소</a>
-            </div>
-            <% } %>
-          </div>
-        </form>
-
+      </div>
+      <div class="col-12">
+        <%- include("partials/copyright"); -%>
       </div>
     </div>
   </main>

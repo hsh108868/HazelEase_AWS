@@ -3,19 +3,19 @@
 /* (Color palette: https://colorhunt.co/palette/196180) */
 /* Padding below the footer and lighter body text */
 
+html, body {
+  height: 100%
+}
+
 body {
-  margin-top: 21px;
-  padding: 0px 30px;
+  margin-top: 76px;
+  align-items: center;
   background-color: #ebecf1;
   color: #555555;
   line-height: 1.5;
 }
 
-h4 {
-  padding: 10px;
-}
-
-img {
+h4, img, .side-navbar {
   padding: 10px;
 }
 
@@ -44,11 +44,7 @@ a:hover {
 }
 
 .side-navbar {
-  margin: 20px 15px 20px 3%;
   background-color: white;
-  width: 15%;
-  padding: 10px 10px;
-  float: left;
 }
 
 .side-navbar li:hover {
@@ -69,14 +65,16 @@ a:hover {
   background-color: #cbeaed;
   border-radius: 20px;
   padding: 20px;
-  display: inline-block;
 }
+
 .tab-content {
   background-color: white;
-  float: left;
-  margin: 20px 3% 20px 0;
-  width: 77%;
+  padding-bottom: 1vw!important;
 }
+
+/* .col-md-9.col-12 {
+  padding-bottom: 15px;
+} */
 
 .tab-content h3 {
   background-color: #0f4c75;
@@ -100,4 +98,122 @@ a:hover {
 
 textarea {
   width : 100%
+}
+
+#amountInput {
+  font-size: 1.5rem;
+}
+
+/* New added CSS */
+@media (min-width: 992px) {
+  body {
+    padding: 0 30px;
+  }
+}
+
+@media (min-width: 768px) {
+  .col-md-9.col-12 {
+    padding-left: 0.3vw;
+  }
+}
+
+@media (max-width: 767px) {
+  .col-md-3.col-12 {
+    margin-bottom: 15px;
+  }
+}
+
+@media (max-width: 576px) {
+  .tab-subcontent, .card-header, .card-body, td {
+    padding: 2.5vw;
+  }
+
+  .card {
+    margin-bottom: 2.5vw!important;
+  }
+
+  .card.hazelmoney-disp {
+    margin: 0!important;
+  }
+
+  .card.m-4 {
+    margin: 2.5vw!important;
+  }
+
+  h3 {
+    font-size: 4vw;
+    padding: 4vw!important;
+  }
+
+  h4 {
+    font-size: 4vw;
+    padding-top: 1vw!important;
+    padding-bottom: 1vw!important;
+  }
+
+  .card, .card-header, .card-body, .clearfix, .side-navbar,
+  button.btn, a.btn, input.form-control, a.text-secondary,
+  #amountInput, select.form-control.d-inline, label, th, td, table {
+    font-size: 3.3vw;
+  }
+
+  .card-body a.btn.btn-sm.rounded-pill, input#productImages {
+    font-size: 2.4vw;
+  }
+
+  select.form-control, input.px-3 {
+    font-size: 2.9vw;
+  }
+
+  h5 {
+    line-height: 0.7!important;
+    padding: 0;
+  }
+
+  h2 {
+    font-size: 7vw!important;
+  }
+
+  h6 {
+    font-size: 4vw!important;
+  }
+
+  h4.p-0 {
+    margin-bottom: 5vw!important;
+  }
+
+  #buttonCancel, #buttonSubmit {
+    margin-top: 15px;
+  }
+
+  .col-9 {
+    padding-left: 1vw!important;
+  }
+
+  small {
+    font-size: 2.8vw;
+    padding: 2.5vw 0 0;
+  }
+
+  button.btn, a.btn {
+    padding: 1vw 1.5vw!important;
+  }
+
+  .col-4.mt-3 {
+    margin-top: 2.5vw!important;
+  }
+
+  .col-sm-6.col-4.mt-3 {
+    padding-right: 0vw!important;
+  }
+
+  .col-4.mt-3:last-child {
+    padding-left: 0vw!important;
+  }
+
+  /* footer related */
+  footer.mastfoot > div.inner > p.text-muted > img {
+    width: 7%!important;
+    padding: 1vw!important;
+  }
 }
