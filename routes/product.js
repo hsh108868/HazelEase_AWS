@@ -25,7 +25,12 @@ exports.showOutlines = function(req, res) {
          SELECT order_id FROM orders WHERE user_id = ? AND (status = 'delivery' OR status = 'pickup');
          SELECT order_id FROM orders WHERE user_id = ? AND status = 'direct';
 
-         SELECT seller_id FROM seller WHERE seller_id = ?;`
+         SELECT seller_id FROM seller WHERE seller_id = ?;
+
+         SELECT p.product_id, COUNT(*) as count
+         FROM product as p
+            RIGHT OUTER JOIN review as r ON p.product_id = r.product_id
+         GROUP BY p.product_id;`
   params = [user_id, user_id, user_id, user_id, user_id, user_id];
 
   db.query(sql, params, function(err, results, fields) {
@@ -40,6 +45,7 @@ exports.showOutlines = function(req, res) {
       user_id: user_id,
       product: results[0],
       images: results[3],
+      revCount: results[8],
       formatNum: fn.formatNum,
       sess: req.session
     });
