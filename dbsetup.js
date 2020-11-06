@@ -181,7 +181,7 @@ app.get("/setup_db", function(req, res) {
           type varchar(30) not null,
           shop_id int unsigned not null,
           user_id varchar(30) not null,
-          rating int unsigned not null,
+          rating float unsigned not null,
           title varchar(50),
           body text not null,
           primary key(trans_id, order_id, product_id, type, shop_id),

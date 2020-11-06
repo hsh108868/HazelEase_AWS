@@ -160,7 +160,7 @@ textarea {
   .card, .card-header, .card-body, .clearfix, .side-navbar,
   button.btn, a.btn, input.form-control, a.text-secondary,
   #amountInput, select.form-control.d-inline, label, th, td, table, form.info-wrap,
-  .save-acc-info-btn, #show_change_pw {
+  .save-acc-info-btn, textarea#detail.form-control, #show_change_pw {
     font-size: 3.3vw;
   }
 

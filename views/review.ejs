@@ -1,74 +1,83 @@
 <%- include("partials/header"); -%>
 <!-- Custom styles -->
-<link rel="stylesheet" href="/css/main.css">
 <link rel="stylesheet" href="/css/account.css">
 </head>
 
 <body id="bootstrap-overrides">
-<%- include("partials/navbar"); -%>
+  <%- include("partials/navbar"); -%>
 
-<main role="main" class="container-fluid">
-    <%- include("partials/sidenav"); -%>
-    <div class="tab-content">
-        <div>
+  <main role="main" class="container-fluid">
+    <div class="row">
+      <div class="col-md-3 col-12">
+        <%- include("partials/sidenav"); -%>
+      </div>
+      <div class="col-md-9 col-12">
+        <div class="tab-content">
+          <div>
             <h3>리뷰 작성</h3>
-        </div>
-        <div class="tab-subcontent">
+          </div>
+          <div class="tab-subcontent">
             <form id="reviewForm" class="address-wrap" method="post" action="/account/write-review">
-                <div class="card-body row">
-                    <div class="form-group col-lg-6 col-md-6">
-                        <label for="order_id"><strong>주문 번호</strong></label><p><%= data.order_id %></p>
-                        <label for="product"><strong>제품명</strong></label><p><%= data.product %></p>
-                    </div>
-                    <div class="form-group col-lg-2 col-md-2">
-                        <label for="type"><strong>타입</strong></label><p><%= data.type %></p>
-                        <label for="seller"><strong>매장 이름</strong></label><p><%= data.shop %></p>
-                    </div>
-                    <div class="col-sm-4 dob-pr-rm row">
-                        <label for="rating" class="sr-only">평점</label>
-                        <select id="rating" name="rating" class="form-control" aria-label="점">
-                            <option value="">평점</option>
-                            <option value="0.0">0</option>
-                            <option value="0.5">0.5</option>
-                            <option value="1.0">1.0</option>
-                            <option value="1.5">1.5</option>
-                            <option value="2.0">2.0</option>
-                            <option value="2.5">2.5</option>
-                            <option value="3.0">3.0</option>
-                            <option value="3.5">3.5</option>
-                            <option value="4.0">4.0</option>
-                            <option value="4.5">4.5</option>
-                            <option value="5.0">5.0</option>
-                        </select>
-                    </div>
+              <div class="row card-body">
+                <div class="col-6">
+                  <label for="order_id"><strong>주문 번호</strong></label>
+                  <p><%= data.order_id %></p>
+                </div>
+                <div class="col-6">
+                  <label for="seller"><strong>매장 이름</strong></label>
+                  <p><%= data.shop %></p>
+                </div>
+                <div class="col-sm-6 col-12">
+                  <label for="product"><strong>제품명</strong></label>
+                  <p><%= data.product %></p>
+                </div>
+                <div class="col-md-3 col-6">
+                  <label for="type"><strong>타입</strong></label>
+                  <p><%= data.type %></p>
+                </div>
+                <div class=" col-md-3 col-6">
+                  <label for="rating" class="sr-only">평점</label>
+                  <select id="rating" name="rating" class="form-control mb-3" aria-label="점">
+                    <option value="">평점</option>
+                    <option value="1.0">1.0</option>
+                    <option value="1.5">1.5</option>
+                    <option value="2.0">2.0</option>
+                    <option value="2.5">2.5</option>
+                    <option value="3.0">3.0</option>
+                    <option value="3.5">3.5</option>
+                    <option value="4.0">4.0</option>
+                    <option value="4.5">4.5</option>
+                    <option value="5.0">5.0</option>
+                  </select>
+                </div>
+                <div class="col-12 mt-3">
+                  <label for="title" class="sr-only">제목</label>
+                  <input name="title" type="" id="title" class="form-control mb-3" placeholder="제목" maxlength="50" required />
+                </div>
+                <div class="col-12">
+                  <label for="detail" class="sr-only">내용</label>
+                  <textarea name="detail" id="detail" class="form-control" rows="10" placeholder="리뷰 내용을 입력하세요."></textarea>
+                </div>
 
-                </div>
-                <div class = "card-body">
-                    <label for="title" class="sr-only">제목</label>
-                    <p>
-                        <input name="title" type="text" id="title" class="form-control width:100%" placeholder="제목" maxlength="50" required/>
-                    </p>
-                    <label for="detail" class="sr-only">내용</label>
-                    <textarea name="detail" id="detail" class="form-control" rows = "10" placeholder="리뷰 내용을 입력하세요."></textarea>
-                </div>
                 <input type="hidden" name="orderId" class="cb-state" value="<%= data.order_id %>">
                 <input type="hidden" name="transId" class="cb-state" value="<%= data.trans_id %>">
                 <input type="hidden" name="type" class="cb-state" value="<%= data.type %>">
                 <input type="hidden" name="productId" class="cb-state" value="<%= data.product_id %>">
                 <input type="hidden" name="shopId" class="cb-state" value="<%= data.shop_id %>">
 
-                <div class="row card-body">
-                    <div class="col-sm-6 my-3">
-                        <a href="/account/purchase-history" class="btn btn-block btn-danger" type="button">취소</a>
-                    </div>
-                    <div class="col-sm-6 my-3">
-                        <button class="btn btn-block btn-success" type="submit">작성 완료</button>
-                    </div>
+                <div class="col-6 mt-3">
+                  <a href="/account/purchase-history" class="btn btn-block btn-danger" type="button">취소</a>
                 </div>
+                <div class="col-6 mt-3">
+                  <button class="btn btn-block btn-success" type="submit">작성 완료</button>
+                </div>
+              </div>
             </form>
+          </div>
         </div>
+      </div>
     </div>
-</main>
+  </main>
 </body>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

@@ -54,7 +54,8 @@
                       <h5 class="card-title">
                         <a href="/product/<%= data[i].product_id %>" class="text-secondary"><%= data[i].product %> <%= data[i].type != "None" ? "(" + data[i].type + ")" : '' %></a>
                         <small class="text-secondary d-block"><%= formatNum(data[i].price) %> 원 / <%= data[i].quantity %> 개</small>
-                        <a href="/account/write-review/<%= data[i].trans_id %>/<%= data[i].order_id %>/<%= data[i].product_id %>/<%= data[i].type %>/<%= data[i].shop_id %>" class="btn btn-sm btn-outline-primary rounded-pill mt-2 d-inline-block">구매후기 쓰기</a>
+                        <a href="/account/write-review/<%= data[i].trans_id %>/<%= data[i].order_id %>/<%= data[i].product_id %>/<%= data[i].type %>/<%= data[i].shop_id %>" class="btn btn-sm btn-outline-primary rounded-pill mt-2 <%= data[i].status == 'completed' ? 'd-inline-block' : 'd-none' %>">구매후기 쓰기</a>
+                        <button class="btn btn-sm btn-secondary rounded-pill mt-2 <%= data[i].status == 'reviewed' ? 'd-inline-block' : 'd-none' %>" disabled>리뷰작성 완료</button>
                       </h5>
                     </div>
                   </div>

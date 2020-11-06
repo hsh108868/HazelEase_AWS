@@ -65,7 +65,8 @@ exports.showDetails = function(req, res) {
          WHERE product_id = ?;
 
          SELECT r.*, o.latest_update
-         FROM review as r RIGHT OUTER JOIN orders as o ON r.trans_id = o.trans_id
+         FROM review as r
+            INNER JOIN orders as o ON r.product_id = o.product_id AND r.trans_id = o.trans_id
          WHERE r.product_id = ?
          ORDER BY o.latest_update ASC;`
   params = [reqProductId, reqProductId, reqProductId, user_id, user_id, user_id, reqProductId, reqProductId];

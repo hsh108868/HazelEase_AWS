@@ -54,7 +54,7 @@ a:hover {
   }
 
   select.form-control, i.fa-star, i.fa-truck, i.fa-store-alt, .text-secondary, p, form button.btn-primary,
-  .container .nav-item, .tab-content, a.btn.btn-sm  {
+  .container .nav-item, .tab-content, a.btn.btn-sm, button.btn-outline-primary  {
     font-size: 3.3vw;
   }
 
