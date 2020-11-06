@@ -23,8 +23,10 @@ exports.showOutlines = function(req, res) {
          GROUP BY trans_id;
 
          SELECT order_id FROM orders WHERE user_id = ? AND (status = 'delivery' OR status = 'pickup');
-         SELECT order_id FROM orders WHERE user_id = ? AND status = 'direct'; `
-  params = [user_id, user_id, user_id, user_id, user_id];
+         SELECT order_id FROM orders WHERE user_id = ? AND status = 'direct';
+
+         SELECT seller_id FROM seller WHERE seller_id = ?;`
+  params = [user_id, user_id, user_id, user_id, user_id, user_id];
 
   db.query(sql, params, function(err, results, fields) {
     if (err) throw err;
@@ -32,6 +34,7 @@ exports.showOutlines = function(req, res) {
     req.session.noOfWishlistItems = results[2].length > 0 ? results[2][0].count : 0;
     req.session.noOfNotifications = results[4].length;
     req.session.noOfReceivingItems = results[5].length + (results[6].length > 0 ? 1 : 0);
+    req.session.isSeller = results[7].length;
 
     res.render('home.ejs', {
       user_id: user_id,

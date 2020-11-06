@@ -63,7 +63,7 @@
               <h6 class="my-0">쿠폰</h6>
               <small><%= couponResult[0] %></small>
             </div>
-            <span class="<%= couponResult[3] == 1 ? "text-success" : "" %>">-<%= couponResult[1] ? formatNum(couponResult[1]) : "0,000" %> 원</span>
+            <span class="<%= couponResult[3] == 1 ? "text-success" : "" %>">-<%= couponResult[1] ? formatNum(couponResult[1]) : "0" %> 원</span>
           </li>
           <li class="list-group-item d-flex justify-content-between lh-condensed">
             <span>전체 금액 (KRW)</span>
@@ -90,13 +90,13 @@
           </div>
         </form>
         <div class="card p-2 mt-3">
-          <div class="clearfix px-2 my-1">
+          <!-- <div class="clearfix px-2 my-1">
             <span class="float-left"><strong>자동결제</strong> <i class="far fa-question-circle ml-1"></i></span>
             <label class="switch float-right">
               <input type="checkbox">
               <span class="slider round"></span>
             </label>
-          </div>
+          </div> -->
           <form id="cart-continue" method="post" action="/cart/process-payment">
             <input type="hidden" name="hazelMoney" value="<%= hazelMoney %>">
             <input type="hidden" name="total" value="<%= total %>">

@@ -190,8 +190,7 @@
                         %>
                 <p><%= expPickupDate %> ⋅ <span class='text-danger'><%= remainingDays == 1 ? '마지막날' : remainingDays + '일 남음' %></span></p>
                 <button type="button" class="btn btn-outline-secondary mr-1 btn-sm" onClick="location.href='/purchase-invoice/<%= pickupItems[i].trans_id %>'">구매상세보기</button>
-                <button type="button" class="btn btn-outline-secondary mr-1 btn-sm"
-                  onClick="location.href='/my-receipt/confirm-pickup/<%= pickupItems[i].order_id %>/<%= pickupItems[i].product_id %>/<%= pickupItems[i].type %>/<%= pickupItems[i].shop_id %>'">수령확인 <i class="fas fa-check ml-1"></i></button>
+                <!-- <button type="button" class="btn btn-outline-secondary mr-1 btn-sm" onClick="location.href='/my-receipt/confirm-pickup/<%= pickupItems[i].order_id %>/<%= pickupItems[i].product_id %>/<%= pickupItems[i].type %>/<%= pickupItems[i].shop_id %>'">수령확인 <i class="fas fa-check ml-1"></i></button> -->
               </div>
             </div>
           </div>

@@ -39,7 +39,7 @@
         <li class="nav-item">
           <a class="navbar-brand qrcode-link" style="color: #3282b8;" href="/qrcode"><span class="link-name d-inline d-sm-inline d-md-none mr-2">QR스캔</span> <i class="fas fa-qrcode"></i></a>
         </li>
-        <li class="nav-item seller-system-link d-md-none d-lg-block">
+        <li class="nav-item seller-system-link <%= sess.isSeller == 0 ? 'd-none' : 'd-md-none d-lg-block' %>">
           <a class="navbar-brand ssl rounded-pill px-2" href="/account/seller-management">판매자 관리</a>
         </li>
     </ul>

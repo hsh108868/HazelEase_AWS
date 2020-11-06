@@ -80,13 +80,14 @@ exports.login = function(req, res) {
   const password = req.body.password;
 
   if (req.method == "POST") {
-    db.query('SELECT ?? FROM ?? WHERE user_id = ?', [['user_id', 'password'], 'member', userid], function(err, results, fields) {
+    db.query('SELECT ?? FROM ?? WHERE user_id = ?; SELECT seller_id FROM seller WHERE seller_id = ?;', [['user_id', 'password'], 'member', userid, userid], function(err, results, fields) {
       if (err) throw err;
-      if (results.length > 0) {
-        bcrypt.compare(password, results[0].password, function(err, result) {
+      if (results[0].length > 0) {
+        bcrypt.compare(password, results[0][0].password, function(err, result) {
           if (result === true) {
             req.session.loggedin = true;
-            req.session.user_id = results[0].user_id;
+            req.session.user_id = results[0][0].user_id;
+            req.session.isSeller = results[1].length;
             let redirectUrl = req.session.redirectUrl || '/home';
             res.redirect(redirectUrl);
           } else {

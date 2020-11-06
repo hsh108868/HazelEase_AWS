@@ -121,7 +121,7 @@ exports.select = function (req, res) {
                     }
                   }
 
-                  let index = types.indexOf(results[0][i].type);
+                  let index = results[0][i].type != "None" ? types.indexOf(results[0][i].type) : 0;
 
                   newQty = results[0][i].quantity + eval(quantities[index]);
                   quantities[index] = newQty.toString();

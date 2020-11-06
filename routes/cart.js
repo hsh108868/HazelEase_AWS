@@ -54,7 +54,7 @@ exports.show = function(req, res) {
         images: results[4],
         hazelMoney: results[5][0].s_money,
         formatNum: fn.formatNum,
-        couponResult: [req.session.couponCode, req.session.couponValue, req.session.couponMsg, req.session.couponStatus],
+        couponResult: [req.session.couponCode, req.session.couponValue != null ? req.session.couponValue : 0, req.session.couponMsg, req.session.couponStatus],
         sess: req.session
       });
     });
@@ -370,7 +370,7 @@ exports.processPayment = function(req, res) {
                 }
               }
 
-              let index = types.indexOf(items[i].type);
+              let index = items[i].type != "None" ? types.indexOf(items[i].type) : 0;
 
               if (eval(items[i].quantity) > eval(quantities[index])) {
                 isSufficient = false;
