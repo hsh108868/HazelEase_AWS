@@ -80,13 +80,14 @@ exports.login = function(req, res) {
   const password = req.body.password;
 
   if (req.method == "POST") {
-    db.query('SELECT ?? FROM ?? WHERE user_id = ?', [['user_id', 'password'], 'member', userid], function(err, results, fields) {
+    db.query('SELECT ?? FROM ?? WHERE user_id = ?; SELECT seller_id FROM seller WHERE seller_id = ?;', [['user_id', 'password'], 'member', userid, userid], function(err, results, fields) {
       if (err) throw err;
-      if (results.length > 0) {
-        bcrypt.compare(password, results[0].password, function(err, result) {
+      if (results[0].length > 0) {
+        bcrypt.compare(password, results[0][0].password, function(err, result) {
           if (result === true) {
             req.session.loggedin = true;
-            req.session.user_id = results[0].user_id;
+            req.session.user_id = results[0][0].user_id;
+            req.session.isSeller = results[1].length;
             let redirectUrl = req.session.redirectUrl || '/home';
             res.redirect(redirectUrl);
           } else {
@@ -113,7 +114,7 @@ exports.login = function(req, res) {
 exports.logout = function(req, res) {
   req.session.destroy(function(err) {
     res.redirect("/login");
-  });
+  })
 };
 
 /* ------------------------------ profile 정보수정 처리 호출 ------------------------------ */
@@ -227,7 +228,7 @@ exports.openSubPage = function(req, res) {
         });
       });
     } else if (reqSubPage === "purchase-history") {
-      var sql = `SELECT t.trans_id, o.order_id, p.product, o.product_id, o.type, o.quantity, o.price, o.shop_id, t.date
+      var sql = `SELECT t.trans_id, o.order_id, p.product, o.product_id, o.type, o.quantity, o.price, o.shop_id, t.date, o.status
                  FROM orders as o
                     RIGHT OUTER JOIN product as p ON p.product_id = o.product_id
                     RIGHT OUTER JOIN transaction as t ON t.trans_id = o.trans_id
@@ -348,19 +349,20 @@ exports.writeReview = function(req, res) {
     res.redirect("/login");
     res.end();
   }
-  db.query(`select o.*, p.product, s.shop
-                from orders as o 
-                inner join product as p on p.product_id = o.product_id
-                inner join shop as s on s.shop_id = o.shop_id
-                where user_id = ? and trans_id = ? and order_id = ? and o.product_id = ? and type = ? and o.shop_id = ?`,
-      [user_id, reqTransId, reqOrderId, reqProductId, reqType, reqShopId],
-        function (err, results, fields) {
-          if (err) throw err;
-          res.render('review.ejs', {
-            user_id : user_id,
-            data : results[0],
-            sess: req.session,
-          });
+
+  let sql = `SELECT o.*, p.product, s.shop
+            FROM orders as o
+                INNER JOIN product as p on p.product_id = o.product_id
+                INNER JOIN shop as s on s.shop_id = o.shop_id
+            WHERE user_id = ? AND trans_id = ? AND order_id = ? AND o.product_id = ? AND type = ? AND o.shop_id = ?;`
+  let params = [user_id, reqTransId, reqOrderId, reqProductId, reqType, reqShopId];
+  db.query(sql, params, function (err, results, fields) {
+    if (err) throw err;
+    res.render('review.ejs', {
+      user_id : user_id,
+      data : results[0],
+      sess: req.session,
+    });
   });
 }
 
@@ -378,17 +380,30 @@ exports.submitReview = function(req, res) {
     product_id: req.body.productId,
     type: req.body.type,
     shop_id: req.body.shopId,
-    rating:req.body.rating,
-    title:req.body.title,
-    body:req.body.detail,
+    rating: req.body.rating,
+    title: req.body.title,
+    body: req.body.detail,
   }
 
-
-  db.query (`insert into review set ?`, post, function (err, results, fields) {
+  db.query (`INSERT INTO review SET ?`, post, function (err, results, fields) {
     if(err) throw err;
-    db.query(`DELETE FROM orders WHERE product_id = ? and order_id = ?` [product_id, order_id], function (err, results, fields) {
-      res.redirect("/account/purchase-history");
-    })
-      }
-  );
+    let sql = `SELECT rating FROM product WHERE product_id = ?;
+               SELECT product_id FROM review WHERE product_id = ?;`
+    let params = [product_id, product_id];
+
+    db.query(sql, params, function (err1, results1, fields1) {
+      if (err1) throw err1;
+      let currentRating = results1[0][0].rating == null ? 0 : results1[0][0].rating;
+      let newRating = ((currentRating * (results1[1].length - 1)) + eval(post.rating)) / (results1[1].length);
+      newRating = newRating.toFixed(3);
+
+      sql = `UPDATE product SET rating = ? WHERE product_id = ?;
+             UPDATE orders SET status = 'reviewed' WHERE order_id = ? AND product_id = ? AND type = ? AND shop_id = ?;`
+      params = [newRating, product_id, order_id, product_id, post.type, post.shop_id];
+      db.query(sql, params, function (err2, results2, fields2) {
+        if (err2) throw err2;
+        res.redirect("/account/purchase-history");
+      });
+    });
+  });
 }

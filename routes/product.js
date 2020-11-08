@@ -23,8 +23,15 @@ exports.showOutlines = function(req, res) {
          GROUP BY trans_id;
 
          SELECT order_id FROM orders WHERE user_id = ? AND (status = 'delivery' OR status = 'pickup');
-         SELECT order_id FROM orders WHERE user_id = ? AND status = 'direct'; `
-  params = [user_id, user_id, user_id, user_id, user_id];
+         SELECT order_id FROM orders WHERE user_id = ? AND status = 'direct';
+
+         SELECT seller_id FROM seller WHERE seller_id = ?;
+
+         SELECT p.product_id, COUNT(*) as count
+         FROM product as p
+            RIGHT OUTER JOIN review as r ON p.product_id = r.product_id
+         GROUP BY p.product_id;`
+  params = [user_id, user_id, user_id, user_id, user_id, user_id];
 
   db.query(sql, params, function(err, results, fields) {
     if (err) throw err;
@@ -32,11 +39,13 @@ exports.showOutlines = function(req, res) {
     req.session.noOfWishlistItems = results[2].length > 0 ? results[2][0].count : 0;
     req.session.noOfNotifications = results[4].length;
     req.session.noOfReceivingItems = results[5].length + (results[6].length > 0 ? 1 : 0);
+    req.session.isSeller = results[7].length;
 
     res.render('home.ejs', {
       user_id: user_id,
       product: results[0],
       images: results[3],
+      revCount: results[8],
       formatNum: fn.formatNum,
       sess: req.session
     });
@@ -60,9 +69,10 @@ exports.showDetails = function(req, res) {
          SELECT *
          FROM stock as st RIGHT OUTER JOIN shop as sh ON st.shop_id = sh.shop_id
          WHERE product_id = ?;
-         
+
          SELECT r.*, o.latest_update
-         FROM review as r RIGHT OUTER JOIN orders as o ON r.trans_id = o.trans_id
+         FROM review as r
+            INNER JOIN orders as o ON r.product_id = o.product_id AND r.trans_id = o.trans_id
          WHERE r.product_id = ?
          ORDER BY o.latest_update ASC;`
   params = [reqProductId, reqProductId, reqProductId, user_id, user_id, user_id, reqProductId, reqProductId];

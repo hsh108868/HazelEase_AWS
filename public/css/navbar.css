@@ -57,3 +57,13 @@ a:hover {
   }
 
 }
+
+@media (max-width: 576px) {
+  .navbar-brand {
+    font-size: 1.1rem;
+  }
+
+  li.nav-item > a, li.nav-item > a > .link-name {
+    font-size: 4vw!important;
+  }
+}

@@ -38,7 +38,12 @@ exports.show = function(req, res) {
 
            SELECT * FROM image;
 
-           SELECT s_money FROM member WHERE user_id = ?; `
+           SELECT s_money FROM member WHERE user_id = ?; 
+           
+           SELECT p.product_id, COUNT(*) as count
+         FROM product as p
+            RIGHT OUTER JOIN review as r ON p.product_id = r.product_id
+         GROUP BY p.product_id`
 
     params = [user_id, user_id, user_id, user_id, user_id];
 
@@ -53,8 +58,9 @@ exports.show = function(req, res) {
         address: results[3],
         images: results[4],
         hazelMoney: results[5][0].s_money,
+        reviewCount : results[6],
         formatNum: fn.formatNum,
-        couponResult: [req.session.couponCode, req.session.couponValue, req.session.couponMsg, req.session.couponStatus],
+        couponResult: [req.session.couponCode, req.session.couponValue != null ? req.session.couponValue : 0, req.session.couponMsg, req.session.couponStatus],
         sess: req.session
       });
     });
@@ -334,7 +340,7 @@ exports.processPayment = function(req, res) {
     res.end();
   } else {
       if (hazelMoney < total) {
-        req.session.messageErr = "하젤페이 머니가 부족합니다.";
+        req.session.messageErr = "헤이즐페이 머니가 부족합니다.";
         res.redirect("/my-cart");
       } else {
         db.query(`INSERT INTO transaction SET ?;`, transPost, function(errA, resultsA, fieldsA) {
@@ -370,7 +376,7 @@ exports.processPayment = function(req, res) {
                 }
               }
 
-              let index = types.indexOf(items[i].type);
+              let index = items[i].type != "None" ? types.indexOf(items[i].type) : 0;
 
               if (eval(items[i].quantity) > eval(quantities[index])) {
                 isSufficient = false;

@@ -1,6 +1,5 @@
 <%- include("partials/header"); -%>
 <!-- Custom styles -->
-<link rel="stylesheet" href="/css/main.css">
 <link rel="stylesheet" href="/css/account.css">
 <link rel="stylesheet" href="/css/seller.css">
 </head>
@@ -9,430 +8,450 @@
   <%- include("partials/navbar"); -%>
 
   <main role="main" class="container-fluid">
-    <%- include("partials/sidenav"); -%>
-    <div class="tab-content">
-      <div>
-        <h3>판매자 관리</h3>
+    <div class="row">
+      <div class="col-md-3 col-12">
+        <%- include("partials/sidenav"); -%>
       </div>
-      <div class="tab-subcontent">
-        <% if (sess.messageErr) { %>
-        <div class="text-danger mb-2"><%= sess.messageErr %></div>
-        <% } else { %>
-        <div class="text-success mb-2"><%= sess.message %></div>
-        <% } %>
-        <% sess.message = ""; sess.messageErr = ""; %>
-        <div id="newSeller" class="<%= isSeller === "yes" ? 'hidden' : '' %>">
-          판매자로 계정을 등록하시겠습니까?
-          <button id="bs-yes" type="button" name="button" class="btn btn-sm btn-success mx-1">예</button>
-          <button id="bs-no" type="button" name="button" class="btn btn-sm btn-danger mr-1">아니오</button>
-        </div>
-
-        <div id="sellerSystem" style="display: <%= isSeller === "yes" ? 'block' : 'none' %>">
-          <div class="my-2">
-            <button type="button" name="button" class="rounded-pill btn btn-outline-primary subform-btn" onclick="openPage('manageInfo', this, 0)" id="<%= sess.openForm == 0 ? 'defaultOpen' : '' %>">
-              판매자 정보
-            </button>
-            <button type="button" name="button" class="rounded-pill btn btn-outline-primary subform-btn <%= isSeller === "no" ? 'hidden' : '' %>" onclick="openPage('manageProduct', this, 1)" id="<%= sess.openForm == 1 ? 'defaultOpen' : '' %>">판매하는
-              제품
-            </button>
-            <button type="button" name="button" class="rounded-pill btn btn-outline-primary subform-btn <%= isSeller === "no" ? 'hidden' : '' %>" onclick="openPage('manageShop', this, 2)" id="<%= sess.openForm == 2 ? 'defaultOpen' : '' %>">
-              매장
-            </button>
-            <button type="button" name="button" class="rounded-pill btn btn-outline-primary subform-btn <%= isSeller === "no" ? 'hidden' : '' %>" onclick="openPage('manageStock', this, 3)" id="<%= sess.openForm == 3 ? 'defaultOpen' : '' %>">
-              재고품
-            </button>
-            <button type="button" name="button" class="rounded-pill btn btn-outline-primary subform-btn <%= isSeller === "no" ? 'hidden' : '' %>" onclick="openPage('manageCoupon', this, 4)" id="<%= sess.openForm == 4 ? 'defaultOpen' : '' %>">
-              쿠폰
-            </button>
+      <div class="col-md-9 col-12">
+        <div class="tab-content">
+          <div>
+            <h3>판매자 관리</h3>
           </div>
+          <div class="tab-subcontent">
+            <% if (sess.messageErr) { %>
+            <div class="text-danger mb-2"><%= sess.messageErr %></div>
+            <% } else { %>
+            <div class="text-success mb-2"><%= sess.message %></div>
+            <% } %>
+            <% sess.message = ""; sess.messageErr = ""; %>
+            <div id="newSeller" class="<%= isSeller === "yes" ? 'hidden' : '' %>">
+              판매자로 계정을 등록하시겠습니까?
+              <button id="bs-yes" type="button" name="button" class="btn btn-sm btn-success mx-1">예</button>
+              <button id="bs-no" type="button" name="button" class="btn btn-sm btn-danger mr-1">아니오</button>
+            </div>
 
-          <div id="manageInfo" class="subform">
-            <form class="row" method="post" action="/seller/manage-info">
-              <div class="col-md-12">
-                <h4 class="font-weight-normal px-0 mb-3 mt-2"><b>판매자 정보</b></h4>
-              </div>
-              <div class="col-md-6">
-                <label for="sellerName" >판매자/브랜드명</label>
-                <input name="sellerName" type="text" class="form-control mb-3" maxlength="50" value="<%= seller.name %>" required />
-
-                <label for="sellerAddress" >회사 주소</label>
-                <input name="sellerAddress" type="text" class="form-control mb-3" maxlength="100" value="<%= seller.address %>" required />
-              </div>
-              <div class="col-md-6">
-                <label for="sellerEmail" >이메일</label>
-                <input name="sellerEmail" type="email" id="email" class="form-control mb-3" maxlength="50" value="<%= seller.email %>" required>
-
-                <label for="sellerPhone" >전화번호</label>
-                <input name="sellerPhone" type="tel" id="no_tel" class="form-control" maxlength="20" value="<%= seller.phone %>" required>
-                <small class="form-text text-muted mb-3" align="left">-없이 입력해 주십시오.</small>
-              </div>
-              <div class="col-md-12 clearfix">
-                <a href="/seller/withdraw" id="bs-quit" class="btn btn-danger float-right">탈퇴</a>
-                <button class="btn btn-primary float-right mr-2" type="submit" name="infoSave">저장</button>
-              </div>
-            </form>
-          </div>
-
-          <div id="manageProduct" class="subform">
-            <form class="row" method="post" action="/seller/manage-product" encType="multipart/form-data">
-              <div class="col-md-12">
-                <h4 class="font-weight-normal px-0 mb-3 mt-2"><b><%= sess.openProductInfo.product_id == "" ? "판매하는 제품 추가" : "제품 정보 수정" %></b></h4>
+            <div id="sellerSystem" style="display: <%= isSeller === "yes" ? 'block' : 'none' %>">
+              <div class="my-2">
+                <button type="button" name="button" class="rounded-pill btn btn-outline-primary subform-btn mb-2" onclick="openPage('manageInfo', this, 0)" id="<%= sess.openForm == 0 ? 'defaultOpen' : '' %>">
+                  판매자 정보
+                </button>
+                <button type="button" name="button" class="rounded-pill btn btn-outline-primary subform-btn mb-2 <%= isSeller === "no" ? 'hidden' : '' %>" onclick="openPage('manageProduct', this, 1)" id="<%= sess.openForm == 1 ? 'defaultOpen' : '' %>">판매하는
+                  제품
+                </button>
+                <button type="button" name="button" class="rounded-pill btn btn-outline-primary subform-btn mb-2 <%= isSeller === "no" ? 'hidden' : '' %>" onclick="openPage('manageShop', this, 2)" id="<%= sess.openForm == 2 ? 'defaultOpen' : '' %>">
+                  매장
+                </button>
+                <button type="button" name="button" class="rounded-pill btn btn-outline-primary subform-btn mb-2 <%= isSeller === "no" ? 'hidden' : '' %>" onclick="openPage('manageStock', this, 3)" id="<%= sess.openForm == 3 ? 'defaultOpen' : '' %>">
+                  재고품
+                </button>
+                <button type="button" name="button" class="rounded-pill btn btn-outline-primary subform-btn mb-2 <%= isSeller === "no" ? 'hidden' : '' %>" onclick="openPage('manageCoupon', this, 4)" id="<%= sess.openForm == 4 ? 'defaultOpen' : '' %>">
+                  쿠폰
+                </button>
               </div>
 
-              <div class="col-md-6">
-                <label for="productName" >제품명</label>
-                <input name="productName" type="text" class="form-control mb-3"  maxlength="100" value="<%= sess.openProductInfo.product %>" required />
-              </div>
-              <div class="col-md-3">
-                <label for="productPrice" >가격 (원)</label>
-                <input name="productPrice" type="number" class="form-control mb-3"  min="0" value="<%= sess.openProductInfo.price %>" required />
-              </div>
-              <div class="col-md-3">
-                <label for="productDisc" >할인 (%)</label>
-                <input name="productDisc" type="number" class="form-control mb-3" min="0" max="100" value="<%= sess.openProductInfo.discount %>" />
-              </div>
-
-              <div class="col-md-6">
-                <label for="productType" >종류</label>
-                <input name="productType" type="text" class="form-control mb-3" placeholder="/로 구분 (예: Black/Blue/.. )" maxlength="100" value="<%= sess.openProductInfo.type_avail %>"/>
-              </div>
-              <div class="col-md-6">
-                <label for="productCategory" >카테고리</label>
-                <input name="productCategory" type="text" class="form-control mb-3" maxlength="50" value="<%= sess.openProductInfo.category %>" required />
-              </div>
-              <div class="col-sm-12">
-                <label for="productDesc" >제품 설명</label>
-                <textarea name="productDesc" rows="8" cols="80" class="form-control mb-3"><%= sess.openProductInfo.info %></textarea>
-              </div>
-              <div class="col-md-12">
-                <label for="productImg">제품 사진</label>
-                <input type="file" class="form-control-file" id="productImages" accept="image/png, image/jpeg" name="photos" multiple <%= sess.openProductInfo.noOfImg == "" ? 'required' : '' %>>
-                <small class="form-text text-muted mb-3" align="left">(가능한 파일 확장자: .png, .jpg, .jpeg, .jfif, .pjpeg, .pjp)</small>
-                <% if (sess.openProductInfo.noOfImg != "") { %>
-                <div>이 제품은 <span class="text-danger"><%= sess.openProductInfo.noOfImg %></span> 개 이미지가 있습니다.</div>
-                <div class="row">
-                  <% for(let i = 0; i < sess.openProductInfo.images.length; i++) { %>
-                    <div class="card m-2 col-lg-2 col-md-4 col-sm-6">
-                      <a href="/seller/manage-product/delete-image/<%= sess.openProductInfo.images[i].image_id %>"
-                        class="m-1 text-danger" style="position: absolute; right: 0px"><i class="far fa-times-circle fa-lg"></i></a>
-                      <div class="card-body">
-                        <img src="<%= '/uploads/' + sess.openProductInfo.images[i].file %>" alt="product-image" width="100px">
-                      </div>
-                    </div>
-                  <% } %>
-                </div>
-                <% } %>
-              </div>
-              <div class="col-md-12 clearfix mb-3">
-                <% if (sess.openProductInfo.product_id == "") { %>
-                <button type="reset" class="btn btn-danger float-right">재쓰기</button>
-                <button class="btn btn-primary float-right mr-2" type="submit" name="productAdd">추가</button>
-                <% } else { %>
-                <button class="btn btn-danger float-right mr-2" type="button" onClick="location.href='/seller/close-product-info'">취소</button>
-                <button class="btn btn-success float-right mr-2" type="submit" name="productEdit">수정완료</button>
-                <% } %>
-              </div>
-            </form>
-
-            <h4 class="font-weight-normal px-0 mb-3 mt-2"><b>판매하는 제품 목록</b></h4>
-            <table class="table table-light" style="border-radius: 10px">
-              <thead>
-                <tr style="border: none">
-                  <th scope="col">ID</th>
-                  <th scope="col">제품</th>
-                  <th scope="col">종류</th>
-                  <th scope="col">설명</th>
-                  <th scope="col">가격 (원)</th>
-                  <th scope="col">할인 (%)</th>
-                  <th scope="col">카테고리</th>
-                  <th scope="col">평점</th>
-                  <th scope="col"></th>
-                </tr>
-              </thead>
-              <tbody>
-                <% if (products.length == 0) { %>
-                <tr>
-                  <td scope="col" colspan="9" class="text-center">등록된 제품 정보가 없습니다.</td>
-                </tr>
-                <% } %>
-                <% for(let i = 0; i < products.length; i++) { %>
-                <tr>
-                  <th scope="row"><%= products[i].product_id %></th>
-                  <td><a style="color: black" href="/product/<%= products[i].product_id %>"><%= products[i].product.length > 15 ? products[i].product.substring(0, 15) + "..." : products[i].product %></a></td>
-                  <td><%= products[i].type_avail.length > 15 ? products[i].type_avail.substring(0, 15) + "..." : products[i].type_avail %></td>
-                  <td><%= products[i].info.length > 30 ? products[i].info.substring(0, 30) + "..." : products[i].info %></td>
-                  <td><%= formatNum(products[i].price) %></td>
-                  <td><%= products[i].discount ? products[i].discount : '0' %></td>
-                  <td><%= products[i].category ? products[i].category : '-' %></td>
-                  <td><%= products[i].rating ? products[i].rating : 'N/A' %></td>
-                  <td>
-                    <div class="dropdown">
-                      <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuAction" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        액션
-                      </a>
-                      <div class="dropdown-menu" aria-labelledby="dropdownMenuAction">
-                        <button type="button" class="dropdown-item" onClick="location.href='/seller/open-product-info/<%= products[i].product_id %>'"><i class="fas fa-edit mr-2"></i>수정</button>
-                        <button type="button" class="dropdown-item" onClick="location.href='/seller/delete-product/<%= products[i].product_id %>'"><i class="fas fa-trash mr-2"></i> 삭제</button>
-                      </div>
-                    </div>
-                    <!-- <a class="m-0"><i class="fas fa-edit mr-1"></i></a>
-                    <a class="m-0"><i class="fas fa-trash"></i></a> -->
-                  </td>
-                </tr>
-                <% } %>
-              </tbody>
-            </table>
-          </div>
-
-          <div id="manageShop" class="subform">
-            <form class="row" method="post" action="/seller/manage-shop">
-              <div class="col-md-12">
-                <h4 class="font-weight-normal px-0 mb-3 mt-2"><b><%= sess.openShopInfo.shop_id == "" ? "매장/가게 등록" : "매장 정보 수정" %></b></h4>
-              </div>
-              <div class="col-md-6">
-                <label for="productName" >매장/가게명</label>
-                <input name="shopName" type="text" class="form-control mb-3" maxlength="50" value="<%= sess.openShopInfo.shop %>" required />
-              </div>
-              <div class="col-md-6">
-                <label for="sellerPhone" >전화번호</label>
-                <input name="shopPhone" type="tel" id="no_tel" class="form-control" maxlength="20" value="<%= sess.openShopInfo.phone %>" required>
-              </div>
-              <div class="col-sm-12">
-                <label for="shopAddress" >매장/가게 주소</label>
-                <textarea name="shopAddress" rows="2" cols="80" class="form-control mb-3"><%= sess.openShopInfo.address %></textarea>
-              </div>
-              <div class="col-md-12 clearfix mb-3">
-                <% if (sess.openShopInfo.shop_id == "") { %>
-                <button type="reset" class="btn btn-danger float-right">재쓰기</button>
-                <button class="btn btn-primary float-right mr-2" type="submit" name="shopAdd">추가</button>
-                <% } else { %>
-                <button class="btn btn-danger float-right mr-2" type="button" onClick="location.href='/seller/close-shop-info'">취소</button>
-                <button class="btn btn-success float-right mr-2" type="submit" name="shopEdit">수정완료</button>
-                <% } %>
-              </div>
-            </form>
-
-            <h4 class="font-weight-normal px-0 mb-3 mt-2"><b>매장 목록</b></h4>
-            <table class="table table-light" style="border-radius: 10px">
-              <thead>
-                <tr style="border: none">
-                  <th scope="col">ID</th>
-                  <th scope="col">매장</th>
-                  <th scope="col">전화번호</th>
-                  <th scope="col">주소</th>
-                  <th scope="col"></th>
-                </tr>
-              </thead>
-              <tbody>
-                <% if (shops.length == 0) { %>
-                <tr>
-                  <td scope="col" colspan="5" class="text-center">등록된 매장 정보가 없습니다.</td>
-                </tr>
-                <% } %>
-                <% for(let i = 0; i < shops.length; i++) { %>
-                <tr>
-                  <th scope="row"><%= shops[i].shop_id %></th>
-                  <td><%= shops[i].shop %></td>
-                  <td><%= shops[i].phone %></td>
-                  <td><%= shops[i].address %></td>
-                  <td>
-                    <div class="dropdown">
-                      <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuAction" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        액션
-                      </a>
-
-                      <div class="dropdown-menu" aria-labelledby="dropdownMenuAction">
-                        <button type="button" class="dropdown-item" onClick="location.href='/seller/open-shop-info/<%= shops[i].shop_id %>'"><i class="fas fa-edit mr-2"></i>수정</button>
-                        <button type="button" class="dropdown-item" onClick="location.href='/seller/delete-shop/<%= shops[i].shop_id %>'"><i class="fas fa-trash mr-2"></i> 삭제</button>
-                      </div>
-                    </div>
-                    <!-- <a class="m-0"><i class="fas fa-edit mr-1"></i></a>
-                    <a class="m-0"><i class="fas fa-trash"></i></a> -->
-                  </td>
-                </tr>
-                <% } %>
-              </tbody>
-            </table>
-          </div>
-
-          <div id="manageStock" class="subform">
-            <form class="row" method="post" action="/seller/add-stock">
-              <div class="col-md-12">
-                <h4 class="font-weight-normal px-0 mb-3 mt-2"><b>재고품 관리</b></h4>
-              </div>
-              <div class="col-md-12">
-                <select id="shopId" name="shopId" class="form-control mb-3">
-                  <option value="0">매장 선택</option>
-                  <% for(let i = 0; i < shops.length; i++) { %>
-                  <option value="<%= shops[i].shop_id %>" <%= shops[i].shop_id == sess.selectedShop ? 'selected' : '' %>>[<%= shops[i].shop_id %>] <%= shops[i].shop %></option>
-                  <% } %>
-                </select>
-              </div>
-              <div class="col-md-12">
-                <div class="input-group mb-3">
-                  <select id="productId" name="productId" class="form-control">
-                    <option value="">매장에 추가할 제품 선택</option>
-                    <% for(let i = 0; i < products.length; i++) { %>
-                      <% var doPrint = true; %>
-                      <% for(let j = 0; j < stocks.length; j++) { %>
-                        <% if(products[i].product_id == stocks[j].product_id) { doPrint = false; } %>
-                      <% } %>
-                      <% if(doPrint == true) { %>
-                        <option value="<%= products[i].product_id %>">[<%= products[i].product_id %>] <%= products[i].product %> (<%= products[i].type_avail ? products[i].type_avail : "종류 없음"  %>)</option>
-                      <% } %>
-                    <% } %>
-                  </select>
-                  <input name="productQty" type="text" class="px-3" placeholder="수량 ,(쉼표)로 구분" required />
-                  <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="submit" id="button-addon2"><i class="fas fa-plus-circle"></i></button>
+              <div id="manageInfo" class="subform">
+                <form class="row" method="post" action="/seller/manage-info">
+                  <div class="col-md-12">
+                    <h4 class="font-weight-normal px-0 mb-3 mt-2"><b>판매자 정보</b></h4>
                   </div>
-                </div>
-              </div>
-            </form>
-            <form class="row" method="post" action="/seller/manage-stock">
-              <div class="col-md-12">
-                <table class="table table-light" style="border-radius: 10px">
-                  <thead>
-                    <tr style="border: none">
-                      <th scope="col">ID</th>
-                      <th scope="col" class="fixed-width-300">제품명</th>
-                      <th scope="col">종류</th>
-                      <th scope="col" class="fixed-width-200">수량</th>
-                      <th scope="col"></th>
+                  <div class="col-md-6">
+                    <label for="sellerName" >판매자/브랜드명</label>
+                    <input name="sellerName" type="" class="form-control mb-3" maxlength="50" value="<%= seller.name %>" required />
 
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <input type="hidden" id="passedShopId" value="">
-                    <% if (stocks.length == 0) { %>
-                    <tr>
-                      <td scope="col" colspan="5" class="text-center">선택된 매장에 판매하는 제품이 없습니다.</td>
-                    </tr>
-                    <% } %>
-                    <% for(let i = 0; i < stocks.length; i++) { %>
-                    <tr>
-                      <th scope="row"><%= stocks[i].product_id %></th>
-                      <td><a style="color: black" href="/product/<%= products[i].product_id %>"><%= stocks[i].product %></a></td>
-                      <td><%= stocks[i].type_avail %></td>
-                      <td>
-                        <div class="input-group input-group-sm mb-3">
-                          <input type="text" value="<%= stocks[i].quantity %>" class="form-control form-control-sm qty-input">
-                          <div class="input-group-append hidden qty-save">
-                            <input type="hidden" id="currProductId<%= i %>" value="<%= stocks[i].product_id %>">
-                            <input type="hidden" id="currShopId<%= i %>" value="<%= stocks[i].shop_id %>">
-                            <button class="btn btn-success qty-save-btn" type="button"><i class="fas fa-check-circle"></i></button>
+                    <label for="sellerAddress" >회사 주소</label>
+                    <input name="sellerAddress" type="" class="form-control mb-3" maxlength="100" value="<%= seller.address %>" required />
+                  </div>
+                  <div class="col-md-6">
+                    <label for="sellerEmail" >이메일</label>
+                    <input name="sellerEmail" type="email" id="email" class="form-control mb-3" maxlength="50" value="<%= seller.email %>" required>
+
+                    <label for="sellerPhone" >전화번호</label>
+                    <input name="sellerPhone" type="tel" id="no_tel" class="form-control" maxlength="20" value="<%= seller.phone %>" required>
+                    <small class="form-text text-muted mb-3" align="left">-없이 입력해 주십시오.</small>
+                  </div>
+                  <div class="col-md-12 clearfix">
+                    <a href="/seller/withdraw" id="bs-quit" class="btn btn-danger float-right">탈퇴</a>
+                    <button class="btn btn-primary float-right mr-2" type="submit" name="infoSave">저장</button>
+                  </div>
+                </form>
+              </div>
+
+              <div id="manageProduct" class="subform">
+                <form class="row" method="post" action="/seller/manage-product" encType="multipart/form-data">
+                  <div class="col-md-12">
+                    <h4 class="font-weight-normal px-0 mb-3 mt-2"><b><%= sess.openProductInfo.product_id == "" ? "판매하는 제품 추가" : "제품 정보 수정" %></b></h4>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="productName" >제품명</label>
+                    <input name="productName" type="" class="form-control mb-3"  maxlength="100" value="<%= sess.openProductInfo.product %>" required />
+                  </div>
+                  <div class="col-md-3">
+                    <label for="productPrice" >가격 (원)</label>
+                    <input name="productPrice" type="number" class="form-control mb-3"  min="0" value="<%= sess.openProductInfo.price %>" required />
+                  </div>
+                  <div class="col-md-3">
+                    <label for="productDisc" >할인 (%)</label>
+                    <input name="productDisc" type="number" class="form-control mb-3" min="0" max="100" value="<%= sess.openProductInfo.discount %>" />
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="productType" >종류</label>
+                    <input name="productType" type="" class="form-control mb-3" placeholder="/로 구분 (예: Black/Blue/.. )" maxlength="100" value="<%= sess.openProductInfo.type_avail %>"/>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="productCategory" >카테고리</label>
+                    <input name="productCategory" type="" class="form-control mb-3" maxlength="50" value="<%= sess.openProductInfo.category %>" required />
+                  </div>
+                  <div class="col-sm-12">
+                    <label for="productDesc" >제품 설명</label>
+                    <textarea name="productDesc" rows="8" cols="80" class="form-control mb-3"><%= sess.openProductInfo.info %></textarea>
+                  </div>
+                  <div class="col-md-12">
+                    <label for="productImg">제품 사진</label>
+                    <input type="file" class="form-control-file" id="productImages" accept="image/png, image/jpeg" name="photos" multiple <%= sess.openProductInfo.noOfImg == "" ? 'required' : '' %>>
+                    <small class="form-text text-muted mb-3" align="left">(가능한 파일 확장자: .png, .jpg, .jpeg, .jfif, .pjpeg, .pjp)</small>
+                    <% if (sess.openProductInfo.noOfImg != "") { %>
+                    <div>이 제품은 <span class="text-danger"><%= sess.openProductInfo.noOfImg %></span> 개 이미지가 있습니다.</div>
+                    <div class="row">
+                      <% for(let i = 0; i < sess.openProductInfo.images.length; i++) { %>
+                        <div class="card m-2 col-lg-2 col-md-4 col-sm-6">
+                          <a href="/seller/manage-product/delete-image/<%= sess.openProductInfo.images[i].image_id %>"
+                            class="m-1 text-danger" style="position: absolute; right: 0px"><i class="far fa-times-circle fa-lg"></i></a>
+                          <div class="card-body">
+                            <img src="<%= '/uploads/' + sess.openProductInfo.images[i].file %>" alt="product-image" width="100px">
                           </div>
                         </div>
-                      </td>
-                      <td>
-                        <button type="button" class="btn btn-outline-danger btn-sm" onClick="location.href='/seller/delete-stock/<%= stocks[i].product_id %>-<%= stocks[i].shop_id %>/'"><i class="fas fa-trash"></i></button>
-                      </td>
-                    </tr>
+                      <% } %>
+                    </div>
                     <% } %>
-                  </tbody>
-                </table>
-              </div>
-            </form>
-          </div>
+                  </div>
+                  <div class="col-md-12 clearfix mb-3">
+                    <% if (sess.openProductInfo.product_id == "") { %>
+                    <button type="reset" class="btn btn-danger float-right">재쓰기</button>
+                    <button class="btn btn-primary float-right mr-2" type="submit" name="productAdd">추가</button>
+                    <% } else { %>
+                    <button class="btn btn-danger float-right mr-2" type="button" onClick="location.href='/seller/close-product-info'">취소</button>
+                    <button class="btn btn-success float-right mr-2" type="submit" name="productEdit">수정완료</button>
+                    <% } %>
+                  </div>
+                </form>
 
-          <div id="manageCoupon" class="subform">
-            <form class="row" method="post" action="/seller/manage-coupon">
-              <div class="col-md-12">
-                <h4 class="font-weight-normal px-0 mb-3 mt-2"><b><%= sess.openCouponInfo.coupon_code == "" ? "쿠폰 발행" : "쿠폰 정보 수정" %></b></h4>
-              </div>
-              <div class="col-md-6">
-                <label for="couponCode">쿠폰 코드</label>
-                <input name="couponCode" type="text" class="form-control mb-3" maxlength="50" value="<%= sess.openCouponInfo.coupon_code %>" <%= sess.openCouponInfo.coupon_code != "" ? "disabled" : "" %> required />
-              </div>
-              <div class="col-md-3">
-                <label for="couponStart">유효기간 (시작)</label>
-                <input name="couponStart" type="date" class="form-control" value="<%= sess.couponValidPeriod.effectiveDate %>" required>
-              </div>
-              <div class="col-md-3">
-                <label for="couponEnd">유효가간 (만기)</label>
-                <input name="couponEnd" type="date" class="form-control" value="<%= sess.couponValidPeriod.expiryDate %>" required>
-              </div>
-              <div class="col-md-6">
-                <label for="couponValue">가치 (원)</label>
-                <input name="couponValue" type="number" class="form-control" min="0" value="<%= sess.openCouponInfo.value %>" required>
-              </div>
-              <div class="col-md-6">
-                <label for="couponMinSpend">최소 소비 (원)</label>
-                <input name="couponMinSpend" type="number" class="form-control mb-3" min="0" value="<%= sess.openCouponInfo.min_spend %>" required>
+                <h4 class="font-weight-normal px-0 mb-3 mt-2"><b>판매하는 제품 목록</b></h4>
+                <div class="table-responsive">
+
+                  <table class="table table-light" style="border-radius: 10px">
+                    <thead>
+                      <tr style="border: none">
+                        <th scope="col">ID</th>
+                        <th scope="col">제품</th>
+                        <th scope="col">종류</th>
+                        <th scope="col">설명</th>
+                        <th scope="col" style="min-width:100px">가격 (원)</th>
+                        <th scope="col" style="min-width:100px">할인 (%)</th>
+                        <th scope="col" style="min-width:100px">카테고리</th>
+                        <th scope="col"style="min-width:70px">평점</th>
+                        <th scope="col"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% if (products.length == 0) { %>
+                      <tr>
+                        <td scope="col" colspan="9" class="text-center">등록된 제품 정보가 없습니다.</td>
+                      </tr>
+                      <% } %>
+                      <% for(let i = 0; i < products.length; i++) { %>
+                      <tr>
+                        <th scope="row"><%= products[i].product_id %></th>
+                        <td><a style="color: black" href="/product/<%= products[i].product_id %>"><%= products[i].product.length > 15 ? products[i].product.substring(0, 15) + "..." : products[i].product %></a></td>
+                        <td><%= products[i].type_avail.length > 15 ? products[i].type_avail.substring(0, 15) + "..." : products[i].type_avail %></td>
+                        <td><%= products[i].info.length > 30 ? products[i].info.substring(0, 30) + "..." : products[i].info %></td>
+                        <td><%= formatNum(products[i].price) %></td>
+                        <td><%= products[i].discount ? products[i].discount : '0' %></td>
+                        <td><%= products[i].category ? products[i].category : '-' %></td>
+                        <td><%= products[i].rating ? products[i].rating : 'N/A' %></td>
+                        <td>
+                          <div class="dropdown">
+                            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuAction" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              액션
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuAction">
+                              <button type="button" class="dropdown-item" onClick="location.href='/seller/open-product-info/<%= products[i].product_id %>'"><i class="fas fa-edit mr-2"></i>수정</button>
+                              <button type="button" class="dropdown-item" onClick="location.href='/seller/delete-product/<%= products[i].product_id %>'"><i class="fas fa-trash mr-2"></i> 삭제</button>
+                            </div>
+                          </div>
+                          <!-- <a class="m-0"><i class="fas fa-edit mr-1"></i></a>
+                          <a class="m-0"><i class="fas fa-trash"></i></a> -->
+                        </td>
+                      </tr>
+                      <% } %>
+                    </tbody>
+                  </table>
+                </div>
               </div>
 
-              <div class="col-md-12 clearfix mb-3">
-                <% if (sess.openCouponInfo.coupon_code == "") { %>
-                <button type="reset" class="btn btn-danger float-right">재쓰기</button>
-                <button class="btn btn-primary float-right mr-2" type="submit" name="shopAdd">발행</button>
-                <% } else { %>
-                <button class="btn btn-danger float-right mr-2" type="button" onClick="location.href='/seller/close-coupon-info'">취소</button>
-                <button class="btn btn-success float-right mr-2" type="submit" name="couponEdit">수정완료</button>
-                <% } %>
+              <div id="manageShop" class="subform">
+                <form class="row" method="post" action="/seller/manage-shop">
+                  <div class="col-md-12">
+                    <h4 class="font-weight-normal px-0 mb-3 mt-2"><b><%= sess.openShopInfo.shop_id == "" ? "매장/가게 등록" : "매장 정보 수정" %></b></h4>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="productName" >매장/가게명</label>
+                    <input name="shopName" type="" class="form-control mb-3" maxlength="50" value="<%= sess.openShopInfo.shop %>" required />
+                  </div>
+                  <div class="col-md-6">
+                    <label for="sellerPhone" >전화번호</label>
+                    <input name="shopPhone" type="tel" id="no_tel" class="form-control mb-3" maxlength="20" value="<%= sess.openShopInfo.phone %>" required>
+                  </div>
+                  <div class="col-sm-12">
+                    <label for="shopAddress" >매장/가게 주소</label>
+                    <textarea name="shopAddress" rows="2" cols="80" class="form-control mb-3"><%= sess.openShopInfo.address %></textarea>
+                  </div>
+                  <div class="col-md-12 clearfix mb-3">
+                    <% if (sess.openShopInfo.shop_id == "") { %>
+                    <button type="reset" class="btn btn-danger float-right">재쓰기</button>
+                    <button class="btn btn-primary float-right mr-2" type="submit" name="shopAdd">추가</button>
+                    <% } else { %>
+                    <button class="btn btn-danger float-right mr-2" type="button" onClick="location.href='/seller/close-shop-info'">취소</button>
+                    <button class="btn btn-success float-right mr-2" type="submit" name="shopEdit">수정완료</button>
+                    <% } %>
+                  </div>
+                </form>
+
+                <h4 class="font-weight-normal px-0 mb-3 mt-2"><b>매장 목록</b></h4>
+                <div class="table-responsive">
+
+                  <table class="table table-light" style="border-radius: 10px">
+                    <thead>
+                      <tr style="border: none">
+                        <th scope="col">ID</th>
+                        <th scope="col" style="min-width:200px">매장</th>
+                        <th scope="col" style="min-width:100px">전화번호</th>
+                        <th scope="col" style="min-width:350px">주소</th>
+                        <th scope="col"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% if (shops.length == 0) { %>
+                      <tr>
+                        <td scope="col" colspan="5" class="text-center">등록된 매장 정보가 없습니다.</td>
+                      </tr>
+                      <% } %>
+                      <% for(let i = 0; i < shops.length; i++) { %>
+                      <tr>
+                        <th scope="row"><%= shops[i].shop_id %></th>
+                        <td><%= shops[i].shop %></td>
+                        <td><%= shops[i].phone %></td>
+                        <td><%= shops[i].address %></td>
+                        <td>
+                          <div class="dropdown">
+                            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuAction" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              액션
+                            </a>
+
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuAction">
+                              <button type="button" class="dropdown-item" onClick="location.href='/seller/open-shop-info/<%= shops[i].shop_id %>'"><i class="fas fa-edit mr-2"></i>수정</button>
+                              <button type="button" class="dropdown-item" onClick="location.href='/seller/delete-shop/<%= shops[i].shop_id %>'"><i class="fas fa-trash mr-2"></i> 삭제</button>
+                            </div>
+                          </div>
+                          <!-- <a class="m-0"><i class="fas fa-edit mr-1"></i></a>
+                          <a class="m-0"><i class="fas fa-trash"></i></a> -->
+                        </td>
+                      </tr>
+                      <% } %>
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </form>
 
-            <h4 class="font-weight-normal p-0"><b>발행된 쿠폰 목록</b></h4>
-            <table class="table table-light" style="border-radius: 10px">
-              <thead>
-                <tr>
-                  <th scope="col"></th>
-                  <th scope="col">쿠폰코드</th>
-                  <th scope="col">가치 (원)</th>
-                  <th scope="col">최소 소비 (원)</th>
-                  <th scope="col">유효기간</th>
-                  <th scope="col"></th>
-                </tr>
-              </thead>
-              <tbody>
-                <% if (coupons.length == 0) { %>
-                <tr>
-                  <td scope="col" colspan="5" class="text-center">발행된 쿠폰이 없습니다.</td>
-                </tr>
-                <% } %>
-                <% for(let i = 0; i < coupons.length; i++) { %>
-                <tr>
-                  <%
-                  let today, couponStart, couponEnd, couponValidity = false;
-                  today = new Date().getTime();
-                  couponStart = coupons[i].effective_date.getTime();
-                  couponEnd = coupons[i].expiry_date.getTime();
-
-                  if(today > couponStart && today < couponEnd) {
-                    couponValidity = true;
-                  }
-                  %>
-
-                  <% if (couponValidity == true) { %>
-                    <td class="text-success"><i class="fas fa-check-circle"></i></td>
-                  <% } else { %>
-                    <td class="text-danger"><i class="fas fa-times-circle"></i></td>
-                  <% } %>
-                  <th scope="row"><%= coupons[i].coupon_code %></th>
-                  <td><%= formatNum(coupons[i].value) %></td>
-                  <td><%= formatNum(coupons[i].min_spend) %></td>
-                  <td><%= coupons[i].effective_date.getFullYear() %>년 <%= coupons[i].effective_date.getMonth() + 1 %>월 <%= coupons[i].effective_date.getDate() %>일 ~ <%= coupons[i].expiry_date.getFullYear() %>년 <%= coupons[i].expiry_date.getMonth() + 1 %>월 <%= coupons[i].expiry_date.getDate() %>일</td>
-                  <td>
-                    <div class="dropdown">
-                      <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuAction" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        액션
-                      </a>
-
-                      <div class="dropdown-menu" aria-labelledby="dropdownMenuAction">
-                        <button type="button" class="dropdown-item" onClick="location.href='/seller/open-coupon-info/<%= coupons[i].coupon_code %>'"><i class="fas fa-edit mr-2"></i>수정</button>
-                        <button type="button" class="dropdown-item" onClick="location.href='/seller/delete-coupon/<%= coupons[i].coupon_code %>'"><i class="fas fa-trash mr-2"></i>삭제</button>
+              <div id="manageStock" class="subform">
+                <form class="row" method="post" action="/seller/add-stock">
+                  <div class="col-12">
+                    <h4 class="font-weight-normal px-0 mb-3 mt-2"><b>재고품 관리</b></h4>
+                  </div>
+                  <div class="col-12">
+                    <select id="shopId" name="shopId" class="form-control mb-3">
+                      <option value="0">매장 선택</option>
+                      <% for(let i = 0; i < shops.length; i++) { %>
+                      <option value="<%= shops[i].shop_id %>" <%= shops[i].shop_id == sess.selectedShop ? 'selected' : '' %>>[<%= shops[i].shop_id %>] <%= shops[i].shop %></option>
+                      <% } %>
+                    </select>
+                  </div>
+                  <div class="col-12">
+                    <div class="input-group mb-3">
+                      <select id="productId" name="productId" class="form-control">
+                        <option value="">매장에 추가할 제품 선택</option>
+                        <% for(let i = 0; i < products.length; i++) { %>
+                          <% var doPrint = true; %>
+                          <% for(let j = 0; j < stocks.length; j++) { %>
+                            <% if(products[i].product_id == stocks[j].product_id) { doPrint = false; } %>
+                          <% } %>
+                          <% if(doPrint == true) { %>
+                            <option value="<%= products[i].product_id %>">[<%= products[i].product_id %>] <%= products[i].product %> (<%= products[i].type_avail ? products[i].type_avail : "종류 없음"  %>)</option>
+                          <% } %>
+                        <% } %>
+                      </select>
+                      <input name="productQty" type="" class="px-3" placeholder="수량 ,(쉼표)로 구분" required />
+                      <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="submit" id="button-addon2"><i class="fas fa-plus-circle"></i></button>
                       </div>
                     </div>
-                    <!-- <a class="m-0"><i class="fas fa-edit mr-1"></i></a>
-                    <a class="m-0"><i class="fas fa-trash"></i></a> -->
-                  </td>
-                </tr>
-                <% } %>
-              </tbody>
-            </table>
+                  </div>
+                </form>
+                <form class="row" method="post" action="/seller/manage-stock">
+                  <div class="col-md-12">
+                    <div class="table-responsive">
+
+                      <table class="table table-light" style="border-radius: 10px">
+                        <thead>
+                          <tr style="border: none">
+                            <th scope="col">ID</th>
+                            <th scope="col" class="fixed-width-300" style="min-width:300px">제품명</th>
+                            <th scope="col" style="min-width:300px">종류</th>
+                            <th scope="col" class="fixed-width-200" style="min-width:200px">수량</th>
+                            <th scope="col"></th>
+
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <input type="hidden" id="passedShopId" value="">
+                          <% if (stocks.length == 0) { %>
+                          <tr>
+                            <td scope="col" colspan="5" class="text-center">선택된 매장에 판매하는 제품이 없습니다.</td>
+                          </tr>
+                          <% } %>
+                          <% for(let i = 0; i < stocks.length; i++) { %>
+                          <tr>
+                            <th scope="row"><%= stocks[i].product_id %></th>
+                            <td><a style="color: black" href="/product/<%= products[i].product_id %>"><%= stocks[i].product %></a></td>
+                            <td><%= stocks[i].type_avail %></td>
+                            <td>
+                              <div class="input-group input-group-sm mb-3">
+                                <input type="" value="<%= stocks[i].quantity %>" class="form-control form-control-sm qty-input">
+                                <div class="input-group-append hidden qty-save">
+                                  <input type="hidden" id="currProductId<%= i %>" value="<%= stocks[i].product_id %>">
+                                  <input type="hidden" id="currShopId<%= i %>" value="<%= stocks[i].shop_id %>">
+                                  <button class="btn btn-success qty-save-btn" type="button"><i class="fas fa-check-circle"></i></button>
+                                </div>
+                              </div>
+                            </td>
+                            <td>
+                              <button type="button" class="btn btn-outline-danger btn-sm" onClick="location.href='/seller/delete-stock/<%= stocks[i].product_id %>-<%= stocks[i].shop_id %>/'"><i class="fas fa-trash"></i></button>
+                            </td>
+                          </tr>
+                          <% } %>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+              <div id="manageCoupon" class="subform">
+                <form class="row" method="post" action="/seller/manage-coupon">
+                  <div class="col-md-12">
+                    <h4 class="font-weight-normal px-0 mb-3 mt-2"><b><%= sess.openCouponInfo.coupon_code == "" ? "쿠폰 발행" : "쿠폰 정보 수정" %></b></h4>
+                  </div>
+                  <div class="col-sm-6 col-12">
+                    <label for="couponCode">쿠폰 코드</label>
+                    <input name="couponCode" type="" class="form-control mb-3" maxlength="50" value="<%= sess.openCouponInfo.coupon_code %>" <%= sess.openCouponInfo.coupon_code != "" ? "disabled" : "" %> required />
+                  </div>
+                  <div class="col-sm-3 col-12">
+                    <label for="couponStart">유효기간 (시작)</label>
+                    <input name="couponStart" type="date" class="form-control mb-3" value="<%= sess.couponValidPeriod.effectiveDate %>" required>
+                  </div>
+                  <div class="col-sm-3 col-12">
+                    <label for="couponEnd">유효가간 (만기)</label>
+                    <input name="couponEnd" type="date" class="form-control mb-3" value="<%= sess.couponValidPeriod.expiryDate %>" required>
+                  </div>
+                  <div class="col-sm-6 col-12">
+                    <label for="couponValue">가치 (원)</label>
+                    <input name="couponValue" type="number" class="form-control mb-3" min="0" value="<%= sess.openCouponInfo.value %>" required>
+                  </div>
+                  <div class="col-sm-6 col-12">
+                    <label for="couponMinSpend">최소 소비 (원)</label>
+                    <input name="couponMinSpend" type="number" class="form-control mb-3" min="0" value="<%= sess.openCouponInfo.min_spend %>" required>
+                  </div>
+
+                  <div class="col-12 clearfix mb-3">
+                    <% if (sess.openCouponInfo.coupon_code == "") { %>
+                    <button type="reset" class="btn btn-danger float-right">재쓰기</button>
+                    <button class="btn btn-primary float-right mr-2" type="submit" name="shopAdd">발행</button>
+                    <% } else { %>
+                    <button class="btn btn-danger float-right mr-2" type="button" onClick="location.href='/seller/close-coupon-info'">취소</button>
+                    <button class="btn btn-success float-right mr-2" type="submit" name="couponEdit">수정완료</button>
+                    <% } %>
+                  </div>
+                </form>
+
+                <h4 class="font-weight-normal p-0"><b>발행된 쿠폰 목록</b></h4>
+                <div class="table-responsive">
+                  <table class="table table-light" style="border-radius: 10px">
+                    <thead>
+                      <tr>
+                        <th scope="col"></th>
+                        <th scope="col" style="min-width:100px">쿠폰코드</th>
+                        <th scope="col" style="min-width:100px">가치 (원)</th>
+                        <th scope="col" style="min-width:150px">최소 소비 (원)</th>
+                        <th scope="col" style="min-width:250px">유효기간</th>
+                        <th scope="col"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% if (coupons.length == 0) { %>
+                      <tr>
+                        <td scope="col" colspan="5" class="text-center">발행된 쿠폰이 없습니다.</td>
+                      </tr>
+                      <% } %>
+                      <% for(let i = 0; i < coupons.length; i++) { %>
+                      <tr>
+                        <%
+                        let today, couponStart, couponEnd, couponValidity = false;
+                        today = new Date().getTime();
+                        couponStart = coupons[i].effective_date.getTime();
+                        couponEnd = coupons[i].expiry_date.getTime();
+
+                        if(today > couponStart && today < couponEnd) {
+                          couponValidity = true;
+                        }
+                        %>
+
+                        <% if (couponValidity == true) { %>
+                          <td class="text-success"><i class="fas fa-check-circle"></i></td>
+                        <% } else { %>
+                          <td class="text-danger"><i class="fas fa-times-circle"></i></td>
+                        <% } %>
+                        <th scope="row"><%= coupons[i].coupon_code %></th>
+                        <td><%= formatNum(coupons[i].value) %></td>
+                        <td><%= formatNum(coupons[i].min_spend) %></td>
+                        <td><%= coupons[i].effective_date.getFullYear() %>년 <%= coupons[i].effective_date.getMonth() + 1 %>월 <%= coupons[i].effective_date.getDate() %>일 ~ <%= coupons[i].expiry_date.getFullYear() %>년 <%= coupons[i].expiry_date.getMonth() + 1 %>월 <%= coupons[i].expiry_date.getDate() %>일</td>
+                        <td>
+                          <div class="dropdown">
+                            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuAction" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              액션
+                            </a>
+
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuAction">
+                              <button type="button" class="dropdown-item" onClick="location.href='/seller/open-coupon-info/<%= coupons[i].coupon_code %>'"><i class="fas fa-edit mr-2"></i>수정</button>
+                              <button type="button" class="dropdown-item" onClick="location.href='/seller/delete-coupon/<%= coupons[i].coupon_code %>'"><i class="fas fa-trash mr-2"></i>삭제</button>
+                            </div>
+                          </div>
+                          <!-- <a class="m-0"><i class="fas fa-edit mr-1"></i></a>
+                          <a class="m-0"><i class="fas fa-trash"></i></a> -->
+                        </td>
+                      </tr>
+                      <% } %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
-
+      </div>
+      <div class="col-12">
+        <%- include("partials/copyright"); -%>
       </div>
     </div>
   </main>

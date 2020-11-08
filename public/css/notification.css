@@ -1,0 +1,39 @@
+@media (max-width: 577px) {
+  .btn-link {
+    /* padding: 2.5% 3%!important; */
+    margin: 0!important;
+  }
+
+  h4.trans-refno, h4.trans-refno a {
+    font-size: 3.8vw!important;
+  }
+
+  .btn-outline-secondary {
+   font-size: 3.0vw;
+ }
+
+ .dd-sm {
+   padding-right: 21px!important;
+ }
+
+ .dd-sm, small, span.border.rounded-pill {
+   font-size: 2.3vw!important;
+ }
+
+ span.border.rounded-pill {
+   padding: 0.5vw 0.8vw!important;
+ }
+
+ h4.trans-refno.mt-5 {
+   margin-top: 10vw!important;
+ }
+
+
+ div.container {
+   margin: 3% 0!important;
+ }
+
+ .order-num {
+   font-size: 3.5vw!important;
+ }
+}

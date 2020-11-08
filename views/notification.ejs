@@ -1,13 +1,15 @@
 <%-include("partials/header");-%>
 <!-- Custom styles -->
 <link href="css/cart.css" rel="stylesheet">
+<link href="css/receipt.css" rel="stylesheet">
+<link href="css/notification.css" rel="stylesheet">
 </head>
 
 <body>
   <%- include("partials/navbar"); -%>
   <div class="container py-4">
-    <div class="my-4 text-center">
-      <h1><i class="fas fa-bell"></i> 알림</h1>
+    <div class="mt-1 mb-2 text-center">
+      <h2><i class="fas fa-bell"></i> 알림</h2>
     </div>
 
     <div class="row">
@@ -17,7 +19,7 @@
           <% sess.reqResult = null %>
         </div>
         <% if(data.length === 0) { %>
-        <div class="alert alert-light" role="alert">
+        <div class="alert alert-light text-center" role="alert">
           최신 구매된 상품이 없습니다.
         </div>
         <% } else {
@@ -26,7 +28,7 @@
            if (p == 0 || (p != 0 && pendingOrder[p].trans_id != pendingOrder[p-1].trans_id)) {
              for (let t = 0; t < transaction.length; t++) {
                if (pendingOrder[p].trans_id == transaction[t].trans_id) { %>
-                <h4 class="mb-3 <%= p != 0 ? 'mt-5' : '' %>">상품이 구매되었습니다. (<a href="/purchase-invoice/<%= pendingOrder[p].trans_id %>">Ref No. <%= pendingOrder[p].trans_id %></a> - <%= transaction[t].date.getFullYear() + "/" + (transaction[t].date.getMonth() + 1) + "/" + transaction[t].date.getDate() %>)</h4>
+                <h4 class="mb-3 trans-refno <%= p != 0 ? 'mt-5' : '' %>">상품이 구매되었습니다. (<a href="/purchase-invoice/<%= pendingOrder[p].trans_id %>">Ref No. <%= pendingOrder[p].trans_id %></a> - <%= transaction[t].date.getFullYear() + "/" + (transaction[t].date.getMonth() + 1) + "/" + transaction[t].date.getDate() %>)</h4>
                 <% tempDate = new Date(transaction[t].date.getTime() + (7*24*60*60*1000));
                    deadlineDate = tempDate.getFullYear() + "-" + (tempDate.getMonth() + 1) + "-" + tempDate.getDate();
 
@@ -40,7 +42,7 @@
           <div class="card-header clearfix">
             <i class="fas fa-store-alt mr-1"></i> 판매자: <strong><%= pendingOrder[p].sellername %></strong>
             <div class="float-right">
-              <a href="/purchase-invoice/<%= pendingOrder[p].trans_id %>">Order No. <%= pendingOrder[p].order_id %></a>
+              <a href="/purchase-invoice/<%= pendingOrder[p].trans_id %>" class="order-num">Order No. <%= pendingOrder[p].order_id %></a>
             </div>
           </div>
           <div class="row">
@@ -50,7 +52,7 @@
             <div class="col-md-6">
               <div class="card-body">
                 <div class="row">
-                  <div class="col-sm-3">
+                  <div class="col-3">
                     <% var isExist = false; %>
                     <% for(let j = 0; j < images.length; j++) { %>
                     <% if (images[j].product_id == data[i].product_id) { %>
@@ -62,7 +64,7 @@
                     <img class="border rounded" src="images/product-default.jpg" alt="product-image" width="110%" />
                     <% } %>
                   </div>
-                  <div class="col-sm-9">
+                  <div class="col-9">
                     <h5 class="card-title">
                       <a href="/product/<%= data[i].product_id %>"><%= data[i].product %></a>
                       <br><small class="text-secondary"><%= data[i].type != "None" ? data[i].type : '' %> (Qty: <span class=""><%= data[i].quantity %></span>)</small>
@@ -73,13 +75,16 @@
               </div>
             </div>
             <% } %>
+            <div class="col-12 text-right position-relative">
+              <small class="text-danger d-block d-sm-none dd-sm">수령법 선택 <%= deadlineDate %>까지 <span class="border border-success rounded-pill bg-success text-light px-2 pb-1 <%= now > directDeadlineTime || !isSameShop ? 'd-none' : '' %>"">direct <i class="fas fa-lock-open"></i></span></small>
+            </div>
           </div>
           <div class="clear-fix my-2 mx-1">
-            <div class="float-left">
+            <div class="float-left align-middle">
               <button type="button" class="btn btn-link mx-2" onclick="location.href='/my-notification/cancel/<%= pendingOrder[p].order_id %>'">취소</button>
             </div>
             <div class="float-right">
-              <small class="mr-3 text-danger">수령법 선택 <%= deadlineDate %>까지</small>
+              <small class="mr-3 text-danger d-none d-sm-inline">수령법 선택 <%= deadlineDate %>까지 <span class="border rounded-pill bg-success text-light px-2 pb-1 <%= now > directDeadlineTime || !isSameShop ? 'd-none' : '' %>"">direct <i class="fas fa-lock-open"></i></span></small>
               <button type="button" class="btn btn-outline-secondary mb-1 mr-2 <%= now > directDeadlineTime || !isSameShop ? 'd-none' : '' %>" onclick="location.href='/my-notification/direct/<%= pendingOrder[p].order_id %>'">바로 가져가기</button>
               <button type="button" class="btn btn-outline-secondary mb-1 mr-2" onclick="location.href='/my-notification/pickup/<%= pendingOrder[p].order_id %>'">픽업</button>
               <button type="button" class="btn btn-outline-secondary mb-1 mr-3" onclick="location.href='/my-notification/delivery/<%= pendingOrder[p].order_id %>'">배송</button>

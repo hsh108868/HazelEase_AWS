@@ -5,14 +5,13 @@
 
 <body>
   <%- include("partials/navbar"); -%>
-
   <div class="container">
     <div class="py-5 text-center page-header">
       <h2><i class="fas fa-shopping-cart fa-lg"></i> <%= user_id ? user_id : "고객"; %>님의 쇼핑카트</h2>
     </div>
 
     <div class="row">
-      <div class="col-md-4 order-md-2 mb-4">
+      <div class="col-md-4 order-md-2 order-1 mb-4">
         <h4 class="d-flex justify-content-between align-items-center mb-3">
           <span class="text-muted">결제 체크아웃</span>
           <!-- 전체 상품 -->
@@ -63,14 +62,14 @@
               <h6 class="my-0">쿠폰</h6>
               <small><%= couponResult[0] %></small>
             </div>
-            <span class="<%= couponResult[3] == 1 ? "text-success" : "" %>">-<%= couponResult[1] ? formatNum(couponResult[1]) : "0,000" %> 원</span>
+            <span class="<%= couponResult[3] == 1 ? "text-success" : "" %>">-<%= couponResult[1] ? formatNum(couponResult[1]) : "0" %> 원</span>
           </li>
           <li class="list-group-item d-flex justify-content-between lh-condensed">
             <span>전체 금액 (KRW)</span>
             <strong><%= formatNum(total) %> 원</strong>
           </li>
           <li class="list-group-item d-flex justify-content-between lh-condensed bg-warning text-dark">
-            <h6 class="my-0">하젤머니 잔액</h6>
+            <h6 class="my-0">헤이즐머니 잔액</h6>
             <strong><%= formatNum(hazelMoney) %> 원</strong>
           </li>
         </ul>
@@ -90,13 +89,13 @@
           </div>
         </form>
         <div class="card p-2 mt-3">
-          <div class="clearfix px-2 my-1">
+          <!-- <div class="clearfix px-2 my-1">
             <span class="float-left"><strong>자동결제</strong> <i class="far fa-question-circle ml-1"></i></span>
             <label class="switch float-right">
               <input type="checkbox">
               <span class="slider round"></span>
             </label>
-          </div>
+          </div> -->
           <form id="cart-continue" method="post" action="/cart/process-payment">
             <input type="hidden" name="hazelMoney" value="<%= hazelMoney %>">
             <input type="hidden" name="total" value="<%= total %>">
@@ -113,7 +112,7 @@
         </div>
       </div>
 
-      <form id="cart-items-form" class="col-md-8 order-md-1" method="POST" action="/cart/update/<%= data.length %>">
+      <form id="cart-items-form" class="col-md-8 order-md-1 order-0" method="POST" action="/cart/update/<%= data.length %>">
         <h4 class="mb-3 clearfix">
           <span class="float-left">구매하는 상품</span>
           <span class="float-right">
@@ -126,7 +125,6 @@
           <% sess.cartUpdateMsg = null; %>
         </div>
         <% } %>
-
         <% if(rep.length === 0) { %>
         <div class="card mb-4">
           <div class="card-body text-center">
@@ -136,14 +134,15 @@
         <% } %>
         <!-- 판매자 -->
         <% var i = 0; %>
-        <% for (let p = 0; p < rep.length; p++) { %>
+        <% let k = 0; %>
+      <% for (let p = 0; p < rep.length; p++) { %>
         <div class="card mb-4">
           <div class="card-header purchasing-product">
             <i class="fas fa-store-alt mr-1"></i> 판매자: <strong><%= rep[p].sellername %></strong>
           </div>
           <!-- 상품 -->
-          <% for (let q = 0; q < rep[p].count; q++, i++) { %>
-          <div class="card-body cart-item">
+        <% for (let q = 0; q < rep[p].count; q++, i++) { %>
+            <div class="card-body cart-item">
             <div class="row">
               <div class="col-3 img-box">
                 <a href="/product/<%= data[i].product_id %>">
@@ -187,17 +186,26 @@
                 <div class="row">
                   <div class="col-sm-6 col-12">
                     <p>
+                      <% if (data[i].rating != 0) { %>
                       <span style="color: #fbd46d;">
                         <% for (let j = 0; j < Math.floor(data[i].rating); j++) { %>
-                        <i class="fas fa-star"></i>
+                          <i class="fas fa-star"></i>
                         <% } %>
                         <% if (data[i].rating - Math.floor(data[i].rating) >= 0.5) { %>
-                        <i class="fas fa-star-half-alt"></i>
+                          <i class="fas fa-star-half-alt"></i>
                         <% } %>
                         <% for (let j = 1; j <= 5 - (data[i].rating - Math.floor(data[i].rating) < 0.5 ? Math.floor(data[i].rating) : data[i].rating); j++) { %>
-                        <i class="far fa-star"></i>
+                          <i class="far fa-star"></i>
                         <% } %>
-                      </span>(0)
+                          <% } %>
+                      </span>
+                      <% if (reviewCount[k].product_id == data[i].product_id) { %>
+                        (<%= reviewCount[k].count %>)
+                        <%
+                          if (k < reviewCount.length - 1) { k++; } else { k = 0; }
+                        } else { %>
+                          <i class="text-secondary">No rating yet</i>
+                        <% } %>
                     </p>
                   </div>
                   <div class="col-sm-6 col-9">

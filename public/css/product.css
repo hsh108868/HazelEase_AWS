@@ -1,6 +1,6 @@
 body {
   padding-top: 60px;
-  min-width: 576px;
+  min-width: 300px;
 }
 
 .disc-tag {
@@ -12,4 +12,65 @@ body {
 
 a:hover {
   text-decoration: none;
+}
+
+@media (max-width: 636px) and (min-width: 576px) {
+  .container.mt-5 {
+    margin: 4.0vw auto!important;
+  }
+}
+@media (max-width: 576px) {
+  .container.mt-5.con-1 {
+    margin: 0 auto!important;
+  }
+
+  .container.mt-5.bg-white.rounded {
+    margin: 2px auto!important;
+  }
+
+  form#add-item-form, form div.p-4, .tab-content, th, td {
+    padding: 1.5vw!important;
+  }
+
+  h3 {
+    font-size: 5.5vw;
+  }
+
+  h3.title {
+    margin-bottom: 2.5vw!important;
+  }
+
+  h4 {
+    font-size: 4vw;
+    /* margin: 1.5vw 0!important; */
+  }
+
+  h5 {
+    font-size: 3.5vw;
+  }
+
+  form .row .col-7 {
+    padding-right: 0!important;
+  }
+
+  select.form-control, i.fa-star, i.fa-truck, i.fa-store-alt, .text-secondary, p, form button.btn-primary,
+  .container .nav-item, .tab-content, a.btn.btn-sm, button.btn-outline-primary  {
+    font-size: 3.3vw;
+  }
+
+  .text-secondary {
+    margin: 1vw 0!important;
+  }
+
+   .media.text-muted {
+     padding: 0!important;
+   }
+
+   div.col-md-6.p-3 {
+     padding-top: 0!important;
+   }
+
+   .empty-review {
+     padding: 2.5vw 0!important;
+   }
 }

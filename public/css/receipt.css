@@ -2,7 +2,6 @@ body, html {
   height: 100%;
   margin: 0;
   padding-top: 2.5rem;
-  min-width: 576px;
 }
 
 .tablink {
@@ -10,11 +9,15 @@ body, html {
   float: left;
   border: 3px solid #e0dede;
   border-radius: 30px;
-  outline: none;
   cursor: pointer;
   padding: 14px 16px;
   font-size: 17px;
-  width: 25%;
+}
+
+.btn-group {
+  background-color: #f4f4f4;
+  border: 3px solid #e0dede;
+  border-radius: 30px;
 }
 
 .tablink:hover {
@@ -26,4 +29,58 @@ body, html {
   display: none;
   padding: 20px 14px;
   height: 100%;
+}
+
+@media (max-width: 576px) {
+  body {
+    padding-top: 4%!important;
+  }
+
+  #Pickup, #Delivery {
+    padding: 4%!important;
+  }
+
+  .card, .card-header, .clearfix, .card-body, a, small, li.list-group-item, h6,
+   .btn-outline-secondary, .btn-secondary, .tablink, .btn-group, .btn-link {
+    font-size: 3.3vw;
+  }
+
+  .btn-group {
+    padding: 0.3%!important;
+  }
+
+  .rounded-pill {
+    font-size: 3.0vw;
+    padding: 3%!important;
+  }
+
+  .rounded-circle {
+    /* padding-left: 8%!important; */
+    padding: 0vw 1.5vw!important;
+    margin-left: 0.5%!important;
+  }
+
+  .card-header, .card-body {
+    padding: 3%!important;
+  }
+
+  .col-9 {
+    padding-left: 1.5%!important;
+    padding-right: 3%!important;
+  }
+
+  p {
+    margin-bottom: 3%!important;
+    font-size: 2.8vw;
+  }
+}
+
+@media (max-width: 438px) {
+  .col-9 {
+    padding-left: 0!important;
+  }
+
+  h5.card-title {
+    line-height: 1.0!important;
+  }
 }

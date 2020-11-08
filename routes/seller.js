@@ -43,6 +43,7 @@ exports.manageProduct = function(req, res) {
     price: req.body.productPrice,
     discount: req.body.productDisc,
     seller_id: user_id,
+    rating: 0,
     category: req.body.productCategory
   }
 

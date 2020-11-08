@@ -155,36 +155,32 @@ exports.pickupCert = function (req, res) {
       res.end();
   } else {
     db.query(sql, params, function (err, results) {
-      if (err) throw err;
-
-      /* --  관련 구매번호 몇 개 계산 -- */
-      var data = results[0];
-      var transIds = [data[0].trans_id];
-      var prevTransId = data[0].trans_id;
-
-      for (let i = 1; i < data.length; i++) {
-        if (data[i].trans_id != prevTransId) {
-          transIds.push(data[i].trans_id);
-          prevTransId = data[i].trans_id;
+        if (err) throw err;
+        /* --  관련 구매번호 몇 개 계산 -- */
+        var data = results[0];
+        var transIds = [data[0].trans_id];
+        var prevTransId = data[0].trans_id;
+        for (let i = 1; i < data.length; i++) {
+          if (data[i].trans_id != prevTransId) {
+            transIds.push(data[i].trans_id);
+            prevTransId = data[i].trans_id;
+          }
         }
-      }
-      /* --------------------------- */
-
-
-      let textLink = "hazelease.herokuapp.com/qrcode/pickup-complete/tid/" + transIds + "/sid/" + reqShopId;
-      QRCode.toDataURL(textLink, { errorCorrectionLevel: 'M' }, function (err, url) {
-        res.render('pickup-cert.ejs', {
-          user_id: user_id,
-          sess: req.session,
-          formatNum: fn.formatNum,
-          data: results[0],
-          date: results[1][0].date,
-          transInfo: results[1][0],
-          images: results[2],
-          qrcode: url
+        /* --------------------------- */
+        let textLink = "hazelease.herokuapp.com/qrcode/pickup-complete/tid/" + transIds + "/sid/" + reqShopId;
+        QRCode.toDataURL(textLink, { errorCorrectionLevel: 'M' }, function (err, url) {
+          res.render('pickup-cert.ejs', {
+            user_id: user_id,
+            sess: req.session,
+            formatNum: fn.formatNum,
+            data: results[0],
+            date: results[1][0].date,
+            transInfo: results[1][0],
+            images: results[2],
+            qrcode: url
+          });
         });
       });
-    });
   }
 }
 

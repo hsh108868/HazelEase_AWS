@@ -1,6 +1,5 @@
 <%- include("partials/header"); -%>
 <!-- Custom styles -->
-<link rel="stylesheet" href="/css/main.css">
 <link rel="stylesheet" href="/css/account.css">
 </head>
 
@@ -8,60 +7,70 @@
   <%- include("partials/navbar"); -%>
 
   <main role="main" class="container-fluid">
-    <%- include("partials/sidenav"); -%>
-    <div class="tab-content">
-      <div>
-        <h3>구매목록</h3>
+    <div class="row">
+      <div class="col-md-3 col-12">
+        <%- include("partials/sidenav"); -%>
       </div>
-      <% if (data.length === 0) { %>
-        <div class="card mb-4">
-          <div class="card-body">
-            구매한 상품이 없습니다.
+      <div class="col-md-9 col-12">
+        <div class="tab-content">
+          <div>
+            <h3>구매목록</h3>
           </div>
-        </div>
-      <% } else { %>
-      <% let i = 0; %>
-      <% for (let p = 0; p < trans.length; p++ ) { %>
-      <div class="card m-4">
-        <div class="card-header clearfix">
-           <%= trans[p].date.getFullYear() + "/" + (trans[p].date.getMonth() + 1) + "/" + trans[p].date.getDate() %>
-          <div class="float-right">
-            <a href="/purchase-invoice/<%= trans[p].trans_id %>" class="text-secondary">Transaction No. <%= trans[p].trans_id %></a>
-          </div>
-        </div>
-        <div class="row">
-          <!-- 상품 -->
-          <% for (let q = 0; q < trans[p].count; q++, i++) { %>
-          <div class="col-md-6">
-            <div class="card-body">
-              <div class="row">
-                <div class="col-sm-3">
-                  <% var isExist = false; %>
-                  <% for(let j = 0; j < images.length; j++) { %>
-                  <% if (images[j].product_id == data[i].product_id) { %>
-                  <a href="/product/<%= data[i].product_id %>"><img class="border rounded p-0" src="/uploads/<%= images[j].file %>" alt="product-image" width="110%" /></a>
-                  <% isExist = true; break; %>
-                  <% } %>
-                  <% } %>
-                  <% if(!isExist) { %>
-                  <img class="border rounded" src="/images/product-default.jpg" alt="product-image" width="110%" />
-                  <% } %>
-                </div>
-                <div class="col-sm-9">
-                  <h5 class="card-title">
-                    <a href="/product/<%= data[i].product_id %>" class="text-secondary"><%= data[i].product %> <%= data[i].type != "None" ? "(" + data[i].type + ")" : '' %></a>
-                    <br><small class="text-secondary"><%= formatNum(data[i].price) %> 원 / <%= data[i].quantity %> 개</small>
-                    <br><a href="/account/write-review/<%= data[i].trans_id %>/<%= data[i].order_id %>/<%= data[i].product_id %>/<%= data[i].type %>/<%= data[i].shop_id %>" class="btn btn-sm btn-outline-primary rounded-pill mt-2">구매후기 쓰기</a>
-                  </h5>
+          <% if (data.length === 0) { %>
+            <div class="card mb-4">
+              <div class="card-body">
+                구매한 상품이 없습니다.
+              </div>
+            </div>
+          <% } else { %>
+          <% let i = 0; %>
+          <% for (let p = 0; p < trans.length; p++ ) { %>
+          <div class="card m-4">
+            <div class="card-header clearfix">
+               <%= trans[p].date.getFullYear() + "/" + (trans[p].date.getMonth() + 1) + "/" + trans[p].date.getDate() %>
+              <div class="float-right">
+                <a href="/purchase-invoice/<%= trans[p].trans_id %>" class="text-secondary">Transaction No. <%= trans[p].trans_id %></a>
+              </div>
+            </div>
+            <div class="row">
+              <!-- 상품 -->
+              <% for (let q = 0; q < trans[p].count; q++, i++) { %>
+              <div class="col-lg-6 col-md-12">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-3">
+                      <% var isExist = false; %>
+                      <% for(let j = 0; j < images.length; j++) { %>
+                      <% if (images[j].product_id == data[i].product_id) { %>
+                      <a href="/product/<%= data[i].product_id %>"><img class="border rounded p-0" src="/uploads/<%= images[j].file %>" alt="product-image" width="110%" /></a>
+                      <% isExist = true; break; %>
+                      <% } %>
+                      <% } %>
+                      <% if(!isExist) { %>
+                      <img class="border rounded" src="/images/product-default.jpg" alt="product-image" width="110%" />
+                      <% } %>
+                    </div>
+                    <div class="col-9">
+                      <h5 class="card-title">
+                        <a href="/product/<%= data[i].product_id %>" class="text-secondary"><%= data[i].product %> <%= data[i].type != "None" ? "(" + data[i].type + ")" : '' %></a>
+                        <small class="text-secondary d-block"><%= formatNum(data[i].price) %> 원 / <%= data[i].quantity %> 개</small>
+                        <a href="/account/write-review/<%= data[i].trans_id %>/<%= data[i].order_id %>/<%= data[i].product_id %>/<%= data[i].type %>/<%= data[i].shop_id %>" class="btn btn-sm btn-outline-primary rounded-pill mt-2 <%= data[i].status == 'completed' ? 'd-inline-block' : 'd-none' %>">구매후기 쓰기</a>
+                        <button class="btn btn-sm btn-secondary rounded-pill mt-2 <%= data[i].status == 'reviewed' ? 'd-inline-block' : 'd-none' %>" disabled>리뷰작성 완료</button>
+                      </h5>
+                    </div>
+                  </div>
                 </div>
               </div>
+              <% } %>
             </div>
           </div>
           <% } %>
+          <% } %>
         </div>
       </div>
-      <% } %>
-      <% } %>
+      <div class="col-12">
+        <%- include("partials/copyright"); -%>
+      </div>
     </div>
   </main>
 

@@ -6,7 +6,7 @@
 
 <body class="bg-light">
   <%- include("partials/navbar"); -%>
-  <div class="container mt-5">
+  <div class="container mt-5 con-1">
     <div class="row bg-white border rounded">
       <div class="col-lg-6 card-body p-0 border rounded">
         <!-- <svg class="bd-placeholder-img card-img-top" width="100%" height="500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail" viewBox="0 0 100 100">
@@ -21,7 +21,7 @@
           <div class="carousel-inner">
             <% for (let i = 0; i < images.length; i++) { %>
             <div class="carousel-item <%= i == 0 ? 'active' : '' %>">
-              <svg class="bd-placeholder-img card-img-top" width="100%" height="520" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail" viewBox="0 0 100 100">
+              <svg class="bd-placeholder-img card-img-top" width="100%" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail" viewBox="0 0 100 100">
                 <image href="/uploads/<%= images[i].file %>" alt="product-image" width="100px" />
               </svg>
             </div>
@@ -58,7 +58,7 @@
             <% for (let j = 1; j <= 5 - (data.rating - Math.floor(data.rating) < 0.5  ? Math.floor(data.rating) : data.rating); j++) { %>
             <i class="far fa-star"></i>
             <% } %>
-          </span>(173)
+          </span>(<%= review.length %>)
         </p>
 
         <%
@@ -73,7 +73,7 @@
         <% } %>
 
         <div class="row mb-3">
-          <div class="col-md-7 mb-3">
+          <div class="col-7 mb-3">
             <select name="type" class="form-control" required>
               <% if (!(typeAvailable.length == 1 && typeAvailable[0] == '')) { %>
               <option value=""> 종류 선택 </option>
@@ -84,7 +84,7 @@
               <% sess.selectType = null; %>
             </select>
           </div>
-          <div class="col-md-5 mb-3">
+          <div class="col-5 mb-3">
             <select name="quantity" class="form-control">
               <option value="1"> 1 </option>
               <option value="2"> 2 </option>
@@ -93,7 +93,7 @@
               <option value="5"> 5 </option>
             </select>
           </div>
-          <div class="col-sm-12 mb-3">
+          <div class="col-12 mb-3">
             <select name="shopId" class="form-control" required>
               <option value="">매장 선택</option>
               <% for (let i = 0; i < stock.length; i++) { %>
@@ -128,7 +128,7 @@
         <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
           <a class="nav-item nav-link active" id="nav-info-tab" data-toggle="tab" href="#nav-info" role="tab" aria-controls="nav-info" aria-selected="true">상세 정보</a>
           <a class="nav-item nav-link" id="nav-shop-tab" data-toggle="tab" href="#nav-shop" role="tab" aria-controls="nav-shop" aria-selected="false">매장</a>
-          <a class="nav-item nav-link" id="nav-review-tab" data-toggle="tab" href="#nav-review" role="tab" aria-controls="nav-review" aria-selected="false">리뷰</a>
+          <a class="nav-item nav-link" id="nav-review-tab" data-toggle="tab" href="#nav-review" role="tab" aria-controls="nav-review" aria-selected="false">리뷰 (<%= review.length %>)</a>
         </div>
       </div>
       <div class="col-sm-12 border border-top-0 rounded-bottom">
@@ -192,63 +192,50 @@
           <!-- 고객 리뷰 -->
           <div class="tab-pane fade text-justify" id="nav-review" role="tabpanel" aria-labelledby="nav-review-tab">
             <% if(review.length === 0) { %>
-              <div>
+              <div class="empty-review">
                 리뷰가 없습니다.
               </div>
-            <% }%>
-              <% for (var i = 0; i < review.length; i++) {%>
-            <p class="text-left mb-1"><%=review[i].user_id %></p>
-            <p>
+            <% } else { %>
+            <div class="p-2">
+              <% for (var i = 0; i < review.length; i++) { %>
+              <p class="text-left mb-1"><%= review[i].user_id %></p>
               <span style="color: #fbd46d;">
                 <% for (let j = 0; j < Math.floor(review[i].rating); j++) { %>
-                <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
                 <% } %>
                 <% if (review[i].rating - Math.floor(review[i].rating) >= 0.5) { %>
-                <i class="fas fa-star-half-alt"></i>
+                  <i class="fas fa-star-half-alt"></i>
                 <% } %>
                 <% for (let j = 1; j <= 5 - (review[i].rating - Math.floor(review[i].rating) < 0.5  ? Math.floor(review[i].rating) : review[i].rating); j++) { %>
-                <i class="far fa-star"></i>
+                  <i class="far fa-star"></i>
                 <% } %>
               </span>
-              <p>구매일 : <%= review[i].latest_update.getFullYear() + "/" + (review[i].latest_update.getMonth() + 1) + "/" + review[i].latest_update.getDate() %></p>
-              <p>타입 : <%=review[i].type%></p>
-              </p>
-            <div class="row">
-            <div class="col-sm-3">
-              <img src="/images/product-default.jpg" alt="product-img" class="img-thumbnail">
-              </div>
-            <div class="col-sm-9">
-              <strong class="text-gray-dark ml-2"><%= review[i].title %></strong>
-              <pre class="m-1 ml-2"><%= review[i].body %></pre>
-            </div>
+              <p class="text-secondary mt-1">(구매일: <%= review[i].latest_update.getFullYear() + "/" + (review[i].latest_update.getMonth() + 1) + "/" + review[i].latest_update.getDate() %>, 타입: <%=review[i].type%>)</p>
 
-            <div class="col-sm-12">
-              <p class="text-right mb-1 mr-2">0명에게 도움 됨</p>
-              <button type="button" class="btn btn-outline-primary  m-2 float-right">
-                도움이 안돼요
-                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-emoji-frown" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"></path>
-        <path fill-rule="evenodd" d="M4.285 12.433a.5.5 0 0 0 .683-.183A3.498 3.498 0 0 1 8 10.5c1.295 0 2.426.703 3.032 1.75a.5.5 0 0 0 .866-.5A4.498 4.498 0 0 0 8 9.5a4.5 4.5 0 0 0-3.898 2.25.5.5 0 0 0 .183.683z"></path>
-        <path d="M7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5zm4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5z"></path>
-      </svg>
-              </button>
-              <button type="button" class="btn btn-outline-primary  m-2 float-right">
-          도움이 돼요
-          <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-emoji-smile" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-  <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"></path>
-  <path fill-rule="evenodd" d="M4.285 9.567a.5.5 0 0 1 .683.183A3.498 3.498 0 0 0 8 11.5a3.498 3.498 0 0 0 3.032-1.75.5.5 0 1 1 .866.5A4.498 4.498 0 0 1 8 12.5a4.498 4.498 0 0 1-3.898-2.25.5.5 0 0 1 .183-.683z"></path>
-  <path d="M7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5zm4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5z"></path>
-</svg>
-        </button>
+              <div class="row">
+                <div class="col-12">
+                  <strong class="text-gray-dark"><%= review[i].title %></strong>
+                  <p class=""><%= review[i].body %></p>
+                </div>
+                <div class="col-12">
+                  <p class="text-right mb-1 mr-2">0명에게 도움 됨</p>
+                  <button type="button" class="btn btn-sm btn-outline-primary ml-1 float-right">
+                    도움이 안돼요 <i class="far fa-frown"></i>
+                  </button>
+                  <button type="button" class="btn btn-sm btn-outline-primary mr-1 float-right">
+                    도움이 돼요 <i class="far fa-smile-beam"></i>
+                  </button>
+                </div>
               </div>
+            <% } %>
             </div>
-          <% }%>
-            </div>
+            <% } %>
           </div>
+
         </div>
+      </div>
     </div>
   </div>
-</body>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script type="text/javascript" src="/js/product.js"></script>

@@ -9,7 +9,7 @@ const passport = require("passport"),
   LocalStrategy = require('passport-local').Strategy;
 const fileUpload = require('express-fileupload');
 const cors = require('cors');
-const morgan = require('morgan');
+// const morgan = require('morgan');
 const _ = require('lodash');
 const QRCode = require('qrcode');
 
@@ -35,7 +35,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(fileUpload({createParentPath: true}));
 app.use(cors());
-app.use(morgan('dev'));
+// app.use(morgan('dev'));
 
 // DB연결와 체크
 db = connection.db;
@@ -84,11 +84,11 @@ app.post("/profile", user.saveChanges);
 // 결제 수단 페이지의 요청 처리
 app.post("/account/payment-method", paymeth.hazelPay);
 
-//리뷰 작성
+// 리뷰 작성
 app.get("/account/write-review/:transId/:orderId/:productId/:type/:shopId", user.writeReview);
 app.post("/account/write-review", user.submitReview);
 
-// 판매자의 관리 시스템 페이지의 요청 처리
+// 판매자의 과리 시스템 페이지의 요청 처리
 app.post("/seller/manage-info", seller.manageInfo);
 
 app.post("/seller/manage-product", seller.manageProduct);
@@ -154,7 +154,6 @@ app.get("/checkout-certificate/:orderId", receipt.checkoutCert);
 
 //매장이동
 app.get("/open-map/:shopId", product.goToMap);
-
 
 let port = process.env.PORT;
 if (port == null || port == "") {
