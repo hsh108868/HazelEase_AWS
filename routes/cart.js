@@ -43,7 +43,7 @@ exports.show = function(req, res) {
            SELECT p.product_id, COUNT(*) as count
          FROM product as p
             RIGHT OUTER JOIN review as r ON p.product_id = r.product_id
-         GROUP BY p.product_id`
+         GROUP BY p.product_id;`
 
     params = [user_id, user_id, user_id, user_id, user_id];
 
